@@ -421,6 +421,243 @@ def tract_county_fips(tract_geoid):
     return tract_geoid[:5]
 
 
+# ---- Site data emission (Leaflet frontend) ----
+
+SITE_DATA = HERE / "site" / "data"
+
+
+def _is_nan(v):
+    try:
+        return v != v  # NaN trick
+    except Exception:
+        return False
+
+
+def _clean(v):
+    """Convert NaN -> None, leave numbers/strings alone."""
+    if v is None or _is_nan(v):
+        return None
+    return v
+
+
+def _short_recommendation(top_cpg):
+    if top_cpg is None or top_cpg < 0:
+        return "No traditional elementary in any served tract"
+    if top_cpg >= 0.85:
+        return "Strong candidate — pursue Judy Center conversation"
+    if top_cpg >= 0.65:
+        return "Possible candidate — confirm school eligibility"
+    return "Lower priority — CPG below typical Judy Center threshold"
+
+
+def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
+                     countywide_flags, joined_schools, catchments,
+                     grantee_tracts_gdf, raw_tracts, tract_to_grantees):
+    """Emit the four files the static Leaflet site reads.
+
+    site/data/
+        grantee_tracts.geojson    EPSG:4326 polygons, 106 tracts
+        schools.geojson           EPSG:4326 points, only schools
+                                  relevant to at least one grantee
+        catchments.geojson        EPSG:4326 polygons, catchments for
+                                  the rendered schools (excluding
+                                  county-wide ones)
+        grantees.json             per-grantee narrative payload
+    """
+    SITE_DATA.mkdir(parents=True, exist_ok=True)
+
+    # --- 1. Grantee tracts ---
+    # Attach the grantees-per-tract list for easy hover popup.
+    raw_tracts_4326 = raw_tracts.to_crs(epsg=4326)
+    g_tracts = raw_tracts_4326[
+        raw_tracts_4326["GEOID20"].isin(tract_to_grantees.keys())
+    ].copy()
+    g_tracts["grantees"] = g_tracts["GEOID20"].map(
+        lambda t: sorted(tract_to_grantees.get(t, []))
+    )
+    g_tracts = g_tracts[[
+        "GEOID20", "grantees", "CHILD_POV_PCT", "CHILD_POPULATION_TOTAL", "geometry"
+    ]].rename(columns={
+        "GEOID20": "geoid20",
+        "CHILD_POV_PCT": "child_pov_pct",
+        "CHILD_POPULATION_TOTAL": "child_pop_total",
+    })
+    g_tracts.to_file(SITE_DATA / "grantee_tracts.geojson", driver="GeoJSON")
+
+    # --- 2. Determine relevant schools ---
+    # We render: resolved JCs + candidate elementaries + JC near-misses.
+    # Each school carries the role it plays for each grantee that cares.
+    ncesid_to_role = defaultdict(dict)  # ncesid -> {grantee: role}
+
+    # Resolved JCs in grantee tracts
+    audit_by_ncesid = {a["ncessch_id"]: a for a in audit if a["ncessch_id"]}
+    for a in audit_by_ncesid.values():
+        gtr = tract_to_grantees.get(a["geoid20"], set())
+        for g in gtr:
+            ncesid_to_role[a["ncessch_id"]][g] = "jc_in_tract"
+
+    # Candidate elementaries
+    for c in candidate_rows:
+        if c["ncessch_id"] and c["is_judy_center"] == "no":
+            ncesid_to_role[c["ncessch_id"]].setdefault(c["grantee"], "candidate")
+        elif c["ncessch_id"]:
+            # is_judy_center yes via candidate path — already handled above
+            ncesid_to_role[c["ncessch_id"]].setdefault(c["grantee"], "jc_in_tract")
+
+    # Near-miss JCs (catchment overlaps tract but school is outside)
+    jc_ncesids = {a["ncessch_id"] for a in audit if a["ncessch_id"]}
+    for o in overlap_rows:
+        if not o["ncessch_id"]:
+            continue
+        if o["ncessch_id"] not in jc_ncesids:
+            continue
+        # Skip if school is already inside this grantee's tracts
+        if ncesid_to_role.get(o["ncessch_id"], {}).get(o["grantee"]) == "jc_in_tract":
+            continue
+        if (o["pct_of_tract"] < 0.05 and o["pct_of_catchment"] < 0.05):
+            continue
+        if (o["ncessch_id"] in countywide_flags
+                or o["lea_site"] in countywide_flags):
+            continue
+        ncesid_to_role[o["ncessch_id"]][o["grantee"]] = "jc_near_miss"
+
+    relevant_ncesids = set(ncesid_to_role.keys())
+
+    # --- 3. Schools GeoJSON ---
+    schools_4326 = joined_schools.to_crs(epsg=4326)
+    rel_schools = schools_4326[
+        schools_4326["NCESSCH_ID"].fillna("").isin(relevant_ncesids)
+    ].copy()
+    rel_schools["lat"] = rel_schools.geometry.y
+    rel_schools["lon"] = rel_schools.geometry.x
+    rel_schools["roles"] = rel_schools["NCESSCH_ID"].map(
+        lambda nid: ncesid_to_role.get(nid, {})
+    )
+    rel_schools["is_judy_center"] = rel_schools["NCESSCH_ID"].map(
+        lambda nid: nid in jc_ncesids
+    )
+    rel_schools["countywide_catchment"] = rel_schools["NCESSCH_ID"].map(
+        lambda nid: nid in countywide_flags
+    )
+    keep = ["NCESSCH_ID", "LEA_SITE", "SCHOOL_NAME", "SCHOOL_TYPE",
+            "SCHOOL_STREET_ADDRESS", "GEOID20", "CHILD_CPG_PCT",
+            "CHILD_POV_PCT", "lat", "lon", "roles", "is_judy_center",
+            "countywide_catchment", "geometry"]
+    rel_schools = rel_schools[keep].rename(columns={
+        "NCESSCH_ID": "ncessch_id",
+        "LEA_SITE": "lea_site",
+        "SCHOOL_NAME": "school_name",
+        "SCHOOL_TYPE": "school_type",
+        "SCHOOL_STREET_ADDRESS": "address",
+        "GEOID20": "geoid20",
+        "CHILD_CPG_PCT": "cpg",
+        "CHILD_POV_PCT": "child_pov_pct",
+    })
+    rel_schools.to_file(SITE_DATA / "schools.geojson", driver="GeoJSON")
+
+    # --- 4. Catchments GeoJSON (relevant schools, exclude countywide) ---
+    cat_4326 = catchments.to_crs(epsg=4326).copy()
+    rel_cats = cat_4326[
+        cat_4326["NCESSCH_ID"].fillna("").isin(relevant_ncesids)
+        & ~cat_4326["NCESSCH_ID"].fillna("").isin(countywide_flags.keys())
+    ][["NCESSCH_ID", "LEA_SITE", "SCHOOL_NAME", "SCHOOL_TYPE", "geometry"]].rename(
+        columns={
+            "NCESSCH_ID": "ncessch_id",
+            "LEA_SITE": "lea_site",
+            "SCHOOL_NAME": "school_name",
+            "SCHOOL_TYPE": "school_type",
+        }
+    )
+    rel_cats.to_file(SITE_DATA / "catchments.geojson", driver="GeoJSON")
+
+    # --- 5. Per-grantee narrative ---
+    cands_by_grantee = defaultdict(list)
+    for c in candidate_rows:
+        cands_by_grantee[c["grantee"]].append(c)
+    for g in cands_by_grantee:
+        cands_by_grantee[g].sort(
+            key=lambda r: (-(float(r["child_cpg_pct"] or 0)),
+                           0 if r["is_judy_center"] == "no" else 1)
+        )
+
+    near_miss_by_grantee = defaultdict(list)
+    seen_pairs = set()
+    for o in overlap_rows:
+        if o["ncessch_id"] not in jc_ncesids:
+            continue
+        if (o["pct_of_tract"] < 0.05 and o["pct_of_catchment"] < 0.05):
+            continue
+        if (o["ncessch_id"] in countywide_flags
+                or o["lea_site"] in countywide_flags):
+            continue
+        if (ncesid_to_role.get(o["ncessch_id"], {}).get(o["grantee"])
+                == "jc_in_tract"):
+            continue
+        # de-dupe across the multiple-tract-overlap rows for the same JC
+        pair = (o["grantee"], o["ncessch_id"])
+        if pair in seen_pairs:
+            continue
+        seen_pairs.add(pair)
+        near_miss_by_grantee[o["grantee"]].append({
+            "school_name": o["school_name"],
+            "ncessch_id": o["ncessch_id"],
+            "pct_of_tract": o["pct_of_tract"],
+            "pct_of_catchment": o["pct_of_catchment"],
+            "tract_geoid": o["tract_geoid"],
+        })
+
+    grantees_payload = []
+    for r in grantee_rows:
+        g = r["grantee"]
+        cands = cands_by_grantee.get(g, [])
+        non_jc = [c for c in cands if c["is_judy_center"] == "no"]
+        top_cpg = float(non_jc[0]["child_cpg_pct"]) if non_jc and non_jc[0]["child_cpg_pct"] else None
+        grantees_payload.append({
+            "grantee": g,
+            "county": r["counties"],
+            "n_tracts": int(r["n_tracts"]),
+            "tracts": sorted(r["tracts"].split("; ")) if r["tracts"] else [],
+            "tract_level_coverage": r["tract_level_coverage"] == "yes",
+            "county_level_coverage": r["county_level_coverage"] == "yes",
+            "jcs_in_tracts": [s for s in r["jc_in_grantee_tracts"].split("; ") if s] if r["jc_in_grantee_tracts"] else [],
+            "jcs_near_miss": near_miss_by_grantee.get(g, []),
+            "candidates": [
+                {
+                    "school_name": c["school_name"],
+                    "school_type": c["school_type"],
+                    "ncessch_id": c["ncessch_id"],
+                    "geoid20": c["geoid20"],
+                    "cpg": _clean(float(c["child_cpg_pct"]) if c["child_cpg_pct"] else None),
+                    "child_pov_pct": _clean(float(c["child_pov_pct"]) if c["child_pov_pct"] else None),
+                    "is_jc": c["is_judy_center"] == "yes",
+                    "address": c["address"],
+                }
+                for c in cands
+            ],
+            "named_hint": g in NAMED_HINT_GRANTEES,
+            "recommendation_short": _short_recommendation(top_cpg),
+        })
+
+    # Sort: needs-JC by best non-JC CPG desc, then has-JC alphabetically
+    def sort_key(p):
+        if p["tract_level_coverage"]:
+            return (1, p["grantee"].lower())
+        # Best non-JC CPG
+        for c in p["candidates"]:
+            if not c["is_jc"] and c["cpg"] is not None:
+                return (0, -c["cpg"], p["grantee"].lower())
+        return (0, 1.0, p["grantee"].lower())
+
+    grantees_payload.sort(key=sort_key)
+
+    import json
+    (SITE_DATA / "grantees.json").write_text(
+        json.dumps(grantees_payload, indent=2, default=str), encoding="utf-8"
+    )
+    print(f"Wrote site data: {len(g_tracts)} tracts, {len(rel_schools)} schools, "
+          f"{len(rel_cats)} catchments, {len(grantees_payload)} grantees")
+
+
 # ---- Executive summary ----
 
 # These four grantees were named-overlap hints in the prototype and confirm
@@ -922,6 +1159,20 @@ def analyze():
     # ---- Output: executive summary (stakeholder-facing markdown) ----
     write_executive_summary(grantee_rows, candidate_rows, audit, joined,
                             tract_to_grantees)
+
+    # ---- Output: site data (interactive map) ----
+    write_site_data(
+        grantee_rows=grantee_rows,
+        candidate_rows=candidate_rows,
+        audit=audit,
+        overlap_rows=overlap_rows,
+        countywide_flags=countywide_flags,
+        joined_schools=joined,
+        catchments=catchments,
+        grantee_tracts_gdf=grantee_tracts_gdf,
+        raw_tracts=raw_tracts,
+        tract_to_grantees=tract_to_grantees,
+    )
 
     # ---- Console summary ----
     print()
