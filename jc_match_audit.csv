@@ -1,0 +1,80 @@
+judy_center,county,matched_school,ncessch_id,geoid20,tier,score
+Beall Elementary School,Allegany,Beall Elementary,240003000003,24001001800,exact,100
+South Penn Elementary School,Allegany,South Penn Elementary,240003001359,24001000700,exact,100
+Westmar Early Learning Center,Allegany,Westmar Middle (addr),240003000007,24001002100,address_100,100
+Hilltop Elementary School,Anne Arundel,Hilltop Elementary,240006000081,24003750801,exact,100
+Belle Grove Elementary School,Anne Arundel,Belle Grove Elementary,240006000043,24003750102,exact,100
+Georgetown East Elementary School,Anne Arundel,Georgetown East Elementary,240006000073,24003706303,exact,100
+Arlington Elementary School,Baltimore City,Arlington Elementary/Middle,240009000146,24510271801,exact,100
+Arundel Elementary/Middle School,Baltimore City,Arundel Elementary/Middle,240009000148,24510250207,exact,100
+Commodore John Rodgers School,Baltimore City,Commodore John Rogers Elementary/Middle,240009000180,24510060400,exact,100
+Curtis Bay Elementary/Middle School,Baltimore City,Curtis Bay Elementary/Middle,240009000183,24510250500,exact,100
+Dorothy I. Height Elementary,Baltimore City,Dorothy I. Height Elementary School ,240009000256,24510130200,exact,100
+Lakeland Elementary/Middle School,Baltimore City,Lakeland Elementary/Middle,240009000264,24510250205,exact,100
+Eutaw-Marshburn Elementary School,Baltimore City,,,,not_in_mdp,0
+Harford Heights Elementary School,Baltimore City,Harford Heights Elementary,240009001153,24510080500,exact,100
+John Ruhrah Elementary/Middle School,Baltimore City,John Ruhrah Elementary/Middle,240009000257,24510260501,exact,100
+Liberty Elementary School,Baltimore City,Liberty Elementary,240009000270,24510151000,exact,100
+Moravia Park Elementary School,Baltimore City,Moravia Park Primary,240009000282,24510260402,exact,100
+Abbottston Elementary School,Baltimore City,Abbottston Elementary,240009000143,24510090500,exact,100
+Fort Worthington Elementary/Middle School,Baltimore City,Fort Worthington Elementary/Middle,nan,24510080302,exact,100
+Maree G Farring Elementary/Middle School,Baltimore City,Maree G. Farring Elementary/Middle,240009001363,24510250401,exact,100
+Campfield Early Childhood Center,Baltimore County,Campfield Early Childhood Ctr,nan,24005403201,fuzzy_92,92
+Hawthorne Elementary School,Baltimore County,Hawthorne Elementary,240012000401,24005451500,exact,100
+Patuxent-Appeal Elementary Campus,Calvert,Patuxent Appeal Elementary Campus,240015000504,24009861003,exact,100
+Federalsburg Elementary School,Caroline,Federalsburg Elementary,240018000521,24011955600,exact,100
+Greensboro Elementary School,Caroline,Greensboro Elementary,240018000522,24011955100,exact,100
+Robert Moton Elementary School,Carroll,Robert Moton Elementary,240021000544,24013507802,exact,100
+Taneytown Elementary School,Carroll,Taneytown Elementary,240021000548,24013501002,exact,100
+Cranberry Station Elementary School,Carroll,Cranberry Station Elementary,240021001105,24013507602,exact,100
+Elmer A. Wolfe Elementary School,Carroll,Elmer A Wolfe Elementary,240021000532,24013512000,exact,100
+Thomson Estates Elementary School,Cecil,Thomson Estates Elementary,240024000581,24015030508,exact,100
+Dr. Samuel A. Mudd Elementary School,Charles,Dr Samuel A Mudd Elementary ,240027000585,24017850901,exact,100
+C. Paul Barnhart Elementary School,Charles,C Paul Barnhart Elementary,240027000380,24017850711,exact,100
+Eva Turner Elementary School,Charles,Eva Turner Elementary,240027000586,24017850906,exact,100
+J.P. Ryon Elementary School,Charles,J P Ryon Elementary,240027000593,24017850802,exact,100
+Indian Head Elementary School,Charles,Indian Head Elementary,240027000591,24017850201,exact,100
+Sandy Hill Elementary School,Dorchester,Sandy Hill Elementary,240030000621,24019970702,exact,100
+Maple Elementary School,Dorchester,Maple Elementary,240030000617,24019970600,exact,100
+Waverley Elementary School,Frederick,Waverley Elementary,240033000657,24021750507,exact,100
+Lincoln Elementary School,Frederick,Lincoln Elementary,240033000649,24021765100,exact,100
+Butterfly Ridge Elementary School,Frederick,Butterfly Ridge Elementary,240033001748,24021750506,exact,100
+Hillcrest Elementary School,Frederick,Hillcrest Elementary,240033090473,24021750505,exact,100
+Monocacy Elementary School,Frederick,Monocacy Elementary,240033001521,24021750701,exact,100
+Tuscarora Elementary School,Frederick,Tuscarora Elementary School,240033001355,24021752301,exact,100
+Yough Glades Elementary School,Garrett,Yough Glades Elementary,240036000852,24023000700,exact,100
+Friendsville Elementary School,Garrett,Friendsville Elementary,240036000667,24023000100,exact,100
+Grantsville Elementary School,Garrett,Grantsville Elementary,240036000668,24023000200,exact,100
+Crellin Elementary School,Garrett,Crellin Elementary,240036000665,24023000602,exact,100
+Broad Ford Elementary School,Garrett,Broad Ford Elementary,240036000664,24023000700,exact,100
+Magnolia Elementary School,Harford,Magnolia Elementary,240039000706,24025301402,exact,100
+Hall's Cross Roads Elementary School,Harford,Halls Cross Roads Elementary,240039000693,24025302901,fuzzy_91,91
+Deerfield Elementary School,Harford,Deerfield Elementary,240039000686,24025301602,exact,100
+Cradlerock Elementary School,Howard,Cradlerock Elementary,240042001699,24027606704,exact,100
+Henry Highland Garnett Elementary School,Kent,,,,not_in_mdp,0
+Rolling Terrace Elementary School,Montgomery,Rolling Terrace Elementary,240048000913,24031702000,exact,100
+Summit Hall Elementary School,Montgomery,Summit Hall Elementary,240048000931,24031700732,exact,100
+Washington Grove Elementary School,Montgomery,Washington Grove Elementary,240048000943,24031700728,exact,100
+Weller Road Elementary School,Montgomery,Weller Road Elementary,240048000946,24031703402,exact,100
+Galway Elementary School,Montgomery,Galway Elementary,240048000839,24031701424,exact,100
+Cool Spring Elementary School,Prince George's,Cool Spring Elementary,240051000510,24033805904,exact,100
+Rosa Parks Elementary School,Prince George's,Rosa L Parks Elementary,240051001573,24033805802,fuzzy_90,90
+H.H. Garnet Elementary School,Prince George's,,,,not_in_mdp,0
+Dr. Alvita Jeffers Elementary,Prince George's,,,,not_in_mdp,0
+Carlotta G. Robinson-Jackson Elementary,Prince George's,,,,not_in_mdp,0
+Sudlersville Elementary School,Queen Anne's,Sudlersville Middle,240054001198,24035810200,exact,100
+Princess Anne Elementary School,Somerset,Princess Anne Elementary,240057001742,24039930101,exact,100
+Carter G. Woodson Elementary,Somerset,Carter G Woodson Elementary,240057001535,24039930600,exact,100
+Green Holly Elementary School,St. Mary's,Green Holly School,240060001221,24037875803,exact,100
+George Washington Carver Elementary School,St. Mary's,George Washington Carver Elementary School,240060001483,24037875904,exact,100
+Lexington Park Elementary School,St. Mary's,Lexington Park Elementary,240060001230,24037875903,exact,100
+Easton Elementary School,Talbot,Easton Elementary,240063001244,24041960300,exact,100
+Ruth Anne Monroe Primary School,Washington,Ruth Ann Monroe Primary,240066001707,24043011204,fuzzy_96,96
+Bester Elementary School,Washington,Bester Elementary,240066001253,24043000700,exact,100
+Emma K Doub Elementary School,Washington,Emma K Doub Elementary,240066001264,24043001001,exact,100
+Lincolnshire Elementary School,Washington,Lincolnshire Elementary,240066001273,24043001002,exact,100
+Pemberton Elementary School,Wicomico,Pemberton Elementary,240069001310,24045010300,exact,100
+Beaver Run Elementary School,Wicomico,Beaver Run Elementary School,240069001298,24045010603,exact,100
+Snow Hill Elementary School,Worcester,Snow Hill Elementary,240072001332,24047951300,exact,100
+Pocomoke Elementary School,Worcester,Pocomoke Elementary,240072001328,24047951500,exact,100
+Buckingham Elementary School,Worcester,Buckingham Elementary,240072001325,24047951000,exact,100
