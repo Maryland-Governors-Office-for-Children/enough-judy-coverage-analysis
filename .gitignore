@@ -4,5 +4,6 @@
 .env
 .DS_Store
 *.geojson
+!site/data/*.geojson
 .cache/
 .claude/
