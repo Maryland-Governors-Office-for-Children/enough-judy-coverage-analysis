@@ -24,10 +24,10 @@ from collections import defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).parent
-GRANTEE_CSV = Path("/mnt/user-data/uploads/2025_Updated_ENOUGH_Grantee_Census_Tracts_and_Zipcodes_-_Unique_ENOUGH_Census_Tracts__6_.csv")
+GRANTEE_CSV = HERE / "2025 Updated ENOUGH Grantee Census Tracts and Zipcodes - Unique ENOUGH Census Tracts.csv"
 JUDY_CSV = HERE / "judy_centers_full.csv"
 
-OUTPUTS = Path("/mnt/user-data/outputs")
+OUTPUTS = HERE
 OUTPUTS.mkdir(exist_ok=True)
 
 
