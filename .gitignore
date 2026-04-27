@@ -7,3 +7,8 @@
 !site/data/*.geojson
 .cache/
 .claude/
+# Reference material kept locally but not republished:
+# the 2019 MSDE coordinator PDF carries direct phone/email
+# contacts that are public-record but better not amplified
+# in a Git repo. SOURCES.md points to the MSDE original.
+internal/
