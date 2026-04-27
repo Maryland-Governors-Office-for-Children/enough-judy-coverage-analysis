@@ -304,6 +304,257 @@ def tract_county_fips(tract_geoid):
     return tract_geoid[:5]
 
 
+# ---- Executive summary ----
+
+# These four grantees were named-overlap hints in the prototype and confirm
+# at the tract level. Listed here so the summary can highlight them as the
+# "already-aligned" exemplars.
+NAMED_HINT_GRANTEES = {
+    "City of Cumberland",
+    "One Annapolis, Inc",
+    "San Mar Family & Community Services: Bester Community of Hope",
+    "Frederick Local Management Board",
+}
+
+
+def _fmt_pct(v):
+    try:
+        return f"{float(v) * 100:.0f}%"
+    except (TypeError, ValueError):
+        return "—"
+
+
+def _grantee_county_label(grantee_row):
+    return grantee_row["counties"]
+
+
+def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_to_grantees):
+    cands_by_grantee = defaultdict(list)
+    for c in candidate_rows:
+        cands_by_grantee[c["grantee"]].append(c)
+    # Within each grantee, sort by CPG desc; non-JCs first within same CPG
+    for g in cands_by_grantee:
+        cands_by_grantee[g].sort(
+            key=lambda r: (-(float(r["child_cpg_pct"] or 0)),
+                           0 if r["is_judy_center"] == "no" else 1)
+        )
+
+    no_jc = [r for r in grantee_rows if r["tract_level_coverage"] != "yes"]
+    has_jc = [r for r in grantee_rows if r["tract_level_coverage"] == "yes"]
+
+    # Order: needs-JC grantees by best non-JC candidate CPG desc, ties by name
+    def best_non_jc_cpg(g):
+        for c in cands_by_grantee.get(g, []):
+            if c["is_judy_center"] == "no":
+                try:
+                    return float(c["child_cpg_pct"] or 0)
+                except (TypeError, ValueError):
+                    return 0.0
+        return -1.0
+
+    no_jc.sort(key=lambda r: (-best_non_jc_cpg(r["grantee"]), r["grantee"]))
+    has_jc.sort(key=lambda r: r["grantee"])
+
+    lines = []
+    lines.append("# ENOUGH x Judy Center Coverage — Executive Summary")
+    lines.append("")
+    lines.append(
+        "Maryland's 28 ENOUGH grantees collectively serve 106 census tracts; the state's "
+        "79 Judy Center Early Learning Hubs are distributed across 24 counties. This "
+        "analysis answers a single operational question: **which ENOUGH grantees are "
+        "good candidates to apply for a Judy Center?** A grantee is a strong candidate "
+        "when its served tracts contain at least one high-poverty elementary school but "
+        "no Judy Center is currently sited there. Of the 28 grantees, **14 already have "
+        "a Judy Center inside one of their served tracts** and **14 do not**. The 14 "
+        "without coverage are listed first below, ordered by the concentrated-poverty "
+        "rate (CHILD_CPG_PCT) of the highest-CPG candidate elementary school in their "
+        "tracts."
+    )
+    lines.append("")
+
+    # ---- Headline gap-list table: grantees WITHOUT tract-level JC ----
+    lines.append("## Grantees without a Judy Center in their served tracts")
+    lines.append("")
+    lines.append("Ranked by best-candidate CPG (the highest concentrated-poverty rate "
+                 "among elementary schools inside the grantee's tracts that are not "
+                 "already Judy Centers).")
+    lines.append("")
+    lines.append("| Grantee | County | # Tracts | Top non-JC candidate(s) by CPG | Recommendation |")
+    lines.append("|---|---|---:|---|---|")
+    for r in no_jc:
+        cands = cands_by_grantee.get(r["grantee"], [])
+        non_jc_cands = [c for c in cands if c["is_judy_center"] == "no"]
+        if non_jc_cands:
+            top = non_jc_cands[:2]
+            top_str = "; ".join(
+                f"{c['school_name']} ({_fmt_pct(c['child_cpg_pct'])})"
+                for c in top
+            )
+            best = float(top[0]["child_cpg_pct"] or 0)
+            if best >= 0.85:
+                rec = "Strong candidate — pursue Judy Center conversation"
+            elif best >= 0.65:
+                rec = "Possible candidate — confirm school eligibility"
+            else:
+                rec = "Lower priority — CPG below typical Judy Center threshold"
+        elif cands:
+            top_str = "(only candidate is already a Judy Center in another sense)"
+            rec = "Review case by case"
+        else:
+            top_str = "No traditional elementary in any served tract"
+            rec = "Investigate alternative school types in tract (charter/middle)"
+        # County: shorten if very long
+        county = r["counties"]
+        if len(county) > 30:
+            county = county[:27] + "..."
+        grantee_short = r["grantee"]
+        if len(grantee_short) > 50:
+            grantee_short = grantee_short[:47] + "..."
+        lines.append(f"| {grantee_short} | {county} | {r['n_tracts']} | "
+                     f"{top_str} | {rec} |")
+    lines.append("")
+
+    # ---- Already-aligned grantees ----
+    lines.append("## Grantees with a Judy Center already in their served tracts")
+    lines.append("")
+    lines.append("These 14 grantees do **not** need to apply — they share at least "
+                 "one census tract with an existing Judy Center. The four marked "
+                 "with a star are the named-overlap exemplars: their grantee names "
+                 "or initiative names already reference the Judy Center school or "
+                 "locality.")
+    lines.append("")
+    lines.append("| Grantee | County | JCs in served tracts |")
+    lines.append("|---|---|---|")
+    for r in has_jc:
+        marker = " *" if r["grantee"] in NAMED_HINT_GRANTEES else ""
+        county = r["counties"]
+        if len(county) > 30:
+            county = county[:27] + "..."
+        jcs = r["jc_in_grantee_tracts"] or "(see audit)"
+        lines.append(f"| {r['grantee']}{marker} | {county} | {jcs} |")
+    lines.append("")
+    lines.append("\\* Named-overlap exemplars (City of Cumberland ↔ South Penn ES; "
+                 "One Annapolis ↔ Georgetown East ES; San Mar ↔ Bester ES; "
+                 "Frederick LMB ↔ Waverley/Hillcrest/Butterfly Ridge ES). The "
+                 "Frederick LMB initiative spans 5 tracts and 3 of the 6 FCPS Judy "
+                 "Centers fall directly inside them; the other three FCPS Judy "
+                 "Centers (Lincoln, Monocacy, Tuscarora) are in adjacent Frederick "
+                 "tracts the LMB does not serve under the current grant.")
+    lines.append("")
+
+    # ---- Full candidate elementary list per grantee without coverage ----
+    lines.append("## Candidate elementary schools by grantee")
+    lines.append("")
+    lines.append("Every elementary or combined school whose census tract is served "
+                 "by an ENOUGH grantee, ranked by CHILD_CPG_PCT within grantee. "
+                 "Schools already operating as Judy Centers are marked. This is the "
+                 "underlying dataset behind the headline table; "
+                 "`candidate_elementary_schools.csv` carries the same data with "
+                 "GEOID20 and NCES IDs.")
+    lines.append("")
+    for r in no_jc + has_jc:
+        cands = cands_by_grantee.get(r["grantee"], [])
+        if not cands:
+            continue
+        lines.append(f"### {r['grantee']}")
+        lines.append(f"_{r['counties']} — {r['n_tracts']} served tract(s)_")
+        lines.append("")
+        lines.append("| School | Type | Tract | CPG | Child Pov | Judy Center? |")
+        lines.append("|---|---|---|---:|---:|:---:|")
+        for c in cands:
+            jc_mark = "yes" if c["is_judy_center"] == "yes" else ""
+            lines.append(
+                f"| {c['school_name']} | {c['school_type']} | {c['geoid20']} | "
+                f"{_fmt_pct(c['child_cpg_pct'])} | "
+                f"{_fmt_pct((c['child_pov_pct'] or 0)/100 if c['child_pov_pct'] else 0)} | "
+                f"{jc_mark} |"
+            )
+        lines.append("")
+
+    # ---- Methodology / caveats ----
+    n_resolved = sum(1 for a in audit if a["tier"] != "not_in_mdp")
+    n_exact = sum(1 for a in audit if a["tier"] == "exact")
+    n_fuzzy = sum(1 for a in audit if a["tier"].startswith("fuzzy"))
+    n_addr  = sum(1 for a in audit if a["tier"].startswith("address"))
+    n_unres = sum(1 for a in audit if a["tier"] == "not_in_mdp")
+    lines.append("## Methodology and caveats")
+    lines.append("")
+    lines.append("**Data sources.** ENOUGH grantee-to-tract roster supplied by GOC "
+                 "(`2025 Updated ENOUGH Grantee Census Tracts and Zipcodes`). Judy "
+                 "Center master list reconciled from the December 2025 MSDE coordinator "
+                 "PDF, the 2019 MSDE coordinator PDF, and individual LEA pages "
+                 "(`judy_centers_full.csv`, 79 sites). Maryland school points and tract "
+                 "polygons from MDP's `ENOUGH_Act_2025` FeatureServer (Layers 0 and 2), "
+                 "downloaded April 2026.")
+    lines.append("")
+    lines.append("**Spatial join.** Both layers reprojected to NAD83 / Maryland State "
+                 "Plane (EPSG:26985). Each school assigned its containing tract via "
+                 "`geopandas.sjoin(predicate='within')`. All 1,377 schools resolved "
+                 "to a tract; school JURSCODE matched the GEOID20 county prefix in "
+                 "every case.")
+    lines.append("")
+    lines.append(f"**Judy Center to MDP school matching.** Tiered: exact normalized "
+                 f"name within county → rapidfuzz `token_sort_ratio >= 85` within "
+                 f"county → address-based fallback (catches Judy Centers colocated "
+                 f"with schools of a different MDP type). "
+                 f"Resolved {n_resolved} of {len(audit)} sites "
+                 f"({n_exact} exact, {n_fuzzy} fuzzy, {n_addr} via address). "
+                 f"Five sites are not in the MDP layer:")
+    lines.append("")
+    for a in audit:
+        if a["tier"] == "not_in_mdp":
+            lines.append(f"  - **{a['judy_center']}** ({a['county']}) — "
+                         f"investigate with MSDE/GOC; possible closure, recent rename, "
+                         f"or PDF-extraction artifact.")
+    lines.append("")
+    lines.append("**Concentrated Poverty Grant rate.** `CHILD_CPG_PCT` on MDP's school "
+                 "layer is a three-year FARMS rolling average. The 2025 ENOUGH eligibility "
+                 "threshold is 75% (per MDP's 2025 documentation; the 2024 layer used "
+                 "80% — worth re-confirming with MDP that the values reloaded under "
+                 "the new threshold). Schools below 65% CPG are flagged "
+                 "_lower priority_ in the recommendation column because they fall below "
+                 "the typical Judy Center poverty profile.")
+    lines.append("")
+    lines.append("**Caveats.**")
+    lines.append("- A Judy Center's host elementary school being outside a grantee's "
+                 "tract does not mean the JC and grantee aren't already coordinating. "
+                 "Many BC Judy Centers (Moravia Park, John Ruhrah, Maree G Farring) "
+                 "sit just outside grantee polygons; a follow-up using the school "
+                 "attendance-zone layer (`Layer 1`) would surface JCs whose catchment "
+                 "overlaps a grantee tract even when the school point itself does not.")
+    lines.append("- The FY24 MSDE board document references 86 Judy Center sites; "
+                 "this analysis uses 79. The 7-row gap is most likely Cecil County's "
+                 "post-2019 expansion (1 → 10 sites) plus pending Prince George's "
+                 "additions. Cecil isn't an ENOUGH county; PG is, so the 3 unresolved "
+                 "PG names above warrant verification.")
+    lines.append("- One grantee (Leaders Breeders Inc., BC tract 24510260301) has no "
+                 "traditional elementary or combined school in its served tract — "
+                 "only Belair-Edison Charter. Judy Center placement at a charter is "
+                 "policy-dependent and worth a separate MSDE conversation.")
+    lines.append("- The CHILD_POV_PCT column reflects MDP's tract-level child poverty "
+                 "estimate; ACS vintage is not declared on the layer (likely 2019-2023 "
+                 "5-year). For 2026 ENOUGH eligibility decisions that require Margin "
+                 "of Error and prior-year point estimates, the analysis must join the "
+                 "Census API directly — MDP's tract layer does not currently carry "
+                 "those fields.")
+    lines.append("- A school's CHILD_CPG_PCT can be substantially higher than its "
+                 "tract's CHILD_POV_PCT (e.g., Belle Grove ES at 88% CPG sits in an "
+                 "Anne Arundel tract reporting 0% child poverty). This is expected: "
+                 "CPG is a 3-year FARMS rolling average for kids enrolled at the "
+                 "school, while tract poverty is the share of children residing in "
+                 "the tract. Open-boundary enrollment, magnet programs, and cross-"
+                 "tract attendance zones routinely create that gap.")
+    lines.append("")
+    lines.append("**Reproducibility.** `python analyze.py` regenerates every CSV in "
+                 "this directory, this summary, and the sanity-check overlays "
+                 "(`sanity_overview_md.png`, `sanity_overview_bc.png`). MDP layer "
+                 "downloads cache to `.cache/` so re-runs are seconds.")
+    lines.append("")
+
+    (OUTPUTS / "executive_summary.md").write_text("\n".join(lines), encoding="utf-8")
+    print("Wrote executive_summary.md")
+
+
 # ---- Analysis ----
 
 def analyze():
@@ -414,15 +665,22 @@ def analyze():
     # ---- Output: candidate elementary schools per grantee tract ----
     # Every elementary/combined school whose tract is served by a grantee,
     # but which is NOT already a Judy Center. Ranked by CHILD_CPG_PCT desc.
-    jc_ncesids = {a["ncessch_id"] for a in audit if a["ncessch_id"]}
+    # Use (GEOID20, SCHOOL_NAME) as the JC identity — NCESSCH_ID is null on
+    # ~5 MDP schools and would produce false positives.
+    jc_keys = {
+        (a["geoid20"], a["matched_school"].removesuffix(" (addr)"))
+        for a in audit if a["geoid20"]
+    }
     elem = joined[joined["SCHOOL_TYPE"].isin(["Elementary", "Combined"])].copy()
     elem = elem[elem["GEOID20"].notna()]
     elem_in_grantee_tracts = elem[elem["GEOID20"].isin(tract_to_grantees.keys())]
 
     candidate_rows = []
     for _, row in elem_in_grantee_tracts.iterrows():
-        ncesid = row.get("NCESSCH_ID") or ""
-        is_jc = ncesid in jc_ncesids
+        is_jc = (row["GEOID20"], row["SCHOOL_NAME"]) in jc_keys
+        ncesid = row.get("NCESSCH_ID")
+        if ncesid is None or (isinstance(ncesid, float) and ncesid != ncesid):
+            ncesid = ""
         for grantee in tract_to_grantees.get(row["GEOID20"], set()):
             candidate_rows.append({
                 "grantee": grantee,
@@ -442,6 +700,10 @@ def analyze():
         w = csv.DictWriter(f, fieldnames=list(candidate_rows[0].keys()))
         w.writeheader()
         w.writerows(candidate_rows)
+
+    # ---- Output: executive summary (stakeholder-facing markdown) ----
+    write_executive_summary(grantee_rows, candidate_rows, audit, joined,
+                            tract_to_grantees)
 
     # ---- Console summary ----
     print()

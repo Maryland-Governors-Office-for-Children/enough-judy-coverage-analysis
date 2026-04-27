@@ -11,7 +11,7 @@ Boys & Girls Clubs of Harford and Cecil Counties,24025301401,Joppatowne Elementa
 CHEER (Community Health and Empowerment through Education and Research),24031702000,New Hampshire Estates Elem,Elementary,240048000881,8720 Carroll Ave Silver Spring MD 20903,0.9,18.6,no
 CHEER (Community Health and Empowerment through Education and Research),24031702000,Rolling Terrace Elementary,Elementary,240048000913,705 Bayfield St Takoma Park MD 20912,0.87,18.6,yes
 "Caroline Human Services Council, Inc.",24011955600,Federalsburg Elementary,Elementary,240018000521,302 S University Ave Federalsburg MD 21632,0.93,45.1,yes
-Cherry Hill Strong,24510250204,Cherry Hill Elementary/Middle,Combined,nan,801 Bridgeview Road Baltimore MD 21225,0.94,62.3,yes
+Cherry Hill Strong,24510250204,Cherry Hill Elementary/Middle,Combined,,801 Bridgeview Road Baltimore MD 21225,0.94,62.3,no
 Cherry Hill Strong,24510250207,Arundel Elementary/Middle,Elementary,240009000148,2400 Round Road Baltimore MD 21225,0.93,22.0,yes
 Child First Authority,24510170200,The Historic Samuel Coleridge-Taylor Elementary,Elementary,240009000309,507 W Preston Street Baltimore MD 21201,0.98,63.5,no
 Child First Authority,24510130200,Dorothy I. Height Elementary School ,Elementary,240009000256,2011 Linden Avenue Baltimore MD 21217,0.93,18.0,yes
@@ -24,9 +24,9 @@ City of Cumberland,24001000700,South Penn Elementary,Elementary,240003001359,500
 Frederick Local Management Board,24021750505,Hillcrest Elementary,Elementary,240033090473,1285 Hillcrest Drive Frederick MD 21703,0.92,8.8,yes
 Frederick Local Management Board,24021750507,Waverley Elementary,Elementary,240033000657,201 Waverley Dr Frederick MD 21702,0.85,0.0,yes
 Frederick Local Management Board,24021750506,Butterfly Ridge Elementary,Elementary,240033001748,601 Contender Way Frederick MD 21703,0.67,2.6,yes
-Good Intentions Foundation Inc.,24033803602,Glenarden Woods Elementary,Elementary,nan,7801 Glenarden Pkwy Lanham MD 20706,0.41,43.4,yes
+Good Intentions Foundation Inc.,24033803602,Glenarden Woods Elementary,Elementary,,7801 Glenarden Pkwy Lanham MD 20706,0.41,43.4,no
 Greater Mondawmin Coordinating Council,24510150400,Robert W Coleman Elementary,Elementary,240009000303,2400 Windsor Avenue Baltimore MD 21216,0.96,47.8,no
-Greater Mondawmin Coordinating Council,24510150600,Edgewood Elementary,Elementary,nan,1900 Edgewood Street Baltimore MD 21216,0.92,57.0,yes
+Greater Mondawmin Coordinating Council,24510150600,Edgewood Elementary,Elementary,,1900 Edgewood Street Baltimore MD 21216,0.92,57.0,no
 "Identity, Inc.",24031700713,South Lake Elementary,Elementary,240048000924,18201 Contour Road Gaithersburg MD 20877,0.85,40.2,no
 "Identity, Inc.",24031700725,Gaithersburg Elementary,Elementary,240048000836,35 N Summit Ave Gaithersburg MD 20877,0.82,7.5,no
 Latin American Youth Center,24033807305,Adelphi Elementary,Elementary,240051000965,9000 25th Ave Adelphi MD 20783,0.87,49.9,no
@@ -47,13 +47,13 @@ San Mar Family & Community Services: Bester Community of Hope,24043000601,Pangbo
 South Baltimore Community Land Trust,24510250500,Bay-Brook Elementary/Middle,Combined,240009000154,4301 10th Street Baltimore MD 21225,0.9,32.8,no
 South Baltimore Community Land Trust,24510250500,Curtis Bay Elementary/Middle,Elementary,240009000183,4301 W Bay Avenue Baltimore MD 21225,0.9,32.8,yes
 Tendea Family INC.,24510070300,Tench Tilghman Elementary/Middle,Combined,240009000320,600 N Patterson Park Avenue Baltimore MD 21205,0.91,28.8,no
-Tendea Family INC.,24510070300,Elmer A. Henderson: A Johns Hopkins Partnership Sc,Combined,nan,2100 Ashland Avenue Baltimore MD 21205,0.91,28.8,yes
+Tendea Family INC.,24510070300,Elmer A. Henderson: A Johns Hopkins Partnership Sc,Combined,,2100 Ashland Avenue Baltimore MD 21205,0.91,28.8,no
 "The Central Baltimore Partnership, Inc.",24510090800,Cecil Elementary,Elementary,240009000169,2000 Cecil Avenue Baltimore MD 21218,0.92,31.4,no
 "The Central Baltimore Partnership, Inc.",24510120400,Dallas F Nicholas Sr Elem,Elementary,240009000184,201 E 21st Street Baltimore MD 21218,0.9,14.5,no
 "The Central Baltimore Partnership, Inc.",24510120300,Margaret Brent Elementary/Middle,Combined,240009000276,100 E 26th Street Baltimore MD 21218,0.9,30.7,no
-"The Central Baltimore Partnership, Inc.",24510120500,Baltimore Design School,Combined,nan,1500 Barclay Street Baltimore MD 21202,0.9,13.8,yes
+"The Central Baltimore Partnership, Inc.",24510120500,Baltimore Design School,Combined,,1500 Barclay Street Baltimore MD 21202,0.9,13.8,no
 The Y in Central Maryland,24510271001,Walter P Carter Elementary/Middle,Combined,240009000328,820 E 43rd Street Baltimore MD 21212,0.92,40.3,no
 The Y in Central Maryland,24510090300,Waverly Elementary/Middle,Combined,240009000329,3400 Ellerslie Avenue Baltimore MD 21218,0.9,58.9,no
 United Communities Against Poverty,24033802404,District Heights Elementary,Elementary,240051001019,2200 County Rd District Heights MD 20747,0.9,31.3,no
 United Communities Against Poverty,24033802407,Frances Scott Key Elem,Elementary,240051001050,2301 Scott Key Dr District Heights MD 20747,0.86,0.0,no
-Urban Strategies Inc,24510280500,National Academy Foundation,Combined,nan,540 N Caroline Street Baltimore MD 21205,0.9,80.7,yes
+Urban Strategies Inc,24510280500,National Academy Foundation,Combined,,540 N Caroline Street Baltimore MD 21205,0.9,80.7,no
