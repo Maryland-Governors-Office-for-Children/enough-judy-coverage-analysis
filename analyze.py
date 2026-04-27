@@ -57,6 +57,14 @@ TRACTS_URL = (
     "Society/ENOUGH_Act_2025/FeatureServer/2/query"
     "?where=1%3D1&outFields=*&returnGeometry=true&f=geojson"
 )
+CATCHMENTS_URL = (
+    "https://mdpgis.mdp.state.md.us/arcgis/rest/services/"
+    "Society/ENOUGH_Act_2025/FeatureServer/1/query"
+    "?where=1%3D1&outFields=*&returnGeometry=true&f=geojson"
+)
+
+# Catchment area / county area >= this fraction => "county-wide" flag.
+COUNTYWIDE_THRESHOLD = 0.70
 
 FUZZ_THRESHOLD = 85  # rapidfuzz token_sort_ratio cutoff
 
@@ -204,6 +212,115 @@ def build_joined_schools() -> gpd.GeoDataFrame:
     joined = gpd.sjoin(schools, tracts_subset, predicate="within", how="left")
     joined = joined.drop(columns=[c for c in ("index_right",) if c in joined])
     return joined
+
+
+def build_catchments() -> gpd.GeoDataFrame:
+    """Return MDP school attendance zones (Layer 1) in EPSG:26985.
+
+    Catchments only exist for schools that have published attendance zones,
+    which is most public elementary/middle/high schools but not magnets,
+    charters, or ELCs without a defined zone. Joining keys: NCESSCH_ID
+    (preferred) and LEA_SITE.
+    """
+    print("Loading MDP catchments (Layer 1)...")
+    cat = fetch_layer(CATCHMENTS_URL, CACHE / "mdp_catchments_2025.geojson")
+    cat = cat.to_crs(epsg=26985)
+    # Some catchment rows have a Shape__Area attribute, but prefer geometry.area
+    # in EPSG:26985 (square metres) for consistency with our overlay math.
+    cat["catchment_area_m2"] = cat.geometry.area
+    return cat
+
+
+def flag_countywide_catchments(catchments: gpd.GeoDataFrame,
+                                tracts: gpd.GeoDataFrame) -> dict:
+    """Return {ncessch_id_or_lea_site: True} for catchments that cover
+    >= COUNTYWIDE_THRESHOLD of their county area.
+
+    Some MDP catchments are effectively the whole county (single-school
+    counties, magnet/special programs). Rendering these as polygons would
+    visually engulf the map, so we flag them and the frontend treats them
+    as "county-wide" annotations rather than shapes.
+    """
+    # County area = sum of tract polygon areas keyed by GEOID20[:5]
+    county_areas = (
+        tracts.assign(cfips=tracts["GEOID20"].str[:5])
+        .groupby("cfips")
+        .geometry.apply(lambda g: g.union_all().area)
+        .to_dict()
+    )
+
+    flags = {}
+    for _, row in catchments.iterrows():
+        cfips = row.get("COUNTY_FIPS") or JURSCODE_TO_FIPS.get(row.get("JURSCODE"))
+        if not cfips:
+            continue
+        ca = float(row["catchment_area_m2"] or 0)
+        ta = county_areas.get(cfips, 0)
+        if ta and ca / ta >= COUNTYWIDE_THRESHOLD:
+            key = row.get("NCESSCH_ID") or row.get("LEA_SITE") or ""
+            if key:
+                flags[key] = round(ca / ta, 3)
+    return flags
+
+
+def compute_catchment_overlaps(catchments: gpd.GeoDataFrame,
+                                grantee_tracts: gpd.GeoDataFrame,
+                                tract_to_grantees: dict,
+                                school_keys: set) -> list:
+    """For every catchment whose host school is in `school_keys`,
+    return rows describing how it overlaps with grantee-served tracts.
+
+    Returns a list of dicts:
+      {ncessch_id, lea_site, school_name, school_type,
+       grantee, tract_geoid, intersect_area_m2, pct_of_tract, pct_of_catchment}
+    Rows where intersect area is essentially zero are filtered.
+    """
+    keys_we_want = catchments[
+        (catchments["NCESSCH_ID"].fillna("").isin(school_keys))
+        | (catchments["LEA_SITE"].fillna("").isin(school_keys))
+    ].copy()
+    if keys_we_want.empty:
+        return []
+
+    # Use overlay for accurate intersection geometry; sjoin alone gives
+    # candidate pairs but not the area of overlap.
+    inter = gpd.overlay(
+        keys_we_want[["NCESSCH_ID", "LEA_SITE", "SCHOOL_NAME", "SCHOOL_TYPE",
+                      "catchment_area_m2", "geometry"]],
+        grantee_tracts[["GEOID20", "geometry"]],
+        how="intersection",
+        keep_geom_type=False,
+    )
+    if inter.empty:
+        return []
+
+    inter["inter_area_m2"] = inter.geometry.area
+    inter = inter[inter["inter_area_m2"] > 1.0]  # drop slivers
+
+    rows = []
+    for _, r in inter.iterrows():
+        tract = r["GEOID20"]
+        for grantee in tract_to_grantees.get(tract, set()):
+            ca = float(r["catchment_area_m2"] or 0)
+            tract_area = (
+                grantee_tracts.loc[grantee_tracts["GEOID20"] == tract,
+                                   "geometry"].iloc[0].area
+            )
+            rows.append({
+                "ncessch_id": r.get("NCESSCH_ID") or "",
+                "lea_site": r.get("LEA_SITE") or "",
+                "school_name": r["SCHOOL_NAME"],
+                "school_type": r["SCHOOL_TYPE"],
+                "grantee": grantee,
+                "tract_geoid": tract,
+                "intersect_area_m2": int(r["inter_area_m2"]),
+                "pct_of_tract": (
+                    round(r["inter_area_m2"] / tract_area, 3)
+                    if tract_area else 0
+                ),
+                "pct_of_catchment": round(r["inter_area_m2"] / ca, 3) if ca else 0,
+            })
+    return rows
 
 
 def resolve_judy_centers(judy_centers, joined_schools):
@@ -700,6 +817,107 @@ def analyze():
         w = csv.DictWriter(f, fieldnames=list(candidate_rows[0].keys()))
         w.writeheader()
         w.writerows(candidate_rows)
+
+    # ---- Catchment-zone analysis (Layer 1) ----
+    catchments = build_catchments()
+    # Build the grantee_tracts polygon frame in the same CRS
+    raw_tracts = gpd.read_file(CACHE / "mdp_tracts_2025.geojson").to_crs(epsg=26985)
+    grantee_tracts_gdf = raw_tracts[
+        raw_tracts["GEOID20"].isin(tract_to_grantees.keys())
+    ][["GEOID20", "geometry"]].copy()
+
+    countywide_flags = flag_countywide_catchments(catchments, raw_tracts)
+
+    # Build the set of school identifiers we care about for overlap analysis:
+    # all resolved Judy Centers plus all candidate elementary schools.
+    interesting_keys = set()
+    for a in audit:
+        if a["ncessch_id"]:
+            interesting_keys.add(a["ncessch_id"])
+    for c in candidate_rows:
+        if c["ncessch_id"]:
+            interesting_keys.add(c["ncessch_id"])
+
+    overlap_rows = compute_catchment_overlaps(
+        catchments, grantee_tracts_gdf, tract_to_grantees, interesting_keys
+    )
+
+    # Write the long-format overlap audit
+    if overlap_rows:
+        with (OUTPUTS / "catchment_overlaps.csv").open("w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(overlap_rows[0].keys()))
+            w.writeheader()
+            w.writerows(overlap_rows)
+
+    # Write the county-wide flag audit (with school name lookup for readability)
+    if countywide_flags:
+        cat_lookup = {}
+        for _, row in catchments.iterrows():
+            key = row.get("NCESSCH_ID") or row.get("LEA_SITE") or ""
+            if key and key not in cat_lookup:
+                cat_lookup[key] = {
+                    "SCHOOL_NAME": row.get("SCHOOL_NAME") or "",
+                    "JURSCODE": row.get("JURSCODE") or "",
+                    "SCHOOL_TYPE": row.get("SCHOOL_TYPE") or "",
+                }
+        with (OUTPUTS / "catchment_countywide_flags.csv").open("w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["ncessch_or_lea_site", "school_name", "jurscode",
+                        "school_type", "fraction_of_county_area"])
+            for k, v in sorted(countywide_flags.items(), key=lambda kv: -kv[1]):
+                meta = cat_lookup.get(k, {})
+                w.writerow([k, meta.get("SCHOOL_NAME", ""), meta.get("JURSCODE", ""),
+                            meta.get("SCHOOL_TYPE", ""), v])
+
+    # Augment grantee_rows with catchment-overlap info: JCs whose catchment
+    # touches the grantee's tracts but whose host school is OUTSIDE those
+    # tracts (the "near-miss" case the prototype README anticipated).
+    jc_keys_resolved = {a["ncessch_id"] for a in audit if a["ncessch_id"]}
+    overlap_by_grantee = defaultdict(set)
+    for o in overlap_rows:
+        if o["ncessch_id"] in jc_keys_resolved:
+            overlap_by_grantee[o["grantee"]].add(o["school_name"])
+
+    # Strip JCs whose host school is already inside the grantee's tracts.
+    for r in grantee_rows:
+        in_tract = set(r["jc_in_grantee_tracts"].split("; ")) if r["jc_in_grantee_tracts"] else set()
+        # The catchment school name from MDP may be a "shorter" form than the
+        # JC list name (e.g. "Arundel Elementary/Middle" vs ".../...School").
+        # Compare via NCES id instead: rebuild from audit.
+        in_tract_ncesids = set()
+        for a in audit:
+            if a["geoid20"] in r["tracts"].split("; ") and a["ncessch_id"]:
+                in_tract_ncesids.add(a["ncessch_id"])
+        # Threshold: ignore trivial slivers (< 5% of tract or catchment area).
+        near_miss = []
+        for o in overlap_rows:
+            if o["grantee"] != r["grantee"]:
+                continue
+            if o["ncessch_id"] not in jc_keys_resolved:
+                continue
+            if o["ncessch_id"] in in_tract_ncesids:
+                continue
+            if o["pct_of_tract"] < 0.05 and o["pct_of_catchment"] < 0.05:
+                continue
+            # Skip county-wide catchments (not informative as proximity)
+            if (o["ncessch_id"] in countywide_flags
+                    or o["lea_site"] in countywide_flags):
+                continue
+            near_miss.append(o["school_name"])
+        # de-dupe preserving order
+        seen, dedup = set(), []
+        for n in near_miss:
+            if n not in seen:
+                seen.add(n)
+                dedup.append(n)
+        r["jcs_catchment_overlaps_tract"] = "; ".join(dedup)
+        r["n_jcs_catchment_overlaps_tract"] = len(dedup)
+
+    # Re-write grantee_coverage.csv with the new columns
+    with (OUTPUTS / "grantee_coverage.csv").open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(grantee_rows[0].keys()))
+        w.writeheader()
+        w.writerows(grantee_rows)
 
     # ---- Output: executive summary (stakeholder-facing markdown) ----
     write_executive_summary(grantee_rows, candidate_rows, audit, joined,
