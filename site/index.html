@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ENOUGH × Judy Center coverage</title>
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="" />
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1c1c1c;
+    --muted: #6a6a6a;
+    --accent: #d4731c;
+    --accent-soft: #fde0c1;
+    --jc: #1c4ed4;
+    --jc-soft: #c9d6f5;
+    --cand: #c0392b;
+    --cand-soft: #f5cdc8;
+    --good: #2f8f4d;
+    --warn: #b9761c;
+    --line: #e3e3df;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); }
+  body { background: var(--bg); display: grid; grid-template-rows: auto 1fr;
+         min-height: 100vh; }
+  header { padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  header .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  main { display: grid; grid-template-columns: 380px 1fr; min-height: 0; }
+  #sidebar { padding: 14px 18px; overflow-y: auto; border-right: 1px solid var(--line);
+             background: var(--panel); }
+  #map { height: 100%; }
+
+  select { width: 100%; padding: 8px 10px; font-size: 14px; border: 1px solid var(--line);
+           border-radius: 6px; background: white; }
+  select optgroup { font-style: normal; color: var(--muted); }
+
+  .pill { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 12px;
+          font-weight: 600; margin-top: 8px; }
+  .pill.needs { background: #fff1da; color: var(--warn); border: 1px solid #f3d6a8; }
+  .pill.has   { background: #e3f6e9; color: var(--good); border: 1px solid #bfe3c8; }
+  .pill.named { background: #e8efff; color: #2540a0; border: 1px solid #c4d2f1; margin-left: 6px; }
+
+  .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .meta b { color: var(--ink); }
+
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase;
+       letter-spacing: 0.05em; color: var(--muted); margin: 18px 0 8px; }
+  ul.compact { padding-left: 18px; margin: 6px 0; font-size: 13px; }
+  ul.compact li { margin-bottom: 3px; }
+
+  table.cands { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.cands th, table.cands td { text-align: left; padding: 6px 6px;
+                                    border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.cands th { font-weight: 600; color: var(--muted); font-size: 11px;
+                   text-transform: uppercase; letter-spacing: 0.04em; }
+  table.cands .cpg { text-align: right; font-variant-numeric: tabular-nums; }
+  table.cands .jc-tag { display: inline-block; padding: 1px 6px; background: var(--jc-soft);
+                        color: var(--jc); border-radius: 4px; font-size: 11px;
+                        font-weight: 600; }
+  table.cands tr.is-jc { background: #f6f9ff; }
+
+  .recco { margin-top: 16px; padding: 11px 12px; background: #fffaf0;
+           border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; font-size: 13px;
+           line-height: 1.45; }
+
+  .legend { background: white; padding: 8px 10px; border-radius: 6px; font-size: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.12); line-height: 1.6; }
+  .legend .swatch { display: inline-block; width: 10px; height: 10px; margin-right: 6px;
+                    vertical-align: middle; }
+  .legend .swatch.tract     { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .legend .swatch.tract-other { background: transparent; border: 1px solid #b8b8b4; }
+  .legend .swatch.jc        { background: var(--jc); border-radius: 50%; }
+  .legend .swatch.jc-near   { background: var(--jc-soft); border: 1px solid var(--jc); border-radius: 50%; }
+  .legend .swatch.cand      { background: var(--cand); border-radius: 50%; }
+  .legend .swatch.cand-line { background: transparent; border: 1px dashed var(--cand); }
+
+  .leaflet-tooltip.school-tip { font-size: 12px; }
+  .leaflet-popup-content { font-size: 13px; line-height: 1.45; }
+
+  .toggle-row { position: absolute; top: 14px; right: 14px; z-index: 500;
+                background: white; padding: 6px 10px; border-radius: 6px;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.12); font-size: 12px; }
+  .toggle-row label { cursor: pointer; user-select: none; }
+
+  /* responsive */
+  @media (max-width: 800px) {
+    main { grid-template-columns: 1fr; grid-template-rows: minmax(280px, 50vh) 1fr; }
+    #sidebar { border-right: 0; border-top: 1px solid var(--line); order: 2; }
+    #map { order: 1; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ENOUGH × Judy Center coverage</h1>
+  <div class="sub">Which Maryland ENOUGH grantees should consider applying for a Judy Center?
+       Select a grantee to see their tracts, the Judy Centers nearby, and the candidate
+       elementary schools by concentrated-poverty rate.</div>
+</header>
+
+<main>
+  <aside id="sidebar">
+    <label for="grantee-select" style="font-size:12px;color:var(--muted);
+                                       text-transform:uppercase;letter-spacing:.05em;">
+      Grantee</label>
+    <select id="grantee-select"></select>
+    <div id="grantee-pane">
+      <div class="meta" style="margin-top:18px;color:var(--muted);">
+        Pick a grantee from the menu above.
+      </div>
+    </div>
+  </aside>
+
+  <div style="position:relative;">
+    <div class="toggle-row">
+      <label><input type="checkbox" id="toggle-all-schools" />
+             Show all MD elementary</label>
+    </div>
+    <div id="map"></div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
