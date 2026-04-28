@@ -8,129 +8,239 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="" />
-<style>
-  :root {
-    --bg: #fafaf7;
-    --panel: #ffffff;
-    --ink: #1c1c1c;
-    --muted: #6a6a6a;
-    --accent: #d4731c;
-    --accent-soft: #fde0c1;
-    --jc: #1c4ed4;
-    --jc-soft: #c9d6f5;
-    --cand: #c0392b;
-    --cand-soft: #f5cdc8;
-    --good: #2f8f4d;
-    --warn: #b9761c;
-    --line: #e3e3df;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont,
-      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); }
-  body { background: var(--bg); display: grid; grid-template-rows: auto 1fr;
-         min-height: 100vh; }
-  header { padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
-  header h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-  header .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
-  main { display: grid; grid-template-columns: 380px 1fr; min-height: 0; }
-  #sidebar { padding: 14px 18px; overflow-y: auto; border-right: 1px solid var(--line);
-             background: var(--panel); }
-  #map { height: 100%; }
-
-  select { width: 100%; padding: 8px 10px; font-size: 14px; border: 1px solid var(--line);
-           border-radius: 6px; background: white; }
-  select optgroup { font-style: normal; color: var(--muted); }
-
-  .pill { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 12px;
-          font-weight: 600; margin-top: 8px; }
-  .pill.needs { background: #fff1da; color: var(--warn); border: 1px solid #f3d6a8; }
-  .pill.has   { background: #e3f6e9; color: var(--good); border: 1px solid #bfe3c8; }
-  .pill.named { background: #e8efff; color: #2540a0; border: 1px solid #c4d2f1; margin-left: 6px; }
-
-  .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
-  .meta b { color: var(--ink); }
-
-  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase;
-       letter-spacing: 0.05em; color: var(--muted); margin: 18px 0 8px; }
-  ul.compact { padding-left: 18px; margin: 6px 0; font-size: 13px; }
-  ul.compact li { margin-bottom: 3px; }
-
-  table.cands { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.cands th, table.cands td { text-align: left; padding: 6px 6px;
-                                    border-bottom: 1px solid var(--line); vertical-align: top; }
-  table.cands th { font-weight: 600; color: var(--muted); font-size: 11px;
-                   text-transform: uppercase; letter-spacing: 0.04em; }
-  table.cands .cpg { text-align: right; font-variant-numeric: tabular-nums; }
-  table.cands .jc-tag { display: inline-block; padding: 1px 6px; background: var(--jc-soft);
-                        color: var(--jc); border-radius: 4px; font-size: 11px;
-                        font-weight: 600; }
-  table.cands tr.is-jc { background: #f6f9ff; }
-
-  .recco { margin-top: 16px; padding: 11px 12px; background: #fffaf0;
-           border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; font-size: 13px;
-           line-height: 1.45; }
-
-  .legend { background: white; padding: 8px 10px; border-radius: 6px; font-size: 12px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12); line-height: 1.6; }
-  .legend .swatch { display: inline-block; width: 10px; height: 10px; margin-right: 6px;
-                    vertical-align: middle; }
-  .legend .swatch.tract     { background: var(--accent-soft); border: 1px solid var(--accent); }
-  .legend .swatch.tract-other { background: transparent; border: 1px solid #b8b8b4; }
-  .legend .swatch.jc        { background: var(--jc); border-radius: 50%; }
-  .legend .swatch.jc-near   { background: var(--jc-soft); border: 1px solid var(--jc); border-radius: 50%; }
-  .legend .swatch.cand      { background: var(--cand); border-radius: 50%; }
-  .legend .swatch.cand-line { background: transparent; border: 1px dashed var(--cand); }
-
-  .leaflet-tooltip.school-tip { font-size: 12px; }
-  .leaflet-popup-content { font-size: 13px; line-height: 1.45; }
-
-  .toggle-row { position: absolute; top: 14px; right: 14px; z-index: 500;
-                background: white; padding: 6px 10px; border-radius: 6px;
-                box-shadow: 0 1px 4px rgba(0,0,0,0.12); font-size: 12px; }
-  .toggle-row label { cursor: pointer; user-select: none; }
-
-  /* responsive */
-  @media (max-width: 800px) {
-    main { grid-template-columns: 1fr; grid-template-rows: minmax(280px, 50vh) 1fr; }
-    #sidebar { border-right: 0; border-top: 1px solid var(--line); order: 2; }
-    #map { order: 1; }
-  }
-</style>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<header>
-  <h1>ENOUGH × Judy Center coverage</h1>
-  <div class="sub">Which Maryland ENOUGH grantees should consider applying for a Judy Center?
-       Select a grantee to see their tracts, the Judy Centers nearby, and the candidate
-       elementary schools by concentrated-poverty rate.</div>
+<header class="site-header">
+  <div class="hwrap">
+    <div>
+      <h1>ENOUGH × Judy Center coverage</h1>
+      <div class="sub">Maryland Governor's Office for Children — which ENOUGH grantees are candidates for a Judy Center?</div>
+    </div>
+    <div class="meta-right">
+      <span class="updated">Refreshed Apr 2026</span>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" data-tab="overview" role="tab" aria-selected="true">Overview</button>
+    <button class="tab" data-tab="map" role="tab" aria-selected="false">Map</button>
+    <button class="tab" data-tab="grantees" role="tab" aria-selected="false">Grantees</button>
+    <button class="tab" data-tab="methodology" role="tab" aria-selected="false">Methodology</button>
+  </nav>
 </header>
 
 <main>
-  <aside id="sidebar">
-    <label for="grantee-select" style="font-size:12px;color:var(--muted);
-                                       text-transform:uppercase;letter-spacing:.05em;">
-      Grantee</label>
-    <select id="grantee-select"></select>
-    <div id="grantee-pane">
-      <div class="meta" style="margin-top:18px;color:var(--muted);">
-        Pick a grantee from the menu above.
+
+<!-- ===== TAB: OVERVIEW ===== -->
+<section class="tabpane active" data-tab="overview">
+  <div class="container">
+    <h2 class="section-title">Dashboard</h2>
+    <div class="dashboard-grid" id="dashboard-grid">
+      <!-- Cards injected by app.js -->
+    </div>
+
+    <h2 class="section-title">The question this analyses answers</h2>
+    <p class="lede">
+      Maryland's <b>28 ENOUGH grantees</b> serve 106 census tracts. The state has
+      <b>92 Judy Center Early Learning Hubs</b>. A grantee is a candidate for a Judy
+      Center when its served tracts contain at least one elementary or combined
+      school but no Judy Center is currently sited there. Per GOC guidance the
+      operational filter is presence of an elementary in a JC-free tract, not a
+      CPG threshold — CPG is shown alongside each candidate as information.
+    </p>
+
+    <h2 class="section-title">Three categories</h2>
+    <div class="cat-summary">
+      <div class="cat-block cat-in_tract" data-cat="in_tract">
+        <div class="cat-head">
+          <span class="cat-pill">Already covered</span>
+          <span class="cat-count" id="cat-count-in_tract">—</span>
+        </div>
+        <p>Grantees whose served tracts already contain a Judy Center. No
+           new application needed.</p>
+        <button class="cat-link" data-cat="in_tract">Browse these grantees →</button>
+      </div>
+      <div class="cat-block cat-catchment_overlap" data-cat="catchment_overlap">
+        <div class="cat-head">
+          <span class="cat-pill">Catchment overlap</span>
+          <span class="cat-count" id="cat-count-catchment_overlap">—</span>
+        </div>
+        <p>No in-tract Judy Center, but a Judy Center's attendance zone
+           overlaps a served tract by ≥ 5%. Coordination opportunity — may
+           not require a new application.</p>
+        <button class="cat-link" data-cat="catchment_overlap">Browse these grantees →</button>
+      </div>
+      <div class="cat-block cat-needs_jc" data-cat="needs_jc">
+        <div class="cat-head">
+          <span class="cat-pill">Needs Judy Center</span>
+          <span class="cat-count" id="cat-count-needs_jc">—</span>
+        </div>
+        <p>No in-tract Judy Center and no overlapping catchment. Primary
+           candidates for new Judy Center applications.</p>
+        <button class="cat-link" data-cat="needs_jc">Browse these grantees →</button>
       </div>
     </div>
-  </aside>
 
-  <div style="position:relative;">
-    <div class="toggle-row">
-      <label><input type="checkbox" id="toggle-all-schools" />
-             Show all MD elementary</label>
-    </div>
-    <div id="map"></div>
+    <h2 class="section-title">Named-overlap exemplars</h2>
+    <p class="lede">
+      Four grantees whose names already reference their host Judy Center — these
+      validated the spatial-join correctness during development:
+      <b>City of Cumberland</b> ↔ South Penn Elementary,
+      <b>One Annapolis</b> ↔ Georgetown East Elementary,
+      <b>San Mar</b> ↔ Bester Elementary,
+      <b>Frederick LMB</b> ↔ Waverley / Hillcrest / Butterfly Ridge Elementary.
+    </p>
   </div>
+</section>
+
+<!-- ===== TAB: MAP ===== -->
+<section class="tabpane" data-tab="map">
+  <div class="map-shell">
+    <aside class="map-sidebar" id="map-sidebar">
+      <div class="sidebar-top">
+        <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">≡</button>
+        <h3>Grantees</h3>
+        <div class="filter-row">
+          <button class="filter-pill" data-cat="all">All <span id="fp-all">28</span></button>
+          <button class="filter-pill in_tract" data-cat="in_tract">Covered <span id="fp-in_tract">—</span></button>
+          <button class="filter-pill catchment_overlap" data-cat="catchment_overlap">Catchment <span id="fp-catchment_overlap">—</span></button>
+          <button class="filter-pill needs_jc" data-cat="needs_jc">Needs JC <span id="fp-needs_jc">—</span></button>
+        </div>
+      </div>
+      <div class="grantee-list" id="grantee-list">
+        <!-- populated by app.js -->
+      </div>
+      <div class="grantee-detail" id="grantee-detail">
+        <div class="detail-empty">Pick a grantee from the list above.</div>
+      </div>
+    </aside>
+    <div class="map-area">
+      <div id="map"></div>
+      <div class="legend" id="map-legend"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TAB: GRANTEES ===== -->
+<section class="tabpane" data-tab="grantees">
+  <div class="container">
+    <div class="filter-row" style="margin-top: 8px;">
+      <button class="filter-pill active" data-cat="all">All <span>28</span></button>
+      <button class="filter-pill in_tract" data-cat="in_tract">Covered <span id="fp2-in_tract">—</span></button>
+      <button class="filter-pill catchment_overlap" data-cat="catchment_overlap">Catchment <span id="fp2-catchment_overlap">—</span></button>
+      <button class="filter-pill needs_jc" data-cat="needs_jc">Needs JC <span id="fp2-needs_jc">—</span></button>
+    </div>
+    <div class="grantee-blocks" id="grantee-blocks">
+      <!-- populated by app.js -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== TAB: METHODOLOGY ===== -->
+<section class="tabpane" data-tab="methodology">
+  <div class="container narrow">
+    <h2 class="section-title">Methodology</h2>
+
+    <h3>Data sources</h3>
+    <ul>
+      <li><b>ENOUGH grantee → census tract roster.</b> Supplied by GOC
+          (<code>2025 Updated ENOUGH Grantee Census Tracts and Zipcodes</code>).
+          28 grantees serving 106 unique census tracts.</li>
+      <li><b>Judy Center master list.</b> Pulled from
+          <a href="https://marylandchild.org/family-support/judy-center-hubs-map/" target="_blank" rel="noopener">marylandchild.org's Judy Center Hubs Map</a>
+          (the SuperStoreFinder XML feed maintained by Maryland Family Network for
+          MSDE). 92 Judy Centers as of April 2026.</li>
+      <li><b>School points, attendance zones, tract polygons.</b> Maryland
+          Department of Planning's
+          <a href="https://mdpgis.mdp.state.md.us/arcgis/rest/services/Society/ENOUGH_Act_2025/FeatureServer" target="_blank" rel="noopener"><code>ENOUGH_Act_2025</code> FeatureServer</a>,
+          Layers 0 / 1 / 2.</li>
+    </ul>
+
+    <h3>Spatial join</h3>
+    <p>Schools and tracts reprojected to NAD83 / Maryland State Plane (EPSG:26985).
+       Each school assigned its containing tract via
+       <code>geopandas.sjoin(predicate='within')</code>. All 1,377 schools
+       resolved to a tract; school JURSCODE matched the GEOID20 county prefix
+       in every case.</p>
+
+    <h3>Judy Center → MDP school matching</h3>
+    <p>Tiered, in order of accuracy: exact normalized name match within county →
+       rapidfuzz <code>token_sort_ratio ≥ 85</code> within county →
+       address-based <code>token_sort_ratio ≥ 90</code> within county →
+       MarylandChild.org lat/lon point-in-polygon. MarylandChild's published
+       lat/lon has known precision issues (some pins are ~1 km off and land in
+       the wrong census tract), so MDP geometry is preferred when the school
+       exists in MDP's school point layer.</p>
+    <p><b>Result:</b> all 92 sites resolved (83 exact, 5 fuzzy, 4 address, 4 lat/lon).</p>
+
+    <h3>Three disjoint categories</h3>
+    <ul>
+      <li><b>In-tract</b> (15 grantees). At least one Judy Center inside a
+          served census tract.</li>
+      <li><b>Catchment overlap</b> (8 grantees). No in-tract JC, but a JC's
+          attendance zone overlaps a served tract by ≥ 5% of either the tract
+          or the catchment area. School-attendance polygons are MDP Layer 1.</li>
+      <li><b>Needs Judy Center</b> (5 grantees). Neither an in-tract JC nor a
+          catchment overlap. Primary candidates for a new Judy Center.</li>
+    </ul>
+
+    <h3>CHILD_CPG_PCT (Concentrated Poverty Grant percent)</h3>
+    <p>A three-year FARMS rolling average MDP publishes per school. ENOUGH
+       eligibility uses a 75% threshold, but the operational filter for this
+       analysis is <b>presence of an elementary school in a JC-free grantee
+       tract</b>, not CPG. CPG is shown alongside each candidate so reviewers
+       can prioritise where to start, not as a gate.</p>
+
+    <h3>Closest-elementary fallback</h3>
+    <p>For grantees in the Needs-JC category whose served tract contains no
+       traditional elementary or combined school (currently only Leaders Breeders
+       Inc., whose single tract houses only Belair-Edison Charter), the pipeline
+       finds the nearest non-JC elementary by point-to-tract-edge distance,
+       capped at 10 km, and surfaces it on the map and in the per-grantee detail.</p>
+
+    <h3>Caveats</h3>
+    <ul>
+      <li>The map's <b>purple Judy Center dots</b> represent state-wide context;
+          when a grantee is selected, JCs in their tract upgrade to <b>blue
+          stars</b> and JCs whose catchment overlaps their tracts upgrade to
+          <b>green stars</b>.</li>
+      <li>A few JC catchments span an entire small county (e.g., single-school
+          counties on the Eastern Shore). Those are flagged county-wide and
+          excluded from near-miss reporting because they don't represent
+          meaningful proximity. See <code>catchment_countywide_flags.csv</code>.</li>
+      <li>The CHILD_POV_PCT field on MDP's tract layer doesn't declare its ACS
+          5-year vintage. Likely 2019-2023. For 2026 ENOUGH eligibility decisions
+          that require Margin of Error and prior-year point estimates, the
+          analysis must join the Census API directly.</li>
+      <li>Some MarylandChild.org lat/lon pins are off (e.g., Georgetown East ES
+          is pinned in Chesapeake Bay). The pipeline mitigates by preferring
+          MDP's authoritative coordinates.</li>
+    </ul>
+
+    <h3>Reproducibility</h3>
+    <p><code>python analyze.py</code> regenerates every CSV in the project root,
+       this site's data files, and the executive summary markdown. MDP layers
+       and the MarylandChild.org feed cache to <code>.cache/</code> so re-runs
+       are fast.</p>
+
+    <h3>Outstanding follow-ups</h3>
+    <ul>
+      <li>Confirm with MDP whether <code>CHILD_CPG_PCT</code> values reflect
+          the 2025 75% threshold or still the 2024 80% threshold.</li>
+      <li>Round-trip the MarylandChild.org list with MSDE's coordinator PDF
+          periodically.</li>
+      <li>Clean up the lat/lon precision issues in MarylandChild.org (Georgetown
+          East, Arlington, others).</li>
+    </ul>
+  </div>
+</section>
+
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
-<script src="app.js?v=1"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
