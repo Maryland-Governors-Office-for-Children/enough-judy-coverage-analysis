@@ -137,5 +137,8 @@ These don't block the current GOC operational decision:
 - **ACS vintage.** `CHILD_POV_PCT` doesn't declare its ACS 5-year vintage on
   MDP's tract layer.
 
+If a deploy fails, see [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) for the
+seven failure categories and the commands to diagnose each.
+
 Repository owner: Maryland Governor's Office for Children. Analysis pipeline
 prepared in collaboration with [Claude Code](https://claude.com/claude-code).
