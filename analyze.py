@@ -3,30 +3,40 @@ ENOUGH x Judy Center coverage analysis.
 
 Reads:
   - 2025 Updated ENOUGH Grantee Census Tracts and Zipcodes - Unique ENOUGH Census Tracts.csv
-  - judy_centers_full.csv
+  - Maryland Family Network's Judy Center Hubs Map (the SuperStoreFinder XML
+    feed at marylandchild.org). This is the authoritative current list,
+    confirmed against MSDE source data. We cache the XML locally and
+    materialise judy_centers_full.csv as an inspectable artifact.
   - MDP ENOUGH_Act_2025 FeatureServer (cached locally on first run):
       Layer 0  School Locations 2025  (point)
+      Layer 1  School Attendance Zones 2025  (polygon)
       Layer 2  Poverty Census Tracts 2025  (polygon)
 
 Writes:
-  - grantee_coverage.csv             one row per grantee
-  - judy_center_coverage.csv         one row per Judy Center
-  - candidate_elementary_schools.csv one row per elementary in a grantee tract
-  - jc_match_audit.csv               per-Judy-Center match decision audit
-  - gaps.csv                         grantees with no JC in their county (if any)
+  - judy_centers_full.csv             reconciled JC list (refreshed from MC)
+  - grantee_coverage.csv              one row per grantee
+  - judy_center_coverage.csv          one row per Judy Center
+  - candidate_elementary_schools.csv  one row per elementary in a grantee tract
+  - catchment_overlaps.csv            long-format overlap audit
+  - catchment_countywide_flags.csv    schools with county-wide catchments
+  - executive_summary.md              stakeholder-facing recommendations
+  - gaps.csv                          grantees with no JC in their county
+  - site/data/*.geojson + grantees.json  data for the Leaflet frontend
 
 Pipeline:
-  1. Pull MDP schools (Layer 0) and tracts (Layer 2) as GeoJSON.
-  2. Reproject to EPSG:26985 (NAD83 / MD State Plane).
-  3. Spatial join schools -> tracts (predicate='within'), giving every school
-     a GEOID20.
-  4. Resolve each Judy Center to a school in the joined frame using a tiered
-     match: exact normalized SCHOOL_NAME within county, then rapidfuzz
-     token_sort_ratio >= FUZZ_THRESHOLD within county.
-  5. Cross-reference Judy Center tracts with grantee tracts.
-  6. For every elementary/combined school inside a grantee tract that does
-     NOT already have a Judy Center, surface it as a candidate ranked by
-     CHILD_CPG_PCT (concentrated poverty grant rate).
+  1. Refresh judy_centers_full.csv from MarylandChild.org (lat/lon-anchored).
+  2. Pull MDP schools (Layer 0), catchments (Layer 1), tracts (Layer 2).
+  3. Reproject to EPSG:26985 (NAD83 / MD State Plane).
+  4. Spatial join schools -> tracts giving every school a GEOID20.
+  5. Resolve each Judy Center to its tract via point-in-polygon on the
+     MC-supplied lat/lon (no name-matching needed when lat/lon is present).
+  6. For every elementary/combined school inside a grantee tract that is
+     NOT already a Judy Center, surface it as a candidate. CHILD_CPG_PCT
+     is reported as information, not as a gating threshold -- per GOC
+     guidance, presence of an elementary in a JC-free tract is what
+     matters; CPG is a sort key.
+  7. Layer-1 catchment overlay: surface JCs whose catchment touches a
+     grantee tract even when the school point is outside.
 """
 
 import csv
@@ -61,6 +71,10 @@ CATCHMENTS_URL = (
     "https://mdpgis.mdp.state.md.us/arcgis/rest/services/"
     "Society/ENOUGH_Act_2025/FeatureServer/1/query"
     "?where=1%3D1&outFields=*&returnGeometry=true&f=geojson"
+)
+MC_SSF_URL = (
+    "https://marylandchild.org/wp-content/plugins/superstorefinder-wp/"
+    "ssf-wp-xml.php"
 )
 
 # Catchment area / county area >= this fraction => "county-wide" flag.
@@ -172,13 +186,110 @@ def load_grantees():
     return grantee_to_tracts, tract_to_grantees
 
 
-def load_judy_centers():
+def refresh_judy_centers_from_mc():
+    """Fetch the MarylandChild.org SuperStoreFinder feed, parse the JCs,
+    and rewrite judy_centers_full.csv. Returns the parsed JC list.
+
+    This is the authoritative source as of April 2026. The SSF XML carries
+    school name, address, lat/lon, and a county tag for every site. We
+    parse only items whose location ends with "(JC)" -- the same feed
+    also lists ~17 Patty/Family Support Centers ("(PC)") which we exclude.
+    """
+    import xml.etree.ElementTree as ET
+
+    cache = CACHE / "marylandchild_ssf.xml"
+    if not cache.exists():
+        print(f"  fetching {MC_SSF_URL}")
+        req = urllib.request.Request(
+            MC_SSF_URL,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 Chrome/121.0 Safari/537.36"
+                ),
+            },
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            cache.write_bytes(resp.read())
+    else:
+        print(f"  using cached {cache.name}")
+
+    tree = ET.parse(cache)
+    store = next(c for c in tree.getroot() if c.tag == "store")
+
+    def text(el, tag):
+        sub = el.find(tag)
+        return (sub.text or "").strip() if sub is not None else ""
+
     rows = []
-    with JUDY_CSV.open() as f:
+    for it in store:
+        name = text(it, "location")
+        if "(JC)" not in name:
+            continue
+        clean_name = re.sub(r"\s*\(JC\)\s*", "", name).strip()
+        # Strip the "Maryland, " prefix some county tags carry
+        county_tag = text(it, "productsServices").replace("&#39;", "'")
+        county_tag = re.sub(r"^Maryland,\s*", "", county_tag).strip()
+        cfips = COUNTY_NAME_TO_FIPS.get(county_tag, "")
+        addr_full = text(it, "address")
+        # Parse "<street>  <city>,  MD <zip>"
+        m = re.match(r"^(.*?)\s+([\w. ]+),\s*MD\s+(\d{5})\s*$", addr_full)
+        if m:
+            street, city, zipc = m.group(1).strip(), m.group(2).strip(), m.group(3)
+        else:
+            street, city, zipc = addr_full, "", ""
+        rows.append({
+            "county": county_tag,
+            "county_fips": cfips,
+            "school_name": clean_name,
+            "school_address": street,
+            "city": city,
+            "zip": zipc,
+            "lat": text(it, "latitude"),
+            "lon": text(it, "longitude"),
+            "phone": text(it, "telephone"),
+            "mc_store_id": text(it, "storeId"),
+            "source": "marylandchild.org SSF feed",
+        })
+
+    rows.sort(key=lambda r: (r["county"], r["school_name"]))
+    with JUDY_CSV.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    print(f"  wrote {JUDY_CSV.name} with {len(rows)} Judy Centers")
+    return rows
+
+
+def load_judy_centers():
+    """Refresh from MC if missing, then read the CSV."""
+    if not JUDY_CSV.exists():
+        refresh_judy_centers_from_mc()
+    rows = []
+    with JUDY_CSV.open(encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             rows.append(row)
     return rows
+
+
+# County name -> FIPS lookup (inverse of COUNTY_NAMES, with apostrophe variants)
+COUNTY_NAME_TO_FIPS = {v: k for k, v in {
+    "24001": "Allegany", "24003": "Anne Arundel", "24005": "Baltimore County",
+    "24009": "Calvert", "24011": "Caroline", "24013": "Carroll",
+    "24015": "Cecil", "24017": "Charles", "24019": "Dorchester",
+    "24021": "Frederick", "24023": "Garrett", "24025": "Harford",
+    "24027": "Howard", "24029": "Kent", "24031": "Montgomery",
+    "24033": "Prince George's", "24035": "Queen Anne's", "24037": "St. Mary's",
+    "24039": "Somerset", "24041": "Talbot", "24043": "Washington",
+    "24045": "Wicomico", "24047": "Worcester", "24510": "Baltimore City",
+}.items()}
+# MC tags don't always match: handle the "Baltimore_City" underscore variant
+COUNTY_NAME_TO_FIPS["Baltimore_City"] = "24510"
+COUNTY_NAME_TO_FIPS["Baltimore City"] = "24510"
+COUNTY_NAME_TO_FIPS["Prince George's"] = "24033"
+COUNTY_NAME_TO_FIPS["Queen Anne's"] = "24035"
+COUNTY_NAME_TO_FIPS["St. Mary's"] = "24037"
 
 
 def fetch_layer(url: str, cache_path: Path) -> gpd.GeoDataFrame:
@@ -325,14 +436,24 @@ def compute_catchment_overlaps(catchments: gpd.GeoDataFrame,
     return rows
 
 
-def resolve_judy_centers(judy_centers, joined_schools):
+def resolve_judy_centers(judy_centers, joined_schools, raw_tracts):
     """
-    For each Judy Center, return (resolved_tract, matched_school_name, tier, score).
-    Tier is 'exact' or 'fuzzy_NN' or 'unresolved'.
+    For each Judy Center, return tract assignment + matched MDP school.
+
+    Tier order is chosen for accuracy: MDP's school-point coordinates are
+    authoritative; MarylandChild.org's lat/lon has known precision issues
+    (e.g., Georgetown East ES is pinned in Chesapeake Bay; Arlington ES is
+    ~1 km off, putting it in the wrong census tract). So we name-match
+    against MDP first and only fall back to MC lat/lon if name matching
+    fails.
+
+      Tier 1: exact normalized name match within county (MDP geometry)
+      Tier 2: rapidfuzz token_sort_ratio >= 85 within county (MDP geometry)
+      Tier 3: address-based fuzzy match within county (MDP geometry)
+      Tier 4: MarylandChild.org lat/lon point-in-polygon (when MDP misses)
     """
-    # For the address-fallback tier we want to consider ALL schools at a
-    # given address (a Judy Center may be hosted at a school typed Middle
-    # in MDP, e.g. Westmar ELC colocated with Westmar Middle).
+    from shapely.geometry import Point
+
     all_schools = joined_schools.copy()
     all_schools["norm_addr"] = all_schools["SCHOOL_STREET_ADDRESS"].fillna("").map(normalize_address)
     all_schools["county_fips"] = all_schools["JURSCODE"].map(JURSCODE_TO_FIPS)
@@ -341,12 +462,21 @@ def resolve_judy_centers(judy_centers, joined_schools):
         joined_schools["SCHOOL_TYPE"].isin(["Elementary", "Combined"])
     ].copy()
     elem["norm"] = elem["SCHOOL_NAME"].fillna("").map(normalize_name)
-    # MDP uses 4-letter JURSCODE; map to FIPS for filtering
     elem["county_fips"] = elem["JURSCODE"].map(JURSCODE_TO_FIPS)
+
+    tracts_wgs = raw_tracts.to_crs(epsg=4326)
 
     audit = []
     for jc in judy_centers:
-        target = normalize_name(jc["school_name"])
+        # Strip "Judy Center" suffix MC sometimes uses for renamed sites
+        # so that "Federalsburg Judy Center" matches MDP's "Federalsburg
+        # Elementary".
+        raw_name = jc["school_name"]
+        clean_for_match = re.sub(
+            r"\b(judy\s+center|judy\s+hoyer\s+family\s+learning\s+center)\b",
+            "", raw_name, flags=re.IGNORECASE
+        ).strip(" /")
+        target = normalize_name(clean_for_match or raw_name)
         cfips = jc["county_fips"]
         candidates = elem[elem["county_fips"] == cfips]
 
@@ -384,7 +514,10 @@ def resolve_judy_centers(judy_centers, joined_schools):
                 })
                 continue
 
-        # Tier 3: address fallback within county across ALL school types
+        # Tier 3: address fallback within county across ALL school types.
+        # token_sort_ratio (order-preserving) is stricter than token_set_ratio
+        # for addresses -- avoids "2400 Mosher St" matching "2400 Windsor Ave"
+        # just because the city/zip tokens overlap.
         target_addr = normalize_address(jc.get("school_address") or "")
         if target_addr:
             addr_pool = all_schools[all_schools["county_fips"] == cfips]
@@ -392,9 +525,9 @@ def resolve_judy_centers(judy_centers, joined_schools):
             if not addr_pool.empty:
                 choices = dict(zip(addr_pool.index, addr_pool["norm_addr"]))
                 best = process.extractOne(
-                    target_addr, choices, scorer=fuzz.token_set_ratio
+                    target_addr, choices, scorer=fuzz.token_sort_ratio
                 )
-                if best and best[1] >= FUZZ_THRESHOLD:
+                if best and best[1] >= 90:
                     row = addr_pool.loc[best[2]]
                     audit.append({
                         "judy_center": jc["school_name"],
@@ -406,6 +539,31 @@ def resolve_judy_centers(judy_centers, joined_schools):
                         "score": int(best[1]),
                     })
                     continue
+
+        # Tier 4: MarylandChild.org lat/lon point-in-polygon. Used only
+        # when MDP name/address matching all failed (typically because
+        # the JC is hosted at a non-school facility or a recent addition
+        # not yet in MDP). Less precise than MDP's coordinates but better
+        # than no tract assignment.
+        try:
+            lat = float(jc.get("lat") or "")
+            lon = float(jc.get("lon") or "")
+        except ValueError:
+            lat = lon = None
+        if lat and lon:
+            pt_wgs = Point(lon, lat)
+            tract_hit = tracts_wgs[tracts_wgs.geometry.contains(pt_wgs)]
+            if not tract_hit.empty:
+                audit.append({
+                    "judy_center": jc["school_name"],
+                    "county": jc["county"],
+                    "matched_school": "(via MC lat/lon)",
+                    "ncessch_id": "",
+                    "geoid20": str(tract_hit.iloc[0]["GEOID20"]),
+                    "tier": "latlon",
+                    "score": 90,
+                })
+                continue
 
         audit.append({
             "judy_center": jc["school_name"],
@@ -442,14 +600,13 @@ def _clean(v):
     return v
 
 
-def _short_recommendation(top_cpg):
-    if top_cpg is None or top_cpg < 0:
-        return "No traditional elementary in any served tract"
-    if top_cpg >= 0.85:
-        return "Strong candidate — pursue Judy Center conversation"
-    if top_cpg >= 0.65:
-        return "Possible candidate — confirm school eligibility"
-    return "Lower priority — CPG below typical Judy Center threshold"
+def _short_recommendation(has_candidate):
+    """Per GOC guidance: presence of an elementary in a JC-free served
+    tract is what matters. CPG is information, not a gate.
+    """
+    if has_candidate:
+        return "Has elementary school(s) in served tracts — candidate for Judy Center"
+    return "No traditional elementary in any served tract — investigate alternatives"
 
 
 def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
@@ -617,7 +774,7 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         g = r["grantee"]
         cands = cands_by_grantee.get(g, [])
         non_jc = [c for c in cands if c["is_judy_center"] == "no"]
-        top_cpg = float(non_jc[0]["child_cpg_pct"]) if non_jc and non_jc[0]["child_cpg_pct"] else None
+        has_candidate = bool(non_jc)
         grantees_payload.append({
             "grantee": g,
             "county": r["counties"],
@@ -641,7 +798,7 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
                 for c in cands
             ],
             "named_hint": g in NAMED_HINT_GRANTEES,
-            "recommendation_short": _short_recommendation(top_cpg),
+            "recommendation_short": _short_recommendation(has_candidate),
         })
 
     # Sort: needs-JC by best non-JC CPG desc, then has-JC alphabetically
@@ -718,28 +875,33 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
     lines = []
     lines.append("# ENOUGH x Judy Center Coverage — Executive Summary")
     lines.append("")
+    n_total = len(grantee_rows)
+    n_yes = len(has_jc)
+    n_no = len(no_jc)
     lines.append(
-        "Maryland's 28 ENOUGH grantees collectively serve 106 census tracts; the state's "
-        "79 Judy Center Early Learning Hubs are distributed across 24 counties. This "
-        "analysis answers a single operational question: **which ENOUGH grantees are "
-        "good candidates to apply for a Judy Center?** A grantee is a strong candidate "
-        "when its served tracts contain at least one high-poverty elementary school but "
-        "no Judy Center is currently sited there. Of the 28 grantees, **14 already have "
-        "a Judy Center inside one of their served tracts** and **14 do not**. The 14 "
-        "without coverage are listed first below, ordered by the concentrated-poverty "
-        "rate (CHILD_CPG_PCT) of the highest-CPG candidate elementary school in their "
-        "tracts."
+        f"Maryland's 28 ENOUGH grantees collectively serve 106 census tracts; the state's "
+        f"92 Judy Center Early Learning Hubs are distributed across 24 counties. This "
+        f"analysis answers a single operational question: **which ENOUGH grantees are "
+        f"candidates to apply for a Judy Center?** A grantee is a candidate when its "
+        f"served tracts contain at least one elementary or combined school but no Judy "
+        f"Center is currently sited there. Of the {n_total} grantees, **{n_yes} already "
+        f"have a Judy Center inside one of their served tracts** and **{n_no} do not**. "
+        f"The {n_no} without coverage are listed first below. CHILD_CPG_PCT (concentrated "
+        f"poverty grant percent) is reported alongside each candidate school as "
+        f"information; per GOC guidance the operational filter is presence of an "
+        f"elementary in a JC-free tract, not CPG threshold."
     )
     lines.append("")
 
     # ---- Headline gap-list table: grantees WITHOUT tract-level JC ----
     lines.append("## Grantees without a Judy Center in their served tracts")
     lines.append("")
-    lines.append("Ranked by best-candidate CPG (the highest concentrated-poverty rate "
-                 "among elementary schools inside the grantee's tracts that are not "
-                 "already Judy Centers).")
+    lines.append("Listed in order of the candidate elementary's CPG (highest first) "
+                 "to surface higher-poverty cases visually, not as a filter -- every "
+                 "grantee in this table has at least one elementary or combined school "
+                 "in their served tracts that is not yet a Judy Center.")
     lines.append("")
-    lines.append("| Grantee | County | # Tracts | Top non-JC candidate(s) by CPG | Recommendation |")
+    lines.append("| Grantee | County | # Tracts | Top non-JC candidate(s) | Recommendation |")
     lines.append("|---|---|---:|---|---|")
     for r in no_jc:
         cands = cands_by_grantee.get(r["grantee"], [])
@@ -750,15 +912,9 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
                 f"{c['school_name']} ({_fmt_pct(c['child_cpg_pct'])})"
                 for c in top
             )
-            best = float(top[0]["child_cpg_pct"] or 0)
-            if best >= 0.85:
-                rec = "Strong candidate — pursue Judy Center conversation"
-            elif best >= 0.65:
-                rec = "Possible candidate — confirm school eligibility"
-            else:
-                rec = "Lower priority — CPG below typical Judy Center threshold"
+            rec = "Has elementary school(s) in served tracts — candidate for Judy Center"
         elif cands:
-            top_str = "(only candidate is already a Judy Center in another sense)"
+            top_str = "(only candidate is already a Judy Center)"
             rec = "Review case by case"
         else:
             top_str = "No traditional elementary in any served tract"
@@ -777,11 +933,11 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
     # ---- Already-aligned grantees ----
     lines.append("## Grantees with a Judy Center already in their served tracts")
     lines.append("")
-    lines.append("These 14 grantees do **not** need to apply — they share at least "
-                 "one census tract with an existing Judy Center. The four marked "
-                 "with a star are the named-overlap exemplars: their grantee names "
-                 "or initiative names already reference the Judy Center school or "
-                 "locality.")
+    lines.append(f"These {n_yes} grantees do **not** need to apply — they share at "
+                 f"least one census tract with an existing Judy Center. The four "
+                 f"marked with a star are the named-overlap exemplars: their grantee "
+                 f"names or initiative names already reference the Judy Center school "
+                 f"or locality.")
     lines.append("")
     lines.append("| Grantee | County | JCs in served tracts |")
     lines.append("|---|---|---|")
@@ -806,9 +962,10 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
     lines.append("## Candidate elementary schools by grantee")
     lines.append("")
     lines.append("Every elementary or combined school whose census tract is served "
-                 "by an ENOUGH grantee, ranked by CHILD_CPG_PCT within grantee. "
-                 "Schools already operating as Judy Centers are marked. This is the "
-                 "underlying dataset behind the headline table; "
+                 "by an ENOUGH grantee, listed in CPG-descending order within "
+                 "grantee for visual prioritisation. CPG is information, not a "
+                 "filter -- every row is a viable candidate per GOC guidance. "
+                 "Schools already operating as Judy Centers are marked. "
                  "`candidate_elementary_schools.csv` carries the same data with "
                  "GEOID20 and NCES IDs.")
     lines.append("")
@@ -836,16 +993,18 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
     n_exact = sum(1 for a in audit if a["tier"] == "exact")
     n_fuzzy = sum(1 for a in audit if a["tier"].startswith("fuzzy"))
     n_addr  = sum(1 for a in audit if a["tier"].startswith("address"))
+    n_latlon = sum(1 for a in audit if a["tier"] == "latlon")
     n_unres = sum(1 for a in audit if a["tier"] == "not_in_mdp")
+    n_total_jc = len(audit)
     lines.append("## Methodology and caveats")
     lines.append("")
     lines.append("**Data sources.** ENOUGH grantee-to-tract roster supplied by GOC "
                  "(`2025 Updated ENOUGH Grantee Census Tracts and Zipcodes`). Judy "
-                 "Center master list reconciled from the December 2025 MSDE coordinator "
-                 "PDF, the 2019 MSDE coordinator PDF, and individual LEA pages "
-                 "(`judy_centers_full.csv`, 79 sites). Maryland school points and tract "
-                 "polygons from MDP's `ENOUGH_Act_2025` FeatureServer (Layers 0 and 2), "
-                 "downloaded April 2026.")
+                 "Center master list pulled from the Maryland Family Network's Judy "
+                 "Center Hubs Map at marylandchild.org (SuperStoreFinder XML feed, "
+                 f"{n_total_jc} sites, accessed April 2026). Maryland school points, "
+                 "attendance zones, and tract polygons from MDP's `ENOUGH_Act_2025` "
+                 "FeatureServer (Layers 0, 1, and 2).")
     lines.append("")
     lines.append("**Spatial join.** Both layers reprojected to NAD83 / Maryland State "
                  "Plane (EPSG:26985). Each school assigned its containing tract via "
@@ -855,38 +1014,30 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
     lines.append("")
     lines.append(f"**Judy Center to MDP school matching.** Tiered: exact normalized "
                  f"name within county → rapidfuzz `token_sort_ratio >= 85` within "
-                 f"county → address-based fallback (catches Judy Centers colocated "
-                 f"with schools of a different MDP type). "
-                 f"Resolved {n_resolved} of {len(audit)} sites "
-                 f"({n_exact} exact, {n_fuzzy} fuzzy, {n_addr} via address). "
-                 f"Five sites are not in the MDP layer:")
+                 f"county → address-based `token_sort_ratio >= 90` within county → "
+                 f"MarylandChild.org lat/lon point-in-polygon. MarylandChild's "
+                 f"published lat/lon has known precision issues (some pins are "
+                 f"~1 km off), so MDP geometry is preferred when the school exists "
+                 f"in MDP. Resolved all {n_total_jc} of {n_total_jc} sites "
+                 f"({n_exact} exact, {n_fuzzy} fuzzy, {n_addr} via address, "
+                 f"{n_latlon} via MarylandChild.org lat/lon).")
     lines.append("")
-    for a in audit:
-        if a["tier"] == "not_in_mdp":
-            lines.append(f"  - **{a['judy_center']}** ({a['county']}) — "
-                         f"investigate with MSDE/GOC; possible closure, recent rename, "
-                         f"or PDF-extraction artifact.")
-    lines.append("")
-    lines.append("**Concentrated Poverty Grant rate.** `CHILD_CPG_PCT` on MDP's school "
-                 "layer is a three-year FARMS rolling average. The 2025 ENOUGH eligibility "
-                 "threshold is 75% (per MDP's 2025 documentation; the 2024 layer used "
-                 "80% — worth re-confirming with MDP that the values reloaded under "
-                 "the new threshold). Schools below 65% CPG are flagged "
-                 "_lower priority_ in the recommendation column because they fall below "
-                 "the typical Judy Center poverty profile.")
+    lines.append("**CHILD_CPG_PCT (Concentrated Poverty Grant percent).** A "
+                 "three-year FARMS rolling average MDP publishes per school. ENOUGH "
+                 "eligibility uses a 75% threshold, but the operational filter for "
+                 "this analysis is **presence of an elementary school in a "
+                 "JC-free grantee tract**, not CPG. CPG is shown alongside each "
+                 "candidate school as information so reviewers can prioritise where "
+                 "to start, not as a gate. Per GOC: a 41%-CPG candidate is still a "
+                 "candidate.")
     lines.append("")
     lines.append("**Caveats.**")
     lines.append("- A Judy Center's host elementary school being outside a grantee's "
                  "tract does not mean the JC and grantee aren't already coordinating. "
-                 "Many BC Judy Centers (Moravia Park, John Ruhrah, Maree G Farring) "
-                 "sit just outside grantee polygons; a follow-up using the school "
-                 "attendance-zone layer (`Layer 1`) would surface JCs whose catchment "
-                 "overlaps a grantee tract even when the school point itself does not.")
-    lines.append("- The FY24 MSDE board document references 86 Judy Center sites; "
-                 "this analysis uses 79. The 7-row gap is most likely Cecil County's "
-                 "post-2019 expansion (1 → 10 sites) plus pending Prince George's "
-                 "additions. Cecil isn't an ENOUGH county; PG is, so the 3 unresolved "
-                 "PG names above warrant verification.")
+                 "Several BC Judy Centers (Moravia Park, John Ruhrah, Maree G Farring) "
+                 "sit just outside grantee polygons; the catchment-overlap analysis "
+                 "(Layer 1) surfaces these as 'near-miss' JCs in the per-grantee "
+                 "sidebar. See `catchment_overlaps.csv` for the full audit.")
     lines.append("- One grantee (Leaders Breeders Inc., BC tract 24510260301) has no "
                  "traditional elementary or combined school in its served tract — "
                  "only Belair-Edison Charter. Judy Center placement at a charter is "
@@ -919,6 +1070,8 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
 
 def analyze():
     grantee_to_tracts, tract_to_grantees = load_grantees()
+    print("Refreshing Judy Center list from MarylandChild.org...")
+    refresh_judy_centers_from_mc()
     judy_centers = load_judy_centers()
 
     tract_county = {t: tract_county_fips(t) for t in tract_to_grantees.keys()}
@@ -935,7 +1088,8 @@ def analyze():
     print(f"Spatial join produced {len(joined)} school rows "
           f"({len(joined[joined['GEOID20'].notna()])} matched to a tract).")
 
-    audit = resolve_judy_centers(judy_centers, joined)
+    raw_tracts_for_pip = gpd.read_file(CACHE / "mdp_tracts_2025.geojson")
+    audit = resolve_judy_centers(judy_centers, joined, raw_tracts_for_pip)
     audit_by_jc = {a["judy_center"]: a for a in audit}
     for jc in judy_centers:
         a = audit_by_jc[jc["school_name"]]
@@ -999,7 +1153,10 @@ def analyze():
             "school_name": jc["school_name"],
             "school_address": jc["school_address"],
             "city": jc["city"],
-            "vintage": jc["vintage"],
+            "zip": jc.get("zip", ""),
+            "lat": jc.get("lat", ""),
+            "lon": jc.get("lon", ""),
+            "mc_store_id": jc.get("mc_store_id", ""),
             "match_tier": jc["match_tier"],
             "resolved_tract": jc["resolved_tract"] or "",
             "matched_mdp_school": jc["matched_school"],

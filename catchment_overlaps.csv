@@ -77,6 +77,9 @@ ncessch_id,lea_site,school_name,school_type,grantee,tract_geoid,intersect_area_m
 240009000256,30-00000061,Dorothy I. Height Elementary School ,Elementary,Greater Mondawmin Coordinating Council,24510150500,1595,0.002,0.0
 240009000256,30-00000061,Dorothy I. Height Elementary School ,Elementary,"Park Heights Renaissance, Inc.",24510150500,1595,0.002,0.0
 240009000264,30-00000012,Lakeland Elementary/Middle,Combined,Cherry Hill Strong,24510250204,10876,0.013,0.004
+240009000265,30-00000086,Lakewood Elementary,Elementary,Tendea Family INC.,24510070100,182424,0.628,0.13
+240009000265,30-00000086,Lakewood Elementary,Elementary,Tendea Family INC.,24510070200,140288,0.451,0.1
+240009000265,30-00000086,Lakewood Elementary,Elementary,Tendea Family INC.,24510070300,103801,0.454,0.074
 240009000270,30-00000064,Liberty Elementary,Elementary,"Park Heights Renaissance, Inc.",24510151100,117687,0.069,0.072
 240009000270,30-00000064,Liberty Elementary,Elementary,"Park Heights Renaissance, Inc.",24510280102,28021,0.008,0.017
 240009000276,30-00000053,Margaret Brent Elementary/Middle,Combined,"The Central Baltimore Partnership, Inc.",24510090800,595,0.001,0.0
@@ -110,21 +113,18 @@ ncessch_id,lea_site,school_name,school_type,grantee,tract_geoid,intersect_area_m
 240009000335,30-00000028,Sandtown-Winchester Achievement Academy,Combined,"Elev8 Baltimore, Inc.",24510160200,139581,0.373,0.11
 240009000335,30-00000028,Sandtown-Winchester Achievement Academy,Combined,"Elev8 Baltimore, Inc.",24510160300,120332,0.472,0.095
 240009001153,30-00000037,Harford Heights Elementary,Elementary,"The Central Baltimore Partnership, Inc.",24510090800,34,0.0,0.0
-240009001363,30-00000203,Maree G. Farring Elementary/Middle,Combined,"Anne Arundel County Partnership for Children, Youth, and Families",24003750101,797,0.001,0.0
-240009001363,30-00000203,Maree G. Farring Elementary/Middle,Combined,"Anne Arundel County Partnership for Children, Youth, and Families",24003750102,52,0.0,0.0
-240009001363,30-00000203,Maree G. Farring Elementary/Middle,Combined,South Baltimore Community Land Trust,24510250402,301649,0.429,0.046
-240009001363,30-00000203,Maree G. Farring Elementary/Middle,Combined,South Baltimore Community Land Trust,24510250500,94768,0.011,0.014
 240012000369,03-00001525,Deep Creek Elementary,Elementary,"Community Assistance Network, Inc.",24005450501,897128,0.371,0.437
 240012000369,03-00001525,Deep Creek Elementary,Elementary,"Community Assistance Network, Inc.",24005450503,402033,0.434,0.196
 240012000369,03-00001525,Deep Creek Elementary,Elementary,"Community Assistance Network, Inc.",24005450504,728723,0.627,0.355
 240012000424,03-00001512,Mars Estates Elementary,Elementary,"Community Assistance Network, Inc.",24005450501,288494,0.119,0.104
 240012000424,03-00001512,Mars Estates Elementary,Elementary,"Community Assistance Network, Inc.",24005450503,116548,0.126,0.042
 240012000424,03-00001512,Mars Estates Elementary,Elementary,"Community Assistance Network, Inc.",24005450504,371588,0.32,0.134
+240012000469,03-00001527,Sandalwood Elementary,Elementary,"Community Assistance Network, Inc.",24005450503,406871,0.439,0.167
+240012000469,03-00001527,Sandalwood Elementary,Elementary,"Community Assistance Network, Inc.",24005450504,51752,0.045,0.021
 240018000521,05-00000501,Federalsburg Elementary,Elementary,"Caroline Human Services Council, Inc.",24011955600,87333049,0.98,0.623
-240027000380,08-00000620,C Paul Barnhart Elementary,Elementary,"LifeStyles of Maryland Foundation, Inc.",24017850901,38439,0.007,0.006
 240027000585,08-00000604,Dr Samuel A Mudd Elementary ,Elementary,"LifeStyles of Maryland Foundation, Inc.",24017850901,4457779,0.812,0.993
 240027000586,08-00000616,Eva Turner Elementary,Elementary,"LifeStyles of Maryland Foundation, Inc.",24017850901,2018,0.0,0.0
-240027000593,08-00000606,J P Ryon Elementary,Elementary,"LifeStyles of Maryland Foundation, Inc.",24017850901,1223,0.0,0.0
+240030000614,09-00001503,Hurlock Elementary,Elementary,"Caroline Human Services Council, Inc.",24011955600,126528,0.001,0.001
 240030000617,09-00000711,Maple Elementary,Elementary,"Moving Dorchester Forward, INC",24019970500,93600,0.031,0.0
 240030000617,09-00000711,Maple Elementary,Elementary,"Moving Dorchester Forward, INC",24019970600,9215985,0.425,0.04
 240030000617,09-00000711,Maple Elementary,Elementary,"Moving Dorchester Forward, INC",24019970804,51523282,0.213,0.223
@@ -163,7 +163,6 @@ ncessch_id,lea_site,school_name,school_type,grantee,tract_geoid,intersect_area_m
 240048000836,15-00000553,Gaithersburg Elementary,Elementary,"Identity, Inc.",24031700713,78908,0.052,0.027
 240048000836,15-00000553,Gaithersburg Elementary,Elementary,"Identity, Inc.",24031700725,302998,0.411,0.104
 240048000836,15-00000553,Gaithersburg Elementary,Elementary,"Identity, Inc.",24031700726,274034,0.425,0.094
-240048000839,15-00000313,Galway Elementary,Elementary,Latin American Youth Center,24033807410,2453,0.002,0.0
 240048000881,15-00000791,New Hampshire Estates Elem,Elementary,"CASA, Inc.",24033805601,181,0.0,0.0
 240048000881,15-00000791,New Hampshire Estates Elem,Elementary,"CASA, Inc.",24033805700,12370,0.01,0.008
 240048000881,15-00000791,New Hampshire Estates Elem,Elementary,CHEER (Community Health and Empowerment through Education and Research),24031701702,120,0.0,0.0
@@ -178,14 +177,13 @@ ncessch_id,lea_site,school_name,school_type,grantee,tract_geoid,intersect_area_m
 240048000924,15-00000564,South Lake Elementary,Elementary,"Identity, Inc.",24031700726,739,0.001,0.0
 240048000931,15-00000563,Summit Hall Elementary,Elementary,"Identity, Inc.",24031700724,2719,0.003,0.003
 240048000931,15-00000563,Summit Hall Elementary,Elementary,"Identity, Inc.",24031700731,337579,0.253,0.409
-240048000943,15-00000552,Washington Grove Elementary,Elementary,"Identity, Inc.",24031700726,26,0.0,0.0
-240048000943,15-00000552,Washington Grove Elementary,Elementary,"Identity, Inc.",24031700727,57594,0.076,0.008
-240048000943,15-00000552,Washington Grove Elementary,Elementary,"Identity, Inc.",24031700731,60936,0.046,0.008
 240051000510,16-00001725,Cool Spring Elementary,Elementary,"CASA, Inc.",24033805500,3240,0.003,0.004
 240051000510,16-00001725,Cool Spring Elementary,Elementary,"CASA, Inc.",24033805601,186273,0.356,0.246
 240051000510,16-00001725,Cool Spring Elementary,Elementary,"CASA, Inc.",24033805602,50879,0.178,0.067
 240051000510,16-00001725,Cool Spring Elementary,Elementary,"CASA, Inc.",24033805700,32,0.0,0.0
 240051000965,16-00001714,Adelphi Elementary,Elementary,Latin American Youth Center,24033807305,275,0.0,0.0
+240051000991,16-00000606,Bradbury Heights Elementary,Elementary,United Communities Against Poverty,24033802406,23302,0.026,0.008
+240051000991,16-00000606,Bradbury Heights Elementary,Elementary,United Communities Against Poverty,24033802407,2100,0.001,0.001
 240051000999,16-00001711,Carole Highlands Elementary,Elementary,"CASA, Inc.",24033805500,914627,0.907,0.819
 240051000999,16-00001711,Carole Highlands Elementary,Elementary,"CASA, Inc.",24033805601,41274,0.079,0.037
 240051000999,16-00001711,Carole Highlands Elementary,Elementary,"CASA, Inc.",24033805602,22,0.0,0.0

@@ -45,7 +45,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Greater Mondawmin Coordinating Council",
@@ -93,7 +93,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "CASA, Inc.",
@@ -140,7 +140,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "The Central Baltimore Partnership, Inc.",
@@ -208,7 +208,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "The Y in Central Maryland",
@@ -258,7 +258,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Tendea Family INC.",
@@ -272,7 +272,15 @@
     "tract_level_coverage": false,
     "county_level_coverage": true,
     "jcs_in_tracts": [],
-    "jcs_near_miss": [],
+    "jcs_near_miss": [
+      {
+        "school_name": "Lakewood Elementary",
+        "ncessch_id": "240009000265",
+        "pct_of_tract": 0.628,
+        "pct_of_catchment": 0.13,
+        "tract_geoid": "24510070100"
+      }
+    ],
     "candidates": [
       {
         "school_name": "Tench Tilghman Elementary/Middle",
@@ -296,7 +304,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "United Communities Against Poverty",
@@ -335,7 +343,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Urban Strategies Inc",
@@ -362,36 +370,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
-  },
-  {
-    "grantee": "Prince George's County Department of Social Services",
-    "county": "Prince George's",
-    "n_tracts": 4,
-    "tracts": [
-      "24033801801",
-      "24033801802",
-      "24033801808",
-      "24033801809"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Hillcrest Heights Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240051001060",
-        "geoid20": "24033801808",
-        "cpg": 0.89,
-        "child_pov_pct": 23.5,
-        "is_jc": false,
-        "address": "4305 22nd Pl Temple Hills MD 20748"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Latin American Youth Center",
@@ -430,7 +409,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Identity, Inc.",
@@ -454,13 +433,6 @@
         "pct_of_tract": 0.253,
         "pct_of_catchment": 0.409,
         "tract_geoid": "24031700731"
-      },
-      {
-        "school_name": "Washington Grove Elementary",
-        "ncessch_id": "240048000943",
-        "pct_of_tract": 0.076,
-        "pct_of_catchment": 0.008,
-        "tract_geoid": "24031700727"
       }
     ],
     "candidates": [
@@ -486,7 +458,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Community Assistance Network, Inc.",
@@ -500,7 +472,15 @@
     "tract_level_coverage": false,
     "county_level_coverage": true,
     "jcs_in_tracts": [],
-    "jcs_near_miss": [],
+    "jcs_near_miss": [
+      {
+        "school_name": "Sandalwood Elementary",
+        "ncessch_id": "240012000469",
+        "pct_of_tract": 0.439,
+        "pct_of_catchment": 0.167,
+        "tract_geoid": "24005450503"
+      }
+    ],
     "candidates": [
       {
         "school_name": "Deep Creek Elementary",
@@ -524,7 +504,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Possible candidate \u2014 confirm school eligibility"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Good Intentions Foundation Inc.",
@@ -550,7 +530,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Lower priority \u2014 CPG below typical Judy Center threshold"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Leaders Breeders Inc.",
@@ -565,7 +545,7 @@
     "jcs_near_miss": [],
     "candidates": [],
     "named_hint": false,
-    "recommendation_short": "No traditional elementary in any served tract"
+    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
   },
   {
     "grantee": "Anne Arundel County Partnership for Children, Youth, and Families",
@@ -616,7 +596,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Boys & Girls Clubs of Harford and Cecil Counties",
@@ -686,7 +666,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Caroline Human Services Council, Inc.",
@@ -698,7 +678,7 @@
     "tract_level_coverage": true,
     "county_level_coverage": true,
     "jcs_in_tracts": [
-      "Federalsburg Elementary School"
+      "Federalsburg Judy Center"
     ],
     "jcs_near_miss": [],
     "candidates": [
@@ -714,7 +694,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "No traditional elementary in any served tract"
+    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
   },
   {
     "grantee": "CHEER (Community Health and Empowerment through Education and Research)",
@@ -755,7 +735,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Cherry Hill Strong",
@@ -769,7 +749,7 @@
     "tract_level_coverage": true,
     "county_level_coverage": true,
     "jcs_in_tracts": [
-      "Arundel Elementary/Middle School"
+      "Arundel Elementary School"
     ],
     "jcs_near_miss": [],
     "candidates": [
@@ -795,7 +775,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Child First Authority",
@@ -812,7 +792,7 @@
     "tract_level_coverage": true,
     "county_level_coverage": true,
     "jcs_in_tracts": [
-      "Dorothy I. Height Elementary"
+      "Dorothy I. Height Elementary School"
     ],
     "jcs_near_miss": [],
     "candidates": [
@@ -838,7 +818,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "City of Cumberland",
@@ -877,7 +857,7 @@
       }
     ],
     "named_hint": true,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Frederick Local Management Board",
@@ -893,9 +873,9 @@
     "tract_level_coverage": true,
     "county_level_coverage": true,
     "jcs_in_tracts": [
-      "Waverley Elementary School",
       "Butterfly Ridge Elementary School",
-      "Hillcrest Elementary School"
+      "Hillcrest Elementary School",
+      "Waverley Elementary School"
     ],
     "jcs_near_miss": [
       {
@@ -939,7 +919,7 @@
       }
     ],
     "named_hint": true,
-    "recommendation_short": "No traditional elementary in any served tract"
+    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
   },
   {
     "grantee": "LifeStyles of Maryland Foundation, Inc.",
@@ -967,7 +947,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "No traditional elementary in any served tract"
+    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
   },
   {
     "grantee": "Moving Dorchester Forward, INC",
@@ -1015,7 +995,7 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "One Annapolis, Inc",
@@ -1030,7 +1010,7 @@
     "tract_level_coverage": true,
     "county_level_coverage": true,
     "jcs_in_tracts": [
-      "Georgetown East Elementary School"
+      "Georgetown East Elementary"
     ],
     "jcs_near_miss": [],
     "candidates": [
@@ -1056,7 +1036,7 @@
       }
     ],
     "named_hint": true,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "Park Heights Renaissance, Inc.",
@@ -1141,7 +1121,38 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+  },
+  {
+    "grantee": "Prince George's County Department of Social Services",
+    "county": "Prince George's",
+    "n_tracts": 4,
+    "tracts": [
+      "24033801801",
+      "24033801802",
+      "24033801808",
+      "24033801809"
+    ],
+    "tract_level_coverage": true,
+    "county_level_coverage": true,
+    "jcs_in_tracts": [
+      "Hillcrest Heights Elementary School"
+    ],
+    "jcs_near_miss": [],
+    "candidates": [
+      {
+        "school_name": "Hillcrest Heights Elementary",
+        "school_type": "Elementary",
+        "ncessch_id": "240051001060",
+        "geoid20": "24033801808",
+        "cpg": 0.89,
+        "child_pov_pct": 23.5,
+        "is_jc": true,
+        "address": "4305 22nd Pl Temple Hills MD 20748"
+      }
+    ],
+    "named_hint": false,
+    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
   },
   {
     "grantee": "San Mar Family & Community Services: Bester Community of Hope",
@@ -1205,7 +1216,7 @@
       }
     ],
     "named_hint": true,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   },
   {
     "grantee": "South Baltimore Community Land Trust",
@@ -1220,15 +1231,7 @@
     "jcs_in_tracts": [
       "Curtis Bay Elementary/Middle School"
     ],
-    "jcs_near_miss": [
-      {
-        "school_name": "Maree G. Farring Elementary/Middle",
-        "ncessch_id": "240009001363",
-        "pct_of_tract": 0.429,
-        "pct_of_catchment": 0.046,
-        "tract_geoid": "24510250402"
-      }
-    ],
+    "jcs_near_miss": [],
     "candidates": [
       {
         "school_name": "Bay-Brook Elementary/Middle",
@@ -1252,6 +1255,6 @@
       }
     ],
     "named_hint": false,
-    "recommendation_short": "Strong candidate \u2014 pursue Judy Center conversation"
+    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
   }
 ]

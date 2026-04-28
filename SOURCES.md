@@ -12,27 +12,29 @@ GOC supplied the same roster to MDP for the public ENOUGH map.
 
 ## Judy Center master list
 
-`judy_centers_full.csv` is reconciled from three public Maryland State
-Department of Education sources:
+`judy_centers_full.csv` is regenerated on every run of `analyze.py` from the
+**Maryland Family Network's Judy Center Hubs Map** at
+`https://marylandchild.org/family-support/judy-center-hubs-map/`. The map is
+backed by a SuperStoreFinder XML feed at
+`https://marylandchild.org/wp-content/plugins/superstorefinder-wp/ssf-wp-xml.php`,
+which the pipeline caches locally to `.cache/marylandchild_ssf.xml` on first
+run. As of April 2026 the feed lists 92 Judy Centers (and 17 Patty Family
+Support Centers, which the pipeline excludes via the "(JC)" / "(PC)" suffix
+on each item's location field).
 
-1. **December 2025 MSDE Judy Center Coordinator Contact List**
-   (`judycentercoordinatorlistwebsitefeb2015_.pdf`, last updated 12/9/2025) —
-   distributed at
-   `https://earlychildhood.marylandpublicschools.org/`. Authoritative list of
-   sites and the per-site coordinator point-of-contact.
-2. **2019 MSDE Judy Center Coordinator Contact List** (same URL, earlier
-   vintage). Reproduced locally in `internal/` (gitignored) for the data
-   reconciliation step but not republished in this public repo — the
-   markdown carried direct phone numbers and email addresses that, while
-   public-record, are better not amplified through GitHub indexing. Refer
-   to MSDE's PDF as the authoritative source.
-3. **LEA-published Judy Center pages and FY24/25 board documents** for sites
-   added between the two PDFs (FCPS, MCPS, HCPS, BayNet 2025 reporting).
+Each item carries: school name, street address, city, ZIP, latitude,
+longitude, county tag, telephone, and an internal MFN store ID. The pipeline
+records all of these except telephone (not needed for the spatial analysis;
+GOC can pull it from MFN's site or MSDE's coordinator PDF when needed).
 
-Coordinator names that appear in `judy_centers_full.csv` are reproduced from
-MSDE's publicly distributed coordinator PDFs and represent each Judy Center's
-single point-of-contact at the host school. They are not personal contact
-details. See `judy_center_contact_list_2019.md` for the full extracted PDF.
+MFN's map is the public-facing Judy Center directory maintained for MSDE.
+For the most current authoritative source -- including the per-site
+coordinator point-of-contact -- consult MSDE's December 2025 Judy Center
+Coordinator PDF
+(`https://earlychildhood.marylandpublicschools.org/`). The pipeline does not
+ingest the PDF directly; it was used in earlier iterations as a
+cross-reference and is preserved (without phone/email PII) in `internal/`
+locally.
 
 ## Maryland Department of Planning ENOUGH layers
 
