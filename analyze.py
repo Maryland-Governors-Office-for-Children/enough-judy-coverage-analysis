@@ -930,6 +930,7 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
     print(f"Wrote site data: {len(g_tracts)} tracts, {len(rel_schools)} schools, "
           f"{len(rel_cats)} catchments, {len(grantees_payload)} grantees "
           f"({n_in_tract}/{n_catchment}/{n_needs})")
+    return payload
 
 
 # ---- Executive summary ----
@@ -956,7 +957,10 @@ def _grantee_county_label(grantee_row):
     return grantee_row["counties"]
 
 
-def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_to_grantees):
+def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
+                             tract_to_grantees, dashboard=None,
+                             grantees_payload=None,
+                             closest_elementary_per_grantee=None):
     cands_by_grantee = defaultdict(list)
     for c in candidate_rows:
         cands_by_grantee[c["grantee"]].append(c)
@@ -967,10 +971,14 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
                            0 if r["is_judy_center"] == "no" else 1)
         )
 
-    no_jc = [r for r in grantee_rows if r["tract_level_coverage"] != "yes"]
-    has_jc = [r for r in grantee_rows if r["tract_level_coverage"] == "yes"]
+    closest_elementary_per_grantee = closest_elementary_per_grantee or {}
 
-    # Order: needs-JC grantees by best non-JC candidate CPG desc, ties by name
+    by_cat = {"in_tract": [], "catchment_overlap": [], "needs_jc": []}
+    for r in grantee_rows:
+        by_cat[r.get("category", "needs_jc")].append(r)
+
+    # Sort each category: in_tract alphabetical; catchment_overlap by best
+    # near-miss pct of tract (largest first); needs_jc by best non-JC CPG
     def best_non_jc_cpg(g):
         for c in cands_by_grantee.get(g, []):
             if c["is_judy_center"] == "no":
@@ -980,92 +988,141 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
                     return 0.0
         return -1.0
 
-    no_jc.sort(key=lambda r: (-best_non_jc_cpg(r["grantee"]), r["grantee"]))
-    has_jc.sort(key=lambda r: r["grantee"])
+    nm_lookup = {p["grantee"]: p["jcs_near_miss"] for p in (grantees_payload or [])}
+
+    by_cat["in_tract"].sort(key=lambda r: r["grantee"])
+    by_cat["catchment_overlap"].sort(
+        key=lambda r: (
+            -(max((nm["pct_of_tract"] for nm in nm_lookup.get(r["grantee"], [])),
+                  default=0)),
+            r["grantee"],
+        )
+    )
+    by_cat["needs_jc"].sort(key=lambda r: (-best_non_jc_cpg(r["grantee"]),
+                                            r["grantee"]))
+
+    n_total = len(grantee_rows)
 
     lines = []
-    lines.append("# ENOUGH x Judy Center Coverage — Executive Summary")
+    lines.append("# ENOUGH × Judy Center Coverage — Executive Summary")
     lines.append("")
-    n_total = len(grantee_rows)
-    n_yes = len(has_jc)
-    n_no = len(no_jc)
     lines.append(
-        f"Maryland's 28 ENOUGH grantees collectively serve 106 census tracts; the state's "
-        f"92 Judy Center Early Learning Hubs are distributed across 24 counties. This "
-        f"analysis answers a single operational question: **which ENOUGH grantees are "
-        f"candidates to apply for a Judy Center?** A grantee is a candidate when its "
-        f"served tracts contain at least one elementary or combined school but no Judy "
-        f"Center is currently sited there. Of the {n_total} grantees, **{n_yes} already "
-        f"have a Judy Center inside one of their served tracts** and **{n_no} do not**. "
-        f"The {n_no} without coverage are listed first below. CHILD_CPG_PCT (concentrated "
-        f"poverty grant percent) is reported alongside each candidate school as "
-        f"information; per GOC guidance the operational filter is presence of an "
-        f"elementary in a JC-free tract, not CPG threshold."
+        f"Maryland's 28 ENOUGH grantees collectively serve 106 census tracts. "
+        f"The state has **{dashboard['n_judy_centers_total']} Judy Center "
+        f"Early Learning Hubs** distributed across 24 counties. This analysis "
+        f"answers a single operational question: **which ENOUGH grantees are "
+        f"candidates to apply for a Judy Center?** A grantee is a candidate "
+        f"when its served tracts contain at least one elementary or combined "
+        f"school but no Judy Center is currently sited there. Per GOC guidance "
+        f"the operational filter is **presence of an elementary in a JC-free "
+        f"tract, not a CPG threshold** — CPG is reported as information so "
+        f"reviewers can prioritise where to start."
     )
     lines.append("")
 
-    # ---- Headline gap-list table: grantees WITHOUT tract-level JC ----
-    lines.append("## Grantees without a Judy Center in their served tracts")
+    # ---- Dashboard ----
+    lines.append("## Dashboard")
     lines.append("")
-    lines.append("Listed in order of the candidate elementary's CPG (highest first) "
-                 "to surface higher-poverty cases visually, not as a filter -- every "
-                 "grantee in this table has at least one elementary or combined school "
-                 "in their served tracts that is not yet a Judy Center.")
+    lines.append("| | |")
+    lines.append("|---|---:|")
+    lines.append(f"| ENOUGH grantees | **{dashboard['n_grantees']}** |")
+    lines.append(f"| &nbsp; — Already covered (JC in tract) | {dashboard['n_in_tract']} |")
+    lines.append(f"| &nbsp; — Catchment overlap (no in-tract JC, near-miss catchment) | {dashboard['n_catchment_overlap']} |")
+    lines.append(f"| &nbsp; — Needs Judy Center | **{dashboard['n_needs_jc']}** |")
+    lines.append(f"| Judy Centers statewide | {dashboard['n_judy_centers_total']} |")
+    lines.append(f"| &nbsp; — In ENOUGH grantee tracts | {dashboard['n_judy_centers_in_grantee_tracts']} |")
+    lines.append(f"| &nbsp; — Catchment-overlap only (school outside grantee tract) | {dashboard['n_judy_centers_catchment_overlap_only']} |")
+    lines.append(f"| Distinct prospective elementaries in grantee tracts | {dashboard['n_prospective_elementaries']} |")
     lines.append("")
-    lines.append("| Grantee | County | # Tracts | Top non-JC candidate(s) | Recommendation |")
-    lines.append("|---|---|---:|---|---|")
-    for r in no_jc:
+
+    # ---- Section: Already covered ----
+    lines.append(f"## 1. Already covered ({dashboard['n_in_tract']})")
+    lines.append("")
+    lines.append("Grantees whose served tracts already contain at least one Judy "
+                 "Center. **No new application needed.** The four entries marked "
+                 "with a ★ are the named-overlap exemplars whose grantee names "
+                 "already reference the Judy Center school or locality.")
+    lines.append("")
+    lines.append("| Grantee | County | Judy Center(s) in served tracts |")
+    lines.append("|---|---|---|")
+    for r in by_cat["in_tract"]:
+        marker = " ★" if r["grantee"] in NAMED_HINT_GRANTEES else ""
+        county = r["counties"]
+        jcs = r["jc_in_grantee_tracts"] or "(see audit)"
+        lines.append(f"| {r['grantee']}{marker} | {county} | {jcs} |")
+    lines.append("")
+
+    # ---- Section: Catchment overlap ----
+    lines.append(f"## 2. Catchment overlap ({dashboard['n_catchment_overlap']})")
+    lines.append("")
+    lines.append("Grantees whose served tracts contain no in-tract Judy Center, "
+                 "but where at least one Judy Center's school-attendance zone "
+                 "overlaps a served tract by ≥ 5% of either the tract or the "
+                 "catchment area. **These are coordination opportunities** — "
+                 "the host school is outside the grantee's polygons but the JC "
+                 "draws students from inside, so the JC and the grantee may "
+                 "already be reaching the same families. May not require a new "
+                 "Judy Center application; worth a direct conversation between "
+                 "the grantee and the existing Judy Center.")
+    lines.append("")
+    lines.append("| Grantee | County | Near-miss Judy Center | % of tract overlap |")
+    lines.append("|---|---|---|---:|")
+    for r in by_cat["catchment_overlap"]:
+        nm_list = nm_lookup.get(r["grantee"], [])
+        if nm_list:
+            top = max(nm_list, key=lambda n: n["pct_of_tract"])
+            jc = top["school_name"].strip()
+            pct = _fmt_pct(top["pct_of_tract"])
+        else:
+            jc = "—"
+            pct = "—"
+        county = r["counties"]
+        lines.append(f"| {r['grantee']} | {county} | {jc} | {pct} |")
+    lines.append("")
+
+    # ---- Section: Needs Judy Center ----
+    lines.append(f"## 3. Needs Judy Center ({dashboard['n_needs_jc']})")
+    lines.append("")
+    lines.append("Grantees with no in-tract Judy Center and no overlapping "
+                 "catchment. **Primary candidates for new Judy Center "
+                 "applications.** Top non-JC candidate elementary school is "
+                 "shown as a starting point; CPG is informational. For grantees "
+                 "with no traditional elementary or combined school in any "
+                 "served tract, the closest non-JC elementary (within 10 km of "
+                 "a tract edge) is offered as a fallback.")
+    lines.append("")
+    lines.append("| Grantee | County | Top candidate(s) | Notes |")
+    lines.append("|---|---|---|---|")
+    for r in by_cat["needs_jc"]:
         cands = cands_by_grantee.get(r["grantee"], [])
         non_jc_cands = [c for c in cands if c["is_judy_center"] == "no"]
+        county = r["counties"]
         if non_jc_cands:
             top = non_jc_cands[:2]
             top_str = "; ".join(
                 f"{c['school_name']} ({_fmt_pct(c['child_cpg_pct'])})"
                 for c in top
             )
-            rec = "Has elementary school(s) in served tracts — candidate for Judy Center"
-        elif cands:
-            top_str = "(only candidate is already a Judy Center)"
-            rec = "Review case by case"
+            note = ""
         else:
-            top_str = "No traditional elementary in any served tract"
-            rec = "Investigate alternative school types in tract (charter/middle)"
-        # County: shorten if very long
-        county = r["counties"]
-        if len(county) > 30:
-            county = county[:27] + "..."
-        grantee_short = r["grantee"]
-        if len(grantee_short) > 50:
-            grantee_short = grantee_short[:47] + "..."
-        lines.append(f"| {grantee_short} | {county} | {r['n_tracts']} | "
-                     f"{top_str} | {rec} |")
+            ce = closest_elementary_per_grantee.get(r["grantee"])
+            if ce:
+                km = ce["distance_m"] / 1000
+                top_str = (f"_(closest fallback: {ce['school_name']} at "
+                           f"{km:.1f} km, CPG {_fmt_pct(ce['cpg'])})_")
+                note = "No traditional elementary in tract"
+            else:
+                top_str = "No traditional elementary in any served tract"
+                note = "Investigate alternative school types"
+        lines.append(f"| {r['grantee']} | {county} | {top_str} | {note} |")
     lines.append("")
-
-    # ---- Already-aligned grantees ----
-    lines.append("## Grantees with a Judy Center already in their served tracts")
-    lines.append("")
-    lines.append(f"These {n_yes} grantees do **not** need to apply — they share at "
-                 f"least one census tract with an existing Judy Center. The four "
-                 f"marked with a star are the named-overlap exemplars: their grantee "
-                 f"names or initiative names already reference the Judy Center school "
-                 f"or locality.")
-    lines.append("")
-    lines.append("| Grantee | County | JCs in served tracts |")
-    lines.append("|---|---|---|")
-    for r in has_jc:
-        marker = " *" if r["grantee"] in NAMED_HINT_GRANTEES else ""
-        county = r["counties"]
-        if len(county) > 30:
-            county = county[:27] + "..."
-        jcs = r["jc_in_grantee_tracts"] or "(see audit)"
-        lines.append(f"| {r['grantee']}{marker} | {county} | {jcs} |")
-    lines.append("")
-    lines.append("\\* Named-overlap exemplars (City of Cumberland ↔ South Penn ES; "
-                 "One Annapolis ↔ Georgetown East ES; San Mar ↔ Bester ES; "
-                 "Frederick LMB ↔ Waverley/Hillcrest/Butterfly Ridge ES). The "
-                 "Frederick LMB initiative spans 5 tracts and 3 of the 6 FCPS Judy "
-                 "Centers fall directly inside them; the other three FCPS Judy "
-                 "Centers (Lincoln, Monocacy, Tuscarora) are in adjacent Frederick "
+    lines.append("**Named-overlap exemplars** (validated during development): "
+                 "City of Cumberland ↔ South Penn ES; One Annapolis ↔ "
+                 "Georgetown East ES; San Mar ↔ Bester ES; Frederick LMB ↔ "
+                 "Waverley/Hillcrest/Butterfly Ridge ES. The Frederick LMB "
+                 "initiative spans 5 tracts and 3 of the 6 FCPS Judy Centers "
+                 "fall directly inside them; the other three FCPS Judy Centers "
+                 "(Lincoln, Monocacy, Tuscarora) are in adjacent Frederick "
                  "tracts the LMB does not serve under the current grant.")
     lines.append("")
 
@@ -1080,12 +1137,14 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined, tract_t
                  "`candidate_elementary_schools.csv` carries the same data with "
                  "GEOID20 and NCES IDs.")
     lines.append("")
-    for r in no_jc + has_jc:
+    for r in (by_cat["needs_jc"] + by_cat["catchment_overlap"]
+              + by_cat["in_tract"]):
         cands = cands_by_grantee.get(r["grantee"], [])
         if not cands:
             continue
         lines.append(f"### {r['grantee']}")
-        lines.append(f"_{r['counties']} — {r['n_tracts']} served tract(s)_")
+        lines.append(f"_{r['counties']} — {r['n_tracts']} served tract(s) — "
+                     f"category: {r['category']}_")
         lines.append("")
         lines.append("| School | Type | Tract | CPG | Child Pov | Judy Center? |")
         lines.append("|---|---|---|---:|---:|:---:|")
@@ -1494,12 +1553,8 @@ def analyze():
         w.writeheader()
         w.writerows(grantee_rows)
 
-    # ---- Output: executive summary (stakeholder-facing markdown) ----
-    write_executive_summary(grantee_rows, candidate_rows, audit, joined,
-                            tract_to_grantees)
-
     # ---- Output: site data (interactive map) ----
-    write_site_data(
+    site_data_payload = write_site_data(
         grantee_rows=grantee_rows,
         candidate_rows=candidate_rows,
         audit=audit,
@@ -1512,6 +1567,13 @@ def analyze():
         tract_to_grantees=tract_to_grantees,
         closest_elementary_per_grantee=closest_elementary_per_grantee,
     )
+
+    # ---- Output: executive summary (stakeholder-facing markdown) ----
+    write_executive_summary(grantee_rows, candidate_rows, audit, joined,
+                            tract_to_grantees,
+                            dashboard=site_data_payload["dashboard"],
+                            grantees_payload=site_data_payload["grantees"],
+                            closest_elementary_per_grantee=closest_elementary_per_grantee)
 
     # ---- Console summary ----
     print()

@@ -1,57 +1,69 @@
 # ENOUGH × Judy Center coverage analysis
 
 Cross-reference of Maryland's 28 [ENOUGH](https://goc.maryland.gov/enough/)
-grantees against the state's 79 [Judy Center Early Learning
+grantees against the state's 92 [Judy Center Early Learning
 Hubs](https://earlychildhood.marylandpublicschools.org/families/judy-centers).
-Answers the operational question: **which ENOUGH grantees are good candidates
-to apply for a Judy Center?**
-
-A grantee is a candidate when its served census tracts contain at least one
-elementary or combined school but no Judy Center is currently sited there. Of
-the 28 grantees, **15 already have a Judy Center inside one of their served
-tracts** and **13 do not**. The 13 without coverage are the focus.
+Answers the operational question: **which ENOUGH grantees are candidates to
+apply for a Judy Center?**
 
 Per GOC guidance, the operational filter is presence of an elementary school
 in a JC-free grantee tract — not a CPG (concentrated poverty grant) threshold.
 CPG is shown alongside each candidate as information so reviewers can
 prioritise where to start, not as a gate.
 
-- **`executive_summary.md`** — stakeholder-facing narrative, candidate list
-  per grantee, methodology, caveats.
-- **Interactive map** — pick a grantee, see their tract polygons shaded, the
-  Judy Centers and candidate elementary schools on the map, and the
-  recommendation in the sidebar.
-  Live site URL is published at the top of this README once the repo is
-  hosted under the GOC organization on GitHub.
+## Dashboard
+
+| | |
+|---|---:|
+| ENOUGH grantees | **28** |
+| &nbsp; — Already covered (Judy Center in served tract) | 15 |
+| &nbsp; — Catchment overlap (no in-tract JC, near-miss catchment) | 8 |
+| &nbsp; — **Needs Judy Center** | **5** |
+| Judy Centers statewide | 92 |
+| &nbsp; — In ENOUGH grantee tracts | 17 |
+| &nbsp; — Catchment-overlap only | 12 |
+| Distinct prospective elementaries in grantee tracts | 35 |
+
+- **Already covered (15)** — at least one Judy Center inside a served census
+  tract. No new application needed.
+- **Catchment overlap (8)** — no in-tract Judy Center, but a JC's school
+  attendance zone overlaps a served tract by ≥ 5%. Coordination opportunity;
+  may not require a new application.
+- **Needs Judy Center (5)** — neither in-tract nor catchment overlap.
+  Primary candidates for new Judy Center applications: CASA Inc., Good
+  Intentions Foundation, Latin American Youth Center, Leaders Breeders Inc.,
+  Urban Strategies Inc.
+
+## Where the analysis lives
+
+- **`executive_summary.md`** — stakeholder-facing narrative with the
+  dashboard, the 3-category breakdown, and per-grantee candidate detail.
+- **Interactive site (`site/`)** — tabbed Leaflet app: **Overview**
+  (dashboard), **Map** (color-coded by category), **Grantees** (per-grantee
+  detail blocks), **Methodology** (data sources, match tiers, caveats).
+  Live URL is published once the repo is hosted under the GOC organization
+  on GitHub.
 - **`SOURCES.md`** — provenance for every dataset used.
 
-## Candidate grantees (need a Judy Center)
+## Needs-Judy-Center detail
 
-The 13 grantees without tract-level coverage. CPG is the
-highest-CPG-non-JC candidate's concentrated-poverty rate, shown for context.
+The five grantees in the **Needs Judy Center** category, with their top
+non-JC candidate elementary by CPG:
 
-| Grantee | County | Highest-CPG non-JC candidate |
+| Grantee | County | Top candidate(s) |
 |---|---|---|
-| Elev8 Baltimore | Baltimore City | Sandtown-Winchester Achievement Academy (96%) |
-| Greater Mondawmin Coordinating Council | Baltimore City | Robert W Coleman Elementary (96%) |
-| CASA, Inc. | Prince George's | Langley Park/McCormick Elem (95%) |
-| The Central Baltimore Partnership | Baltimore City | Cecil Elementary (92%) |
-| The Y in Central Maryland | Baltimore City | Walter P Carter Elementary/Middle (92%) |
-| Tendea Family Inc. | Baltimore City | Tench Tilghman Elementary/Middle (91%) |
-| United Communities Against Poverty | Prince George's | District Heights Elementary (90%) |
-| Urban Strategies Inc. | Baltimore City | National Academy Foundation (90%) |
-| Latin American Youth Center | Prince George's | Adelphi Elementary (87%) |
-| Identity, Inc. | Montgomery | South Lake Elementary (85%) |
-| Community Assistance Network | Baltimore County | Deep Creek Elementary (81%) |
-| Good Intentions Foundation | Prince George's | Glenarden Woods Elementary (41%) |
-| Leaders Breeders Inc. | Baltimore City | _no traditional elementary in tract — only Belair-Edison Charter_ |
+| United Communities Against Poverty | Prince George's | District Heights Elementary (90%); Frances Scott Key Elem (86%) |
+| Urban Strategies Inc | Baltimore City | National Academy Foundation (90%) |
+| Latin American Youth Center | Prince George's | Adelphi Elementary (87%); Cherokee Lane Elementary (85%) |
+| Good Intentions Foundation Inc. | Prince George's | Glenarden Woods Elementary (41%) |
+| Leaders Breeders Inc. | Baltimore City | _closest fallback: Sinclair Lane Elementary at 0.5 km, CPG 91%_ |
 
-The four grantees whose names already reference their host Judy Center —
-**City of Cumberland** (South Penn ES), **One Annapolis** (Georgetown East
-ES), **San Mar** (Bester ES), **Frederick LMB** (3 of 6 FCPS Judy Centers) —
-are validated as already-aligned exemplars. **Prince George's County DSS** is
-also covered: Hillcrest Heights Elementary (a Judy Center confirmed via
-MarylandChild.org) sits inside one of PG DSS's served tracts.
+The four named-overlap exemplars — **City of Cumberland** (South Penn ES),
+**One Annapolis** (Georgetown East ES), **San Mar** (Bester ES),
+**Frederick LMB** (Waverley/Hillcrest/Butterfly Ridge ES) — are validated
+as already-aligned. **Prince George's County DSS** is also covered:
+Hillcrest Heights Elementary (a Judy Center confirmed via MarylandChild.org)
+sits inside one of PG DSS's served tracts.
 
 ## Pipeline
 
