@@ -1,6 +1,6 @@
 # ENOUGH × Judy Center Coverage — Executive Summary
 
-Maryland's 28 ENOUGH grantees collectively serve 106 census tracts. The state has **92 Judy Center Early Learning Hubs** distributed across 24 counties. This analysis answers a single operational question: **which ENOUGH grantees are candidates to apply for a Judy Center?** A grantee is a candidate when its served tracts contain at least one elementary or combined school but no Judy Center is currently sited there. Per GOC guidance the operational filter is **presence of an elementary in a JC-free tract, not a CPG threshold** — CPG is reported as information so reviewers can prioritise where to start.
+Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has 92 Judy Center Early Learning Hubs. This summary breaks the grantees into three groups: those that already have a Judy Center in their served tracts, those served by a nearby Judy Center whose attendance zone reaches in, and those with no Judy Center coverage at all. For grantees in the third group, it lists the elementary schools that could host a future Judy Center.
 
 ## Dashboard
 
@@ -17,7 +17,7 @@ Maryland's 28 ENOUGH grantees collectively serve 106 census tracts. The state ha
 
 ## 1. Already covered (15)
 
-Grantees whose served tracts already contain at least one Judy Center. **No new application needed.** The four entries marked with a ★ are the named-overlap exemplars whose grantee names already reference the Judy Center school or locality.
+A Judy Center already sits inside one of the grantee's served census tracts. No new application needed. Four grantees marked with a ★ are named after their host Judy Center school or locality and operate in close partnership with it.
 
 | Grantee | County | Judy Center(s) in served tracts |
 |---|---|---|
@@ -37,9 +37,9 @@ Grantees whose served tracts already contain at least one Judy Center. **No new 
 | San Mar Family & Community Services: Bester Community of Hope ★ | Washington | Bester Elementary School |
 | South Baltimore Community Land Trust | Baltimore City | Curtis Bay Elementary/Middle School |
 
-## 2. Catchment overlap (8)
+## 2. Served by a nearby Judy Center (8)
 
-Grantees whose served tracts contain no in-tract Judy Center, but where at least one Judy Center's school-attendance zone overlaps a served tract by ≥ 5% of either the tract or the catchment area. **These are coordination opportunities** — the host school is outside the grantee's polygons but the JC draws students from inside, so the JC and the grantee may already be reaching the same families. May not require a new Judy Center application; worth a direct conversation between the grantee and the existing Judy Center.
+No Judy Center sits inside the grantee's tracts, but a Judy Center elsewhere draws students from inside them through its school attendance zone. In practice the grantee and the existing Judy Center are likely already reaching the same families. A new application may not be necessary; a direct conversation with the host Judy Center is usually the right first step.
 
 | Grantee | County | Near-miss Judy Center | % of tract overlap |
 |---|---|---|---:|
@@ -52,9 +52,9 @@ Grantees whose served tracts contain no in-tract Judy Center, but where at least
 | CASA, Inc. | Prince George's | Cool Spring Elementary | 36% |
 | Identity, Inc. | Montgomery | Summit Hall Elementary | 25% |
 
-## 3. Needs Judy Center (5)
+## 3. Not served by a Judy Center (5)
 
-Grantees with no in-tract Judy Center and no overlapping catchment. **Primary candidates for new Judy Center applications.** Top non-JC candidate elementary school is shown as a starting point; CPG is informational. For grantees with no traditional elementary or combined school in any served tract, the closest non-JC elementary (within 10 km of a tract edge) is offered as a fallback.
+No Judy Center inside the grantee's tracts, and no nearby Judy Center whose attendance zone reaches in. These are the grantees most worth a conversation about a new Judy Center. The table lists the top elementary schools in their tracts as starting points. Where a grantee's tracts contain no traditional elementary at all, the closest one outside the tract is shown as a fallback.
 
 | Grantee | County | Top candidate(s) | Notes |
 |---|---|---|---|
@@ -64,7 +64,7 @@ Grantees with no in-tract Judy Center and no overlapping catchment. **Primary ca
 | Good Intentions Foundation Inc. | Prince George's | Glenarden Woods Elementary (41%) |  |
 | Leaders Breeders Inc. | Baltimore City | _(closest fallback: Sinclair Lane Elementary at 0.5 km, CPG 91%)_ | No traditional elementary in tract |
 
-**Named-overlap exemplars** (validated during development): City of Cumberland ↔ South Penn ES; One Annapolis ↔ Georgetown East ES; San Mar ↔ Bester ES; Frederick LMB ↔ Waverley/Hillcrest/Butterfly Ridge ES. The Frederick LMB initiative spans 5 tracts and 3 of the 6 FCPS Judy Centers fall directly inside them; the other three FCPS Judy Centers (Lincoln, Monocacy, Tuscarora) are in adjacent Frederick tracts the LMB does not serve under the current grant.
+**Already-aligned grantees.** Four grantees are named after their host Judy Center school or locality and operate in close partnership with it: City of Cumberland with South Penn Elementary, One Annapolis with Georgetown East Elementary, San Mar with Bester Elementary, and Frederick Local Management Board with Waverley, Hillcrest, and Butterfly Ridge Elementary. Frederick LMB serves 5 tracts; 3 of the 6 Frederick County Judy Centers sit inside them, while the other three (Lincoln, Monocacy, Tuscarora) are in adjacent Frederick tracts not covered by the current grant.
 
 ## Candidate elementary schools by grantee
 
@@ -290,20 +290,17 @@ _Baltimore City — 2 served tract(s) — category: in_tract_
 | Bay-Brook Elementary/Middle | Combined | 24510250500 | 90% | 33% |  |
 | Curtis Bay Elementary/Middle | Elementary | 24510250500 | 90% | 33% | yes |
 
-## Methodology and caveats
+## Methodology
 
-**Data sources.** ENOUGH grantee-to-tract roster supplied by GOC (`2025 Updated ENOUGH Grantee Census Tracts and Zipcodes`). Judy Center master list pulled from the Maryland Family Network's Judy Center Hubs Map at marylandchild.org (SuperStoreFinder XML feed, 92 sites, accessed April 2026). Maryland school points, attendance zones, and tract polygons from MDP's `ENOUGH_Act_2025` FeatureServer (Layers 0, 1, and 2).
+**What this combines.** The ENOUGH grantee roster from the Governor's Office for Children, the current Judy Center directory from Maryland Family Network's public map, and Maryland's school points, school attendance zones, and census-tract polygons from the Maryland Department of Planning's ENOUGH map service.
 
-**Spatial join.** Both layers reprojected to NAD83 / Maryland State Plane (EPSG:26985). Each school assigned its containing tract via `geopandas.sjoin(predicate='within')`. All 1,377 schools resolved to a tract; school JURSCODE matched the GEOID20 county prefix in every case.
+**How grantees are sorted.** Each grantee falls into exactly one group: a Judy Center sits inside one of their served census tracts (15 grantees), a Judy Center elsewhere reaches into a served tract through its school attendance zone (8), or neither (5).
 
-**Judy Center to MDP school matching.** Tiered: exact normalized name within county → rapidfuzz `token_sort_ratio >= 85` within county → address-based `token_sort_ratio >= 90` within county → MarylandChild.org lat/lon point-in-polygon. MarylandChild's published lat/lon has known precision issues (some pins are ~1 km off), so MDP geometry is preferred when the school exists in MDP. Resolved all 92 of 92 sites (83 exact, 5 fuzzy, 0 via address, 4 via MarylandChild.org lat/lon).
+**Matching Judy Centers to schools.** Each Judy Center from Maryland Family Network's directory was paired with the corresponding school in MDP's records by name, then address, then directory coordinates. A few directory pins land in the wrong census tract, so MDP coordinates are preferred when available. All 92 sites resolved cleanly.
 
-**CHILD_CPG_PCT (Concentrated Poverty Grant percent).** A three-year FARMS rolling average MDP publishes per school. ENOUGH eligibility uses a 75% threshold, but the operational filter for this analysis is **presence of an elementary school in a JC-free grantee tract**, not CPG. CPG is shown alongside each candidate school as information so reviewers can prioritise where to start, not as a gate. Per GOC: a 41%-CPG candidate is still a candidate.
+**About CPG.** CPG (concentrated poverty grant rate) is a three-year rolling average of the share of students at a school who qualify for free and reduced-price meals. CPG appears next to each candidate school as a visual prioritisation cue. It is not used as a filter in this analysis — every elementary in a grantee's tract is a viable candidate.
 
-**Caveats.**
-- A Judy Center's host elementary school being outside a grantee's tract does not mean the JC and grantee aren't already coordinating. Several BC Judy Centers (Moravia Park, John Ruhrah, Maree G Farring) sit just outside grantee polygons; the catchment-overlap analysis (Layer 1) surfaces these as 'near-miss' JCs in the per-grantee sidebar. See `catchment_overlaps.csv` for the full audit.
-- One grantee (Leaders Breeders Inc., BC tract 24510260301) has no traditional elementary or combined school in its served tract — only Belair-Edison Charter. Judy Center placement at a charter is policy-dependent and worth a separate MSDE conversation.
-- The CHILD_POV_PCT column reflects MDP's tract-level child poverty estimate; ACS vintage is not declared on the layer (likely 2019-2023 5-year). For 2026 ENOUGH eligibility decisions that require Margin of Error and prior-year point estimates, the analysis must join the Census API directly — MDP's tract layer does not currently carry those fields.
-- A school's CHILD_CPG_PCT can be substantially higher than its tract's CHILD_POV_PCT (e.g., Belle Grove ES at 88% CPG sits in an Anne Arundel tract reporting 0% child poverty). This is expected: CPG is a 3-year FARMS rolling average for kids enrolled at the school, while tract poverty is the share of children residing in the tract. Open-boundary enrollment, magnet programs, and cross-tract attendance zones routinely create that gap.
-
-**Reproducibility.** `python analyze.py` regenerates every CSV in this directory, this summary, and the sanity-check overlays (`sanity_overview_md.png`, `sanity_overview_bc.png`). MDP layer downloads cache to `.cache/` so re-runs are seconds.
+**A few things to keep in mind.**
+- A school's CPG can be much higher than the child-poverty rate of the tract it sits in. CPG counts the students enrolled at the school; tract poverty counts the children living in the tract. Open-boundary enrollment and magnet programs routinely produce this gap.
+- A handful of Judy Centers have school attendance zones that cover most of a small county. Those are excluded from the "served by a nearby Judy Center" group because covering an entire county doesn't say anything meaningful about proximity to a particular grantee.
+- One grantee (Leaders Breeders Inc.) has no traditional elementary in its served tract — only a charter school. The closest non-Judy-Center elementary outside the tract (Sinclair Lane Elementary, about half a kilometre away) is shown as a fallback. Judy Center placement at a charter school is a policy question worth raising directly with MSDE.

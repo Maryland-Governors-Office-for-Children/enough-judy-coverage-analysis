@@ -1,15 +1,13 @@
 # ENOUGH × Judy Center coverage analysis
 
-Cross-reference of Maryland's 28 [ENOUGH](https://goc.maryland.gov/enough/)
-grantees against the state's 92 [Judy Center Early Learning
+Maryland's 28 [ENOUGH](https://goc.maryland.gov/enough/) grantees serve 106
+census tracts. The state has 92 [Judy Center Early Learning
 Hubs](https://earlychildhood.marylandpublicschools.org/families/judy-centers).
-Answers the operational question: **which ENOUGH grantees are candidates to
-apply for a Judy Center?**
-
-Per GOC guidance, the operational filter is presence of an elementary school
-in a JC-free grantee tract — not a CPG (concentrated poverty grant) threshold.
-CPG is shown alongside each candidate as information so reviewers can
-prioritise where to start, not as a gate.
+This tool sorts the grantees into three groups — those that already have a
+Judy Center in their served tracts, those served by a nearby Judy Center
+whose attendance zone reaches in, and those with no Judy Center coverage at
+all — and lists the elementary schools that could host a Judy Center for
+grantees in the third group.
 
 ## Dashboard
 
@@ -17,22 +15,16 @@ prioritise where to start, not as a gate.
 |---|---:|
 | ENOUGH grantees | **28** |
 | &nbsp; — Already covered (Judy Center in served tract) | 15 |
-| &nbsp; — Catchment overlap (no in-tract JC, near-miss catchment) | 8 |
-| &nbsp; — **Needs Judy Center** | **5** |
+| &nbsp; — Served by a nearby Judy Center | 8 |
+| &nbsp; — **Not served by a Judy Center** | **5** |
 | Judy Centers statewide | 92 |
 | &nbsp; — In ENOUGH grantee tracts | 17 |
-| &nbsp; — Catchment-overlap only | 12 |
-| Distinct prospective elementaries in grantee tracts | 35 |
+| &nbsp; — Reaching grantee tracts via attendance zone only | 12 |
+| Distinct candidate elementary schools in grantee tracts | 35 |
 
-- **Already covered (15)** — at least one Judy Center inside a served census
-  tract. No new application needed.
-- **Catchment overlap (8)** — no in-tract Judy Center, but a JC's school
-  attendance zone overlaps a served tract by ≥ 5%. Coordination opportunity;
-  may not require a new application.
-- **Needs Judy Center (5)** — neither in-tract nor catchment overlap.
-  Primary candidates for new Judy Center applications: CASA Inc., Good
-  Intentions Foundation, Latin American Youth Center, Leaders Breeders Inc.,
-  Urban Strategies Inc.
+The five grantees not served by a Judy Center — the primary candidates for a
+new Judy Center — are CASA Inc., Good Intentions Foundation, Latin American
+Youth Center, Leaders Breeders Inc., and Urban Strategies Inc.
 
 ## Where the analysis lives
 

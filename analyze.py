@@ -1007,16 +1007,14 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
     lines.append("# ENOUGH × Judy Center Coverage — Executive Summary")
     lines.append("")
     lines.append(
-        f"Maryland's 28 ENOUGH grantees collectively serve 106 census tracts. "
-        f"The state has **{dashboard['n_judy_centers_total']} Judy Center "
-        f"Early Learning Hubs** distributed across 24 counties. This analysis "
-        f"answers a single operational question: **which ENOUGH grantees are "
-        f"candidates to apply for a Judy Center?** A grantee is a candidate "
-        f"when its served tracts contain at least one elementary or combined "
-        f"school but no Judy Center is currently sited there. Per GOC guidance "
-        f"the operational filter is **presence of an elementary in a JC-free "
-        f"tract, not a CPG threshold** — CPG is reported as information so "
-        f"reviewers can prioritise where to start."
+        f"Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has "
+        f"{dashboard['n_judy_centers_total']} Judy Center Early Learning Hubs. "
+        f"This summary breaks the grantees into three groups: those that "
+        f"already have a Judy Center in their served tracts, those served by "
+        f"a nearby Judy Center whose attendance zone reaches in, and those "
+        f"with no Judy Center coverage at all. For grantees in the third "
+        f"group, it lists the elementary schools that could host a future "
+        f"Judy Center."
     )
     lines.append("")
 
@@ -1038,10 +1036,11 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
     # ---- Section: Already covered ----
     lines.append(f"## 1. Already covered ({dashboard['n_in_tract']})")
     lines.append("")
-    lines.append("Grantees whose served tracts already contain at least one Judy "
-                 "Center. **No new application needed.** The four entries marked "
-                 "with a ★ are the named-overlap exemplars whose grantee names "
-                 "already reference the Judy Center school or locality.")
+    lines.append("A Judy Center already sits inside one of the grantee's "
+                 "served census tracts. No new application needed. Four "
+                 "grantees marked with a ★ are named after their host Judy "
+                 "Center school or locality and operate in close partnership "
+                 "with it.")
     lines.append("")
     lines.append("| Grantee | County | Judy Center(s) in served tracts |")
     lines.append("|---|---|---|")
@@ -1052,18 +1051,16 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
         lines.append(f"| {r['grantee']}{marker} | {county} | {jcs} |")
     lines.append("")
 
-    # ---- Section: Catchment overlap ----
-    lines.append(f"## 2. Catchment overlap ({dashboard['n_catchment_overlap']})")
+    # ---- Section: Served by a nearby Judy Center ----
+    lines.append(f"## 2. Served by a nearby Judy Center ({dashboard['n_catchment_overlap']})")
     lines.append("")
-    lines.append("Grantees whose served tracts contain no in-tract Judy Center, "
-                 "but where at least one Judy Center's school-attendance zone "
-                 "overlaps a served tract by ≥ 5% of either the tract or the "
-                 "catchment area. **These are coordination opportunities** — "
-                 "the host school is outside the grantee's polygons but the JC "
-                 "draws students from inside, so the JC and the grantee may "
-                 "already be reaching the same families. May not require a new "
-                 "Judy Center application; worth a direct conversation between "
-                 "the grantee and the existing Judy Center.")
+    lines.append("No Judy Center sits inside the grantee's tracts, but a Judy "
+                 "Center elsewhere draws students from inside them through its "
+                 "school attendance zone. In practice the grantee and the "
+                 "existing Judy Center are likely already reaching the same "
+                 "families. A new application may not be necessary; a direct "
+                 "conversation with the host Judy Center is usually the right "
+                 "first step.")
     lines.append("")
     lines.append("| Grantee | County | Near-miss Judy Center | % of tract overlap |")
     lines.append("|---|---|---|---:|")
@@ -1080,16 +1077,16 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
         lines.append(f"| {r['grantee']} | {county} | {jc} | {pct} |")
     lines.append("")
 
-    # ---- Section: Needs Judy Center ----
-    lines.append(f"## 3. Needs Judy Center ({dashboard['n_needs_jc']})")
+    # ---- Section: Not served by a Judy Center ----
+    lines.append(f"## 3. Not served by a Judy Center ({dashboard['n_needs_jc']})")
     lines.append("")
-    lines.append("Grantees with no in-tract Judy Center and no overlapping "
-                 "catchment. **Primary candidates for new Judy Center "
-                 "applications.** Top non-JC candidate elementary school is "
-                 "shown as a starting point; CPG is informational. For grantees "
-                 "with no traditional elementary or combined school in any "
-                 "served tract, the closest non-JC elementary (within 10 km of "
-                 "a tract edge) is offered as a fallback.")
+    lines.append("No Judy Center inside the grantee's tracts, and no nearby "
+                 "Judy Center whose attendance zone reaches in. These are the "
+                 "grantees most worth a conversation about a new Judy Center. "
+                 "The table lists the top elementary schools in their tracts "
+                 "as starting points. Where a grantee's tracts contain no "
+                 "traditional elementary at all, the closest one outside the "
+                 "tract is shown as a fallback.")
     lines.append("")
     lines.append("| Grantee | County | Top candidate(s) | Notes |")
     lines.append("|---|---|---|---|")
@@ -1116,14 +1113,17 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
                 note = "Investigate alternative school types"
         lines.append(f"| {r['grantee']} | {county} | {top_str} | {note} |")
     lines.append("")
-    lines.append("**Named-overlap exemplars** (validated during development): "
-                 "City of Cumberland ↔ South Penn ES; One Annapolis ↔ "
-                 "Georgetown East ES; San Mar ↔ Bester ES; Frederick LMB ↔ "
-                 "Waverley/Hillcrest/Butterfly Ridge ES. The Frederick LMB "
-                 "initiative spans 5 tracts and 3 of the 6 FCPS Judy Centers "
-                 "fall directly inside them; the other three FCPS Judy Centers "
-                 "(Lincoln, Monocacy, Tuscarora) are in adjacent Frederick "
-                 "tracts the LMB does not serve under the current grant.")
+    lines.append("**Already-aligned grantees.** Four grantees are named after "
+                 "their host Judy Center school or locality and operate in "
+                 "close partnership with it: City of Cumberland with South "
+                 "Penn Elementary, One Annapolis with Georgetown East "
+                 "Elementary, San Mar with Bester Elementary, and Frederick "
+                 "Local Management Board with Waverley, Hillcrest, and "
+                 "Butterfly Ridge Elementary. Frederick LMB serves 5 tracts; "
+                 "3 of the 6 Frederick County Judy Centers sit inside them, "
+                 "while the other three (Lincoln, Monocacy, Tuscarora) are "
+                 "in adjacent Frederick tracts not covered by the current "
+                 "grant.")
     lines.append("")
 
     # ---- Full candidate elementary list per grantee without coverage ----
@@ -1166,70 +1166,57 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
     n_latlon = sum(1 for a in audit if a["tier"] == "latlon")
     n_unres = sum(1 for a in audit if a["tier"] == "not_in_mdp")
     n_total_jc = len(audit)
-    lines.append("## Methodology and caveats")
+    lines.append("## Methodology")
     lines.append("")
-    lines.append("**Data sources.** ENOUGH grantee-to-tract roster supplied by GOC "
-                 "(`2025 Updated ENOUGH Grantee Census Tracts and Zipcodes`). Judy "
-                 "Center master list pulled from the Maryland Family Network's Judy "
-                 "Center Hubs Map at marylandchild.org (SuperStoreFinder XML feed, "
-                 f"{n_total_jc} sites, accessed April 2026). Maryland school points, "
-                 "attendance zones, and tract polygons from MDP's `ENOUGH_Act_2025` "
-                 "FeatureServer (Layers 0, 1, and 2).")
+    lines.append("**What this combines.** The ENOUGH grantee roster from the "
+                 "Governor's Office for Children, the current Judy Center "
+                 "directory from Maryland Family Network's public map, and "
+                 "Maryland's school points, school attendance zones, and "
+                 "census-tract polygons from the Maryland Department of "
+                 "Planning's ENOUGH map service.")
     lines.append("")
-    lines.append("**Spatial join.** Both layers reprojected to NAD83 / Maryland State "
-                 "Plane (EPSG:26985). Each school assigned its containing tract via "
-                 "`geopandas.sjoin(predicate='within')`. All 1,377 schools resolved "
-                 "to a tract; school JURSCODE matched the GEOID20 county prefix in "
-                 "every case.")
+    lines.append(f"**How grantees are sorted.** Each grantee falls into "
+                 f"exactly one group: a Judy Center sits inside one of "
+                 f"their served census tracts ({dashboard['n_in_tract']} "
+                 f"grantees), a Judy Center elsewhere reaches into a served "
+                 f"tract through its school attendance zone "
+                 f"({dashboard['n_catchment_overlap']}), or neither "
+                 f"({dashboard['n_needs_jc']}).")
     lines.append("")
-    lines.append(f"**Judy Center to MDP school matching.** Tiered: exact normalized "
-                 f"name within county → rapidfuzz `token_sort_ratio >= 85` within "
-                 f"county → address-based `token_sort_ratio >= 90` within county → "
-                 f"MarylandChild.org lat/lon point-in-polygon. MarylandChild's "
-                 f"published lat/lon has known precision issues (some pins are "
-                 f"~1 km off), so MDP geometry is preferred when the school exists "
-                 f"in MDP. Resolved all {n_total_jc} of {n_total_jc} sites "
-                 f"({n_exact} exact, {n_fuzzy} fuzzy, {n_addr} via address, "
-                 f"{n_latlon} via MarylandChild.org lat/lon).")
+    lines.append(f"**Matching Judy Centers to schools.** Each Judy Center "
+                 f"from Maryland Family Network's directory was paired with "
+                 f"the corresponding school in MDP's records by name, then "
+                 f"address, then directory coordinates. A few directory pins "
+                 f"land in the wrong census tract, so MDP coordinates are "
+                 f"preferred when available. All {n_total_jc} sites resolved "
+                 f"cleanly.")
     lines.append("")
-    lines.append("**CHILD_CPG_PCT (Concentrated Poverty Grant percent).** A "
-                 "three-year FARMS rolling average MDP publishes per school. ENOUGH "
-                 "eligibility uses a 75% threshold, but the operational filter for "
-                 "this analysis is **presence of an elementary school in a "
-                 "JC-free grantee tract**, not CPG. CPG is shown alongside each "
-                 "candidate school as information so reviewers can prioritise where "
-                 "to start, not as a gate. Per GOC: a 41%-CPG candidate is still a "
-                 "candidate.")
+    lines.append("**About CPG.** CPG (concentrated poverty grant rate) is a "
+                 "three-year rolling average of the share of students at a "
+                 "school who qualify for free and reduced-price meals. CPG "
+                 "appears next to each candidate school as a visual "
+                 "prioritisation cue. It is not used as a filter in this "
+                 "analysis — every elementary in a grantee's tract is a "
+                 "viable candidate.")
     lines.append("")
-    lines.append("**Caveats.**")
-    lines.append("- A Judy Center's host elementary school being outside a grantee's "
-                 "tract does not mean the JC and grantee aren't already coordinating. "
-                 "Several BC Judy Centers (Moravia Park, John Ruhrah, Maree G Farring) "
-                 "sit just outside grantee polygons; the catchment-overlap analysis "
-                 "(Layer 1) surfaces these as 'near-miss' JCs in the per-grantee "
-                 "sidebar. See `catchment_overlaps.csv` for the full audit.")
-    lines.append("- One grantee (Leaders Breeders Inc., BC tract 24510260301) has no "
-                 "traditional elementary or combined school in its served tract — "
-                 "only Belair-Edison Charter. Judy Center placement at a charter is "
-                 "policy-dependent and worth a separate MSDE conversation.")
-    lines.append("- The CHILD_POV_PCT column reflects MDP's tract-level child poverty "
-                 "estimate; ACS vintage is not declared on the layer (likely 2019-2023 "
-                 "5-year). For 2026 ENOUGH eligibility decisions that require Margin "
-                 "of Error and prior-year point estimates, the analysis must join the "
-                 "Census API directly — MDP's tract layer does not currently carry "
-                 "those fields.")
-    lines.append("- A school's CHILD_CPG_PCT can be substantially higher than its "
-                 "tract's CHILD_POV_PCT (e.g., Belle Grove ES at 88% CPG sits in an "
-                 "Anne Arundel tract reporting 0% child poverty). This is expected: "
-                 "CPG is a 3-year FARMS rolling average for kids enrolled at the "
-                 "school, while tract poverty is the share of children residing in "
-                 "the tract. Open-boundary enrollment, magnet programs, and cross-"
-                 "tract attendance zones routinely create that gap.")
-    lines.append("")
-    lines.append("**Reproducibility.** `python analyze.py` regenerates every CSV in "
-                 "this directory, this summary, and the sanity-check overlays "
-                 "(`sanity_overview_md.png`, `sanity_overview_bc.png`). MDP layer "
-                 "downloads cache to `.cache/` so re-runs are seconds.")
+    lines.append("**A few things to keep in mind.**")
+    lines.append("- A school's CPG can be much higher than the child-poverty "
+                 "rate of the tract it sits in. CPG counts the students "
+                 "enrolled at the school; tract poverty counts the children "
+                 "living in the tract. Open-boundary enrollment and magnet "
+                 "programs routinely produce this gap.")
+    lines.append("- A handful of Judy Centers have school attendance zones "
+                 "that cover most of a small county. Those are excluded from "
+                 "the \"served by a nearby Judy Center\" group because "
+                 "covering an entire county doesn't say anything meaningful "
+                 "about proximity to a particular grantee.")
+    lines.append("- One grantee (Leaders Breeders Inc.) has no traditional "
+                 "elementary in its served tract — only a charter school. "
+                 "The closest non-Judy-Center elementary outside the tract "
+                 "(Sinclair Lane Elementary, about half a kilometre away) "
+                 "is shown as a fallback. Judy Center placement at a charter "
+                 "school is a policy question worth raising directly with "
+                 "MSDE.")
     lines.append("")
 
     (OUTPUTS / "executive_summary.md").write_text("\n".join(lines), encoding="utf-8")

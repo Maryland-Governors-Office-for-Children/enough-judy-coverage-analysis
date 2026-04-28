@@ -8,7 +8,7 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="" />
-<link rel="stylesheet" href="styles.css?v=2" />
+<link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
 
@@ -40,56 +40,59 @@
       <!-- Cards injected by app.js -->
     </div>
 
-    <h2 class="section-title">The question this analyses answers</h2>
+    <h2 class="section-title">What this analysis covers</h2>
     <p class="lede">
-      Maryland's <b>28 ENOUGH grantees</b> serve 106 census tracts. The state has
-      <b>92 Judy Center Early Learning Hubs</b>. A grantee is a candidate for a Judy
-      Center when its served tracts contain at least one elementary or combined
-      school but no Judy Center is currently sited there. Per GOC guidance the
-      operational filter is presence of an elementary in a JC-free tract, not a
-      CPG threshold — CPG is shown alongside each candidate as information.
+      Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has
+      92 Judy Center Early Learning Hubs. This analysis breaks down which
+      grantees have Judy Centers in their communities, which grantees have
+      Judy Centers that serve their communities, which grantees are not
+      served by Judy Centers, and which elementary schools are candidates
+      to host new Judy Centers.
     </p>
 
-    <h2 class="section-title">Three categories</h2>
+    <h2 class="section-title">The three groups</h2>
     <div class="cat-summary">
       <div class="cat-block cat-in_tract" data-cat="in_tract">
         <div class="cat-head">
           <span class="cat-pill">Already covered</span>
           <span class="cat-count" id="cat-count-in_tract">—</span>
         </div>
-        <p>Grantees whose served tracts already contain a Judy Center. No
-           new application needed.</p>
-        <button class="cat-link" data-cat="in_tract">Browse these grantees →</button>
+        <p>A Judy Center is already operating inside one of the grantee's
+           served census tracts. No new application needed.</p>
+        <button class="cat-link" data-cat="in_tract">See these grantees →</button>
       </div>
       <div class="cat-block cat-catchment_overlap" data-cat="catchment_overlap">
         <div class="cat-head">
-          <span class="cat-pill">Catchment overlap</span>
+          <span class="cat-pill">Served by a nearby Judy Center</span>
           <span class="cat-count" id="cat-count-catchment_overlap">—</span>
         </div>
-        <p>No in-tract Judy Center, but a Judy Center's attendance zone
-           overlaps a served tract by ≥ 5%. Coordination opportunity — may
-           not require a new application.</p>
-        <button class="cat-link" data-cat="catchment_overlap">Browse these grantees →</button>
+        <p>No Judy Center sits inside the grantee's tracts, but one nearby
+           draws students from inside them through its attendance zone. The
+           grantee and the existing Judy Center are likely already reaching
+           the same families.</p>
+        <button class="cat-link" data-cat="catchment_overlap">See these grantees →</button>
       </div>
       <div class="cat-block cat-needs_jc" data-cat="needs_jc">
         <div class="cat-head">
-          <span class="cat-pill">Needs Judy Center</span>
+          <span class="cat-pill">Not served by a Judy Center</span>
           <span class="cat-count" id="cat-count-needs_jc">—</span>
         </div>
-        <p>No in-tract Judy Center and no overlapping catchment. Primary
-           candidates for new Judy Center applications.</p>
-        <button class="cat-link" data-cat="needs_jc">Browse these grantees →</button>
+        <p>No Judy Center inside the grantee's tracts, and no nearby Judy
+           Center whose attendance zone reaches in. These grantees are the
+           primary candidates for a new Judy Center.</p>
+        <button class="cat-link" data-cat="needs_jc">See these grantees →</button>
       </div>
     </div>
 
-    <h2 class="section-title">Named-overlap exemplars</h2>
+    <h2 class="section-title">Already-aligned grantees</h2>
     <p class="lede">
-      Four grantees whose names already reference their host Judy Center — these
-      validated the spatial-join correctness during development:
-      <b>City of Cumberland</b> ↔ South Penn Elementary,
-      <b>One Annapolis</b> ↔ Georgetown East Elementary,
-      <b>San Mar</b> ↔ Bester Elementary,
-      <b>Frederick LMB</b> ↔ Waverley / Hillcrest / Butterfly Ridge Elementary.
+      Four grantees are named after their host Judy Center school or locality
+      and operate in close partnership with it:
+      City of Cumberland with South Penn Elementary,
+      One Annapolis with Georgetown East Elementary,
+      San Mar with Bester Elementary, and
+      Frederick Local Management Board with Waverley, Hillcrest, and
+      Butterfly Ridge Elementary.
     </p>
   </div>
 </section>
@@ -163,85 +166,77 @@
           map at MDP.</li>
     </ul>
 
-    <h3>How a grantee lands in each category</h3>
-    <p>Each grantee is placed in exactly one of three buckets:</p>
+    <h3>How grantees are sorted into the three groups</h3>
     <ul>
-      <li><b>Already covered (15 grantees).</b> At least one Judy Center sits
-          inside a served census tract. No new application needed.</li>
-      <li><b>Catchment overlap (8 grantees).</b> No Judy Center sits inside a
-          served tract, but the school attendance zone of a Judy Center
-          elsewhere overlaps a served tract by at least 5% of either the
-          tract or the attendance zone. Indicates that an existing Judy
-          Center is already serving students from inside the grantee's
-          territory — a coordination opportunity rather than an application
-          gap.</li>
-      <li><b>Needs Judy Center (5 grantees).</b> No Judy Center inside a
-          served tract and no overlapping attendance zone. These are the
-          primary candidates for new Judy Center applications.</li>
+      <li><b>Already covered (15 grantees):</b> a Judy Center sits inside one
+          of the grantee's served census tracts.</li>
+      <li><b>Served by a nearby Judy Center (8 grantees):</b> no Judy Center
+          is inside a served tract, but the attendance zone of one elsewhere
+          covers part of a served tract. Most often this means a Judy Center
+          and an ENOUGH grantee are already reaching the same families even
+          though the school sits across a tract boundary.</li>
+      <li><b>Not served by a Judy Center (5 grantees):</b> no Judy Center
+          inside a served tract and no nearby Judy Center whose attendance
+          zone reaches in. These are the grantees most worth a conversation
+          about a new Judy Center.</li>
     </ul>
 
     <h3>Reading the map</h3>
     <ul>
-      <li><b>Tract polygons</b> shade orange across all ENOUGH grantee tracts
-          by default. Selecting a single grantee deepens the colour on
-          that grantee's tracts and dims the rest for context.</li>
-      <li><b>Purple dots</b> are every Judy Center in Maryland.</li>
-      <li><b>Blue stars</b> appear when a selected grantee's tract contains
-          a Judy Center.</li>
-      <li><b>Green stars</b> appear when a selected grantee's tract is
-          touched by a Judy Center's school attendance zone (the Judy
-          Center itself is outside the grantee's polygons).</li>
-      <li><b>Red dots</b> are the candidate elementary schools inside a
-          selected grantee's tracts that are not yet Judy Centers. Dot size
-          reflects each school's CPG (concentrated poverty grant) rate, but
-          CPG is information, not a filter — every red dot is a viable
-          candidate per GOC guidance.</li>
-      <li><b>Red dot with a dashed circle</b> appears for grantees that have
-          no traditional elementary or combined school inside their served
-          tracts. The pipeline surfaces the closest non-JC elementary within
-          10 km of the tract edge as a fallback. Currently this applies only
-          to Leaders Breeders Inc. (Sinclair Lane Elementary, ~0.5 km from
-          their tract).</li>
+      <li><b>Orange tract polygons</b> mark every ENOUGH grantee's served
+          census tracts. Selecting a grantee deepens the orange on that
+          grantee's tracts and dims the others for context.</li>
+      <li><b>Purple dots</b> show every Judy Center in Maryland.</li>
+      <li><b>Blue stars</b> appear when the selected grantee already has a
+          Judy Center inside one of their served tracts.</li>
+      <li><b>Green stars</b> appear when a Judy Center sits outside the
+          selected grantee's tracts but its attendance zone reaches in.</li>
+      <li><b>Red dots</b> are the elementary schools inside the selected
+          grantee's tracts that aren't currently Judy Centers — the
+          candidates for new Judy Center placement. Dot size reflects each
+          school's CPG (concentrated-poverty) rate as a quick visual cue;
+          all of them are viable candidates.</li>
+      <li><b>Red dot with a dashed circle</b> appears when a grantee's
+          served tracts contain no traditional elementary at all, in which
+          case the closest elementary outside the tract is shown as a
+          fallback. Currently this applies only to Leaders Breeders Inc.,
+          whose tract sits about half a kilometre from Sinclair Lane
+          Elementary.</li>
     </ul>
 
-    <h3>How Judy Centers were matched to map points</h3>
-    <p>Each Judy Center on Maryland Family Network's directory was matched to
-       MDP's school records using a tiered approach: exact name match within
-       county, then a fuzzy name match, then an address match, then a
-       fall-through using the directory's own coordinates. MDP's coordinates
-       are preferred when available because some directory pins are off by
-       enough to land in a different census tract. All 92 Judy Centers
-       resolved cleanly.</p>
+    <h3>Matching Judy Centers to schools</h3>
+    <p>Each Judy Center from Maryland Family Network's directory was paired
+       with the corresponding school in MDP's records, working through name,
+       address, and finally directory coordinates. MDP's coordinates are
+       preferred when available because a few directory pins are off by
+       enough to land in the wrong census tract. All 92 sites paired
+       cleanly.</p>
 
-    <h3>Why CPG is shown but not used as a filter</h3>
-    <p>Each school's CPG (concentrated poverty grant rate) is published by
-       MDP as a three-year rolling average of students qualifying for free
-       and reduced-price meals. Per GOC guidance for this analysis, the
-       operational question is presence of an elementary school in a
-       JC-free served tract, not whether that school clears a particular CPG
-       threshold. CPG is displayed alongside each candidate to help
-       reviewers prioritise visually, but every candidate elementary in a
-       grantee's served tract is a viable candidate.</p>
+    <h3>About CPG (concentrated poverty grant rate)</h3>
+    <p>CPG is a three-year rolling average of the share of students at a
+       school who qualify for free and reduced-price meals. The map shows
+       it next to each candidate elementary as a visual prioritisation
+       cue. It is not used as a filter for this analysis — what matters
+       here is whether a grantee's tracts contain an elementary that
+       isn't already a Judy Center.</p>
 
-    <h3>Caveats</h3>
+    <h3>A few things to keep in mind</h3>
     <ul>
-      <li>A handful of Judy Centers serve attendance zones that span an
-          entire small county (single-school counties on the Eastern Shore,
-          for example). Those are flagged "county-wide" and excluded from
-          catchment-overlap reporting because they don't represent meaningful
-          proximity to any one grantee.</li>
-      <li>A school's CPG can be substantially higher than its census
-          tract's child poverty rate. CPG measures the kids enrolled at the
-          school; tract poverty measures the kids living in the tract.
-          Open-boundary enrollment, magnet programs, and cross-tract
-          attendance zones routinely create a gap. Belle Grove Elementary
-          in Anne Arundel sits in a tract reporting 0% child poverty but
-          reports 88% CPG, for instance.</li>
-      <li>Some pins on the Maryland Family Network directory are imprecise
-          (Georgetown East Elementary's pin lands in the Chesapeake Bay,
-          for example). This tool uses MDP's authoritative coordinates
-          when available and falls back to the directory only as a last
-          resort.</li>
+      <li>A handful of Judy Centers serve attendance zones that cover most
+          of a small county. Those are excluded from "served by a nearby
+          Judy Center" reporting because covering an entire county doesn't
+          really tell you anything about proximity to a particular grantee.</li>
+      <li>A school's CPG can be much higher than the child-poverty rate of
+          the tract it sits in. CPG counts the students enrolled at the
+          school; tract poverty counts the children living in the tract.
+          Open-boundary enrollment and magnet programs routinely produce
+          this gap. Belle Grove Elementary in Anne Arundel, for instance,
+          reports 88% CPG in a tract whose published child-poverty rate
+          is 0%.</li>
+      <li>A few pins on the Maryland Family Network directory aren't
+          precise — Georgetown East Elementary's pin, for example, sits in
+          the Chesapeake Bay. This tool uses MDP's authoritative coordinates
+          when available so those pins don't throw off the analysis.</li>
     </ul>
   </div>
 </section>
