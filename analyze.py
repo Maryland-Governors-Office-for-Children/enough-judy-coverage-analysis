@@ -724,19 +724,8 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
 
     # Some Judy Centers are not in MDP at all (e.g. resolved via MC
     # lat/lon). For those we still want a point in schools.geojson so
-    # the purple layer is complete. Build them from the audit + MC
-    # lat/lon directly.
-    have_ncesids = set(rel_schools["NCESSCH_ID"].fillna(""))
-    extra_jc_features = []
+    # the purple layer is complete. Pull them from the JC CSV directly.
     from shapely.geometry import Point
-    for a in audit:
-        if a["ncessch_id"] in have_ncesids:
-            continue
-        # Look up the MC row's lat/lon from judy_centers_full.csv.
-        # judy_centers list isn't passed in here, but we can read it via
-        # audit's school name -- look it up in the freshly-written CSV.
-        pass  # handled below via judy_centers re-load
-    # Pull JCs that have no NCES match (latlon tier) from the JC CSV
     jc_csv_rows = list(csv.DictReader(JUDY_CSV.open(encoding="utf-8")))
     jc_csv_by_name = {r["school_name"]: r for r in jc_csv_rows}
     extra_records = []
@@ -903,10 +892,6 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         for nm in p["jcs_near_miss"]:
             jcs_catchment_only.add(nm["ncessch_id"])
     jcs_catchment_only -= jcs_in_tract_set
-    n_prospective = sum(
-        1 for c in candidate_rows
-        if c["is_judy_center"] == "no" and c["ncessch_id"]
-    )
     # Dedup prospective by ncessch_id (some schools serve multiple grantees)
     n_prospective_distinct = len({c["ncessch_id"] for c in candidate_rows
                                   if c["is_judy_center"] == "no" and c["ncessch_id"]})
@@ -1000,8 +985,6 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
     )
     by_cat["needs_jc"].sort(key=lambda r: (-best_non_jc_cpg(r["grantee"]),
                                             r["grantee"]))
-
-    n_total = len(grantee_rows)
 
     lines = []
     lines.append("# ENOUGH × Judy Center Coverage — Executive Summary")
@@ -1158,13 +1141,7 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
             )
         lines.append("")
 
-    # ---- Methodology / caveats ----
-    n_resolved = sum(1 for a in audit if a["tier"] != "not_in_mdp")
-    n_exact = sum(1 for a in audit if a["tier"] == "exact")
-    n_fuzzy = sum(1 for a in audit if a["tier"].startswith("fuzzy"))
-    n_addr  = sum(1 for a in audit if a["tier"].startswith("address"))
-    n_latlon = sum(1 for a in audit if a["tier"] == "latlon")
-    n_unres = sum(1 for a in audit if a["tier"] == "not_in_mdp")
+    # ---- Methodology ----
     n_total_jc = len(audit)
     lines.append("## Methodology")
     lines.append("")
@@ -1430,17 +1407,11 @@ def analyze():
     # touches the grantee's tracts but whose host school is OUTSIDE those
     # tracts (the "near-miss" case the prototype README anticipated).
     jc_keys_resolved = {a["ncessch_id"] for a in audit if a["ncessch_id"]}
-    overlap_by_grantee = defaultdict(set)
-    for o in overlap_rows:
-        if o["ncessch_id"] in jc_keys_resolved:
-            overlap_by_grantee[o["grantee"]].add(o["school_name"])
-
     # Strip JCs whose host school is already inside the grantee's tracts.
     for r in grantee_rows:
-        in_tract = set(r["jc_in_grantee_tracts"].split("; ")) if r["jc_in_grantee_tracts"] else set()
-        # The catchment school name from MDP may be a "shorter" form than the
-        # JC list name (e.g. "Arundel Elementary/Middle" vs ".../...School").
-        # Compare via NCES id instead: rebuild from audit.
+        # The catchment school name from MDP may be a "shorter" form than
+        # the JC list name (e.g. "Arundel Elementary/Middle" vs
+        # ".../...School"). Compare via NCES id instead.
         in_tract_ncesids = set()
         for a in audit:
             if a["geoid20"] in r["tracts"].split("; ") and a["ncessch_id"]:
