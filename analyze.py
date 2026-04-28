@@ -611,18 +611,22 @@ def _short_recommendation(has_candidate):
 
 def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
                      countywide_flags, joined_schools, catchments,
-                     grantee_tracts_gdf, raw_tracts, tract_to_grantees):
+                     grantee_tracts_gdf, raw_tracts, tract_to_grantees,
+                     closest_elementary_per_grantee=None):
     """Emit the four files the static Leaflet site reads.
 
     site/data/
         grantee_tracts.geojson    EPSG:4326 polygons, 106 tracts
-        schools.geojson           EPSG:4326 points, only schools
-                                  relevant to at least one grantee
+        schools.geojson           EPSG:4326 points: ALL 92 Judy Centers
+                                  (state-wide context, purple-dot layer)
+                                  PLUS candidate elementaries that play a
+                                  role for at least one grantee
         catchments.geojson        EPSG:4326 polygons, catchments for
                                   the rendered schools (excluding
                                   county-wide ones)
-        grantees.json             per-grantee narrative payload
+        grantees.json             {dashboard: {...}, grantees: [...]}
     """
+    closest_elementary_per_grantee = closest_elementary_per_grantee or {}
     SITE_DATA.mkdir(parents=True, exist_ok=True)
 
     # --- 1. Grantee tracts ---
@@ -683,9 +687,19 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
     relevant_ncesids = set(ncesid_to_role.keys())
 
     # --- 3. Schools GeoJSON ---
+    # We render: every resolved Judy Center (ALL 92, for the purple state-
+    # wide layer) PLUS every candidate elementary that plays a role for at
+    # least one grantee. JCs without any grantee role get an empty roles
+    # dict and render purple by default; JCs with roles upgrade to blue
+    # (in_tract) or green (catchment_overlap) when their grantee is
+    # selected.
     schools_4326 = joined_schools.to_crs(epsg=4326)
+
+    # Set of NCES ids we want to render (relevant schools + all JCs).
+    render_ncesids = relevant_ncesids | jc_ncesids
+
     rel_schools = schools_4326[
-        schools_4326["NCESSCH_ID"].fillna("").isin(relevant_ncesids)
+        schools_4326["NCESSCH_ID"].fillna("").isin(render_ncesids)
     ].copy()
     rel_schools["lat"] = rel_schools.geometry.y
     rel_schools["lon"] = rel_schools.geometry.x
@@ -698,10 +712,65 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
     rel_schools["countywide_catchment"] = rel_schools["NCESSCH_ID"].map(
         lambda nid: nid in countywide_flags
     )
+    # display_role classifies the school's default tile colour:
+    #   "jc"        -> Judy Center (purple by default)
+    #   "candidate" -> candidate elementary (red, only renders when
+    #                  its grantee is selected)
+    def _display_role(row):
+        if row["is_judy_center"]:
+            return "jc"
+        return "candidate"
+    rel_schools["display_role"] = rel_schools.apply(_display_role, axis=1)
+
+    # Some Judy Centers are not in MDP at all (e.g. resolved via MC
+    # lat/lon). For those we still want a point in schools.geojson so
+    # the purple layer is complete. Build them from the audit + MC
+    # lat/lon directly.
+    have_ncesids = set(rel_schools["NCESSCH_ID"].fillna(""))
+    extra_jc_features = []
+    from shapely.geometry import Point
+    for a in audit:
+        if a["ncessch_id"] in have_ncesids:
+            continue
+        # Look up the MC row's lat/lon from judy_centers_full.csv.
+        # judy_centers list isn't passed in here, but we can read it via
+        # audit's school name -- look it up in the freshly-written CSV.
+        pass  # handled below via judy_centers re-load
+    # Pull JCs that have no NCES match (latlon tier) from the JC CSV
+    jc_csv_rows = list(csv.DictReader(JUDY_CSV.open(encoding="utf-8")))
+    jc_csv_by_name = {r["school_name"]: r for r in jc_csv_rows}
+    extra_records = []
+    for a in audit:
+        if a["tier"] != "latlon":
+            continue
+        jc_row = jc_csv_by_name.get(a["judy_center"], {})
+        try:
+            lat = float(jc_row.get("lat") or "")
+            lon = float(jc_row.get("lon") or "")
+        except ValueError:
+            continue
+        extra_records.append({
+            "ncessch_id": "",
+            "lea_site": "",
+            "school_name": a["judy_center"],
+            "school_type": "Judy Center",
+            "address": jc_row.get("school_address") or "",
+            "geoid20": a["geoid20"],
+            "cpg": None,
+            "child_pov_pct": None,
+            "lat": lat,
+            "lon": lon,
+            "roles": {},
+            "is_judy_center": True,
+            "countywide_catchment": False,
+            "display_role": "jc",
+            "geometry": Point(lon, lat),
+        })
+
     keep = ["NCESSCH_ID", "LEA_SITE", "SCHOOL_NAME", "SCHOOL_TYPE",
             "SCHOOL_STREET_ADDRESS", "GEOID20", "CHILD_CPG_PCT",
             "CHILD_POV_PCT", "lat", "lon", "roles", "is_judy_center",
-            "countywide_catchment", "geometry"]
+            "countywide_catchment", "display_role", "geometry"]
     rel_schools = rel_schools[keep].rename(columns={
         "NCESSCH_ID": "ncessch_id",
         "LEA_SITE": "lea_site",
@@ -712,6 +781,12 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         "CHILD_CPG_PCT": "cpg",
         "CHILD_POV_PCT": "child_pov_pct",
     })
+    if extra_records:
+        extra_df = gpd.GeoDataFrame(extra_records, crs=4326)
+        rel_schools = gpd.GeoDataFrame(
+            __import__("pandas").concat([rel_schools, extra_df], ignore_index=True),
+            crs=4326,
+        )
     rel_schools.to_file(SITE_DATA / "schools.geojson", driver="GeoJSON")
 
     # --- 4. Catchments GeoJSON (relevant schools, exclude countywide) ---
@@ -778,6 +853,7 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         grantees_payload.append({
             "grantee": g,
             "county": r["counties"],
+            "category": r.get("category", "needs_jc"),
             "n_tracts": int(r["n_tracts"]),
             "tracts": sorted(r["tracts"].split("; ")) if r["tracts"] else [],
             "tract_level_coverage": r["tract_level_coverage"] == "yes",
@@ -797,6 +873,7 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
                 }
                 for c in cands
             ],
+            "closest_elementary": closest_elementary_per_grantee.get(g),
             "named_hint": g in NAMED_HINT_GRANTEES,
             "recommendation_short": _short_recommendation(has_candidate),
         })
@@ -813,12 +890,46 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
 
     grantees_payload.sort(key=sort_key)
 
+    # Dashboard counts
+    n_in_tract = sum(1 for p in grantees_payload if p["category"] == "in_tract")
+    n_catchment = sum(1 for p in grantees_payload if p["category"] == "catchment_overlap")
+    n_needs = sum(1 for p in grantees_payload if p["category"] == "needs_jc")
+    # Distinct JCs that play each role across all grantees
+    jcs_in_tract_set = {a["ncessch_id"] for a in audit
+                        if a["ncessch_id"]
+                        and tract_to_grantees.get(a["geoid20"])}
+    jcs_catchment_only = set()
+    for p in grantees_payload:
+        for nm in p["jcs_near_miss"]:
+            jcs_catchment_only.add(nm["ncessch_id"])
+    jcs_catchment_only -= jcs_in_tract_set
+    n_prospective = sum(
+        1 for c in candidate_rows
+        if c["is_judy_center"] == "no" and c["ncessch_id"]
+    )
+    # Dedup prospective by ncessch_id (some schools serve multiple grantees)
+    n_prospective_distinct = len({c["ncessch_id"] for c in candidate_rows
+                                  if c["is_judy_center"] == "no" and c["ncessch_id"]})
+
+    dashboard = {
+        "n_grantees": len(grantees_payload),
+        "n_in_tract": n_in_tract,
+        "n_catchment_overlap": n_catchment,
+        "n_needs_jc": n_needs,
+        "n_judy_centers_total": len(audit),
+        "n_judy_centers_in_grantee_tracts": len(jcs_in_tract_set),
+        "n_judy_centers_catchment_overlap_only": len(jcs_catchment_only),
+        "n_prospective_elementaries": n_prospective_distinct,
+    }
+
     import json
+    payload = {"dashboard": dashboard, "grantees": grantees_payload}
     (SITE_DATA / "grantees.json").write_text(
-        json.dumps(grantees_payload, indent=2, default=str), encoding="utf-8"
+        json.dumps(payload, indent=2, default=str), encoding="utf-8"
     )
     print(f"Wrote site data: {len(g_tracts)} tracts, {len(rel_schools)} schools, "
-          f"{len(rel_cats)} catchments, {len(grantees_payload)} grantees")
+          f"{len(rel_cats)} catchments, {len(grantees_payload)} grantees "
+          f"({n_in_tract}/{n_catchment}/{n_needs})")
 
 
 # ---- Executive summary ----
@@ -1313,6 +1424,70 @@ def analyze():
         r["jcs_catchment_overlaps_tract"] = "; ".join(dedup)
         r["n_jcs_catchment_overlaps_tract"] = len(dedup)
 
+    # Per-grantee disjoint category for the dashboard.
+    # Cat 1 in_tract: at least one Judy Center inside a served tract.
+    # Cat 2 catchment_overlap: no in-tract JC, but at least one near-miss.
+    # Cat 3 needs_jc: neither.
+    for r in grantee_rows:
+        if r["tract_level_coverage"] == "yes":
+            r["category"] = "in_tract"
+        elif r["n_jcs_catchment_overlaps_tract"] > 0:
+            r["category"] = "catchment_overlap"
+        else:
+            r["category"] = "needs_jc"
+
+    # Closest non-JC elementary fallback for Cat 3 grantees with zero
+    # in-tract candidate elementaries (currently only Leaders Breeders,
+    # whose single tract contains only Belair-Edison Charter).
+    # We measure distance from the school point to the nearest edge of
+    # the grantee's tract union, capped at 10 km.
+    closest_elementary_per_grantee = {}
+    elem_for_closest = joined[
+        joined["SCHOOL_TYPE"].isin(["Elementary", "Combined"])
+    ].copy()
+    jc_ncesids = {a["ncessch_id"] for a in audit if a["ncessch_id"]}
+    elem_non_jc = elem_for_closest[
+        ~elem_for_closest["NCESSCH_ID"].fillna("").isin(jc_ncesids)
+    ]
+    cands_by_g = defaultdict(list)
+    for c in candidate_rows:
+        cands_by_g[c["grantee"]].append(c)
+    for r in grantee_rows:
+        if r["category"] != "needs_jc":
+            continue
+        non_jc_cands = [c for c in cands_by_g.get(r["grantee"], [])
+                        if c["is_judy_center"] == "no"]
+        if non_jc_cands:
+            continue  # has at least one in-tract candidate; no fallback needed
+        gtr = grantee_tracts_gdf[
+            grantee_tracts_gdf["GEOID20"].isin(r["tracts"].split("; "))
+        ]
+        if gtr.empty:
+            continue
+        union_geom = gtr.geometry.union_all()
+        elem_non_jc = elem_non_jc.copy()
+        elem_non_jc["dist_m"] = elem_non_jc.geometry.distance(union_geom)
+        within_10km = elem_non_jc[elem_non_jc["dist_m"] <= 10000]
+        if within_10km.empty:
+            continue
+        nearest = within_10km.sort_values("dist_m").iloc[0]
+        # Reproject the school point to WGS84 for lat/lon.
+        from shapely.ops import transform as shapely_transform
+        from pyproj import Transformer
+        to_wgs = Transformer.from_crs(26985, 4326, always_xy=True).transform
+        wgs_pt = shapely_transform(to_wgs, nearest.geometry)
+        closest_elementary_per_grantee[r["grantee"]] = {
+            "school_name": nearest.get("SCHOOL_NAME") or "",
+            "ncessch_id": nearest.get("NCESSCH_ID") or "",
+            "school_type": nearest.get("SCHOOL_TYPE") or "",
+            "address": nearest.get("SCHOOL_STREET_ADDRESS") or "",
+            "cpg": float(nearest["CHILD_CPG_PCT"]) if nearest.get("CHILD_CPG_PCT") not in (None, "") else None,
+            "geoid20": str(nearest.get("GEOID20") or ""),
+            "distance_m": int(nearest["dist_m"]),
+            "lat": wgs_pt.y,
+            "lon": wgs_pt.x,
+        }
+
     # Re-write grantee_coverage.csv with the new columns
     with (OUTPUTS / "grantee_coverage.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(grantee_rows[0].keys()))
@@ -1335,6 +1510,7 @@ def analyze():
         grantee_tracts_gdf=grantee_tracts_gdf,
         raw_tracts=raw_tracts,
         tract_to_grantees=tract_to_grantees,
+        closest_elementary_per_grantee=closest_elementary_per_grantee,
     )
 
     # ---- Console summary ----

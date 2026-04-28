@@ -1,1260 +1,1338 @@
-[
-  {
-    "grantee": "Elev8 Baltimore, Inc.",
-    "county": "Baltimore City",
-    "n_tracts": 5,
-    "tracts": [
-      "24510130300",
-      "24510150100",
-      "24510160100",
-      "24510160200",
-      "24510160300"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Dorothy I. Height Elementary School ",
-        "ncessch_id": "240009000256",
-        "pct_of_tract": 1.0,
-        "pct_of_catchment": 0.096,
-        "tract_geoid": "24510130300"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Sandtown-Winchester Achievement Academy",
-        "school_type": "Combined",
-        "ncessch_id": "240009000335",
-        "geoid20": "24510150100",
-        "cpg": 0.96,
-        "child_pov_pct": 42.9,
-        "is_jc": false,
-        "address": "701 Gold Street Baltimore MD 21217"
-      },
-      {
-        "school_name": "Harlem Park Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000239",
-        "geoid20": "24510160200",
-        "cpg": 0.95,
-        "child_pov_pct": 68.6,
-        "is_jc": false,
-        "address": "1401 W Lafayette Avenue Baltimore MD 21217"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+{
+  "dashboard": {
+    "n_grantees": 28,
+    "n_in_tract": 15,
+    "n_catchment_overlap": 8,
+    "n_needs_jc": 5,
+    "n_judy_centers_total": 92,
+    "n_judy_centers_in_grantee_tracts": 17,
+    "n_judy_centers_catchment_overlap_only": 12,
+    "n_prospective_elementaries": 35
   },
-  {
-    "grantee": "Greater Mondawmin Coordinating Council",
-    "county": "Baltimore City",
-    "n_tracts": 5,
-    "tracts": [
-      "24510130400",
-      "24510150400",
-      "24510150500",
-      "24510150600",
-      "24510150702"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Dorothy I. Height Elementary School ",
-        "ncessch_id": "240009000256",
-        "pct_of_tract": 0.992,
-        "pct_of_catchment": 0.741,
-        "tract_geoid": "24510130400"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Robert W Coleman Elementary",
+  "grantees": [
+    {
+      "grantee": "Elev8 Baltimore, Inc.",
+      "county": "Baltimore City",
+      "category": "catchment_overlap",
+      "n_tracts": 5,
+      "tracts": [
+        "24510130300",
+        "24510150100",
+        "24510160100",
+        "24510160200",
+        "24510160300"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Dorothy I. Height Elementary School ",
+          "ncessch_id": "240009000256",
+          "pct_of_tract": 1.0,
+          "pct_of_catchment": 0.096,
+          "tract_geoid": "24510130300"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Sandtown-Winchester Achievement Academy",
+          "school_type": "Combined",
+          "ncessch_id": "240009000335",
+          "geoid20": "24510150100",
+          "cpg": 0.96,
+          "child_pov_pct": 42.9,
+          "is_jc": false,
+          "address": "701 Gold Street Baltimore MD 21217"
+        },
+        {
+          "school_name": "Harlem Park Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000239",
+          "geoid20": "24510160200",
+          "cpg": 0.95,
+          "child_pov_pct": 68.6,
+          "is_jc": false,
+          "address": "1401 W Lafayette Avenue Baltimore MD 21217"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Greater Mondawmin Coordinating Council",
+      "county": "Baltimore City",
+      "category": "catchment_overlap",
+      "n_tracts": 5,
+      "tracts": [
+        "24510130400",
+        "24510150400",
+        "24510150500",
+        "24510150600",
+        "24510150702"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Dorothy I. Height Elementary School ",
+          "ncessch_id": "240009000256",
+          "pct_of_tract": 0.992,
+          "pct_of_catchment": 0.741,
+          "tract_geoid": "24510130400"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Robert W Coleman Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000303",
+          "geoid20": "24510150400",
+          "cpg": 0.96,
+          "child_pov_pct": 47.8,
+          "is_jc": false,
+          "address": "2400 Windsor Avenue Baltimore MD 21216"
+        },
+        {
+          "school_name": "Edgewood Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "",
+          "geoid20": "24510150600",
+          "cpg": 0.92,
+          "child_pov_pct": 57.0,
+          "is_jc": false,
+          "address": "1900 Edgewood Street Baltimore MD 21216"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "CASA, Inc.",
+      "county": "Prince George's",
+      "category": "catchment_overlap",
+      "n_tracts": 4,
+      "tracts": [
+        "24033805500",
+        "24033805601",
+        "24033805602",
+        "24033805700"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Cool Spring Elementary",
+          "ncessch_id": "240051000510",
+          "pct_of_tract": 0.356,
+          "pct_of_catchment": 0.246,
+          "tract_geoid": "24033805601"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Langley Pk/Mccormick Elem",
+          "school_type": "Elementary",
+          "ncessch_id": "240051001087",
+          "geoid20": "24033805700",
+          "cpg": 0.95,
+          "child_pov_pct": 18.1,
+          "is_jc": false,
+          "address": "8201 15th Ave Hyattsville MD 20783"
+        },
+        {
+          "school_name": "Carole Highlands Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240051000999",
+          "geoid20": "24033805500",
+          "cpg": 0.89,
+          "child_pov_pct": 25.1,
+          "is_jc": false,
+          "address": "1610 Hannon St Takoma Park MD 20912"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "The Central Baltimore Partnership, Inc.",
+      "county": "Baltimore City",
+      "category": "catchment_overlap",
+      "n_tracts": 5,
+      "tracts": [
+        "24510090400",
+        "24510090800",
+        "24510120300",
+        "24510120400",
+        "24510120500"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Abbottston Elementary",
+          "ncessch_id": "240009000143",
+          "pct_of_tract": 0.643,
+          "pct_of_catchment": 0.162,
+          "tract_geoid": "24510090400"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Cecil Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000169",
+          "geoid20": "24510090800",
+          "cpg": 0.92,
+          "child_pov_pct": 31.4,
+          "is_jc": false,
+          "address": "2000 Cecil Avenue Baltimore MD 21218"
+        },
+        {
+          "school_name": "Dallas F Nicholas Sr Elem",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000184",
+          "geoid20": "24510120400",
+          "cpg": 0.9,
+          "child_pov_pct": 14.5,
+          "is_jc": false,
+          "address": "201 E 21st Street Baltimore MD 21218"
+        },
+        {
+          "school_name": "Margaret Brent Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000276",
+          "geoid20": "24510120300",
+          "cpg": 0.9,
+          "child_pov_pct": 30.7,
+          "is_jc": false,
+          "address": "100 E 26th Street Baltimore MD 21218"
+        },
+        {
+          "school_name": "Baltimore Design School",
+          "school_type": "Combined",
+          "ncessch_id": "",
+          "geoid20": "24510120500",
+          "cpg": 0.9,
+          "child_pov_pct": 13.8,
+          "is_jc": false,
+          "address": "1500 Barclay Street Baltimore MD 21202"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "The Y in Central Maryland",
+      "county": "Baltimore City",
+      "category": "catchment_overlap",
+      "n_tracts": 7,
+      "tracts": [
+        "24510090100",
+        "24510090200",
+        "24510090300",
+        "24510090400",
+        "24510090600",
+        "24510090700",
+        "24510271001"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Abbottston Elementary",
+          "ncessch_id": "240009000143",
+          "pct_of_tract": 0.998,
+          "pct_of_catchment": 0.311,
+          "tract_geoid": "24510090700"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Walter P Carter Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000328",
+          "geoid20": "24510271001",
+          "cpg": 0.92,
+          "child_pov_pct": 40.3,
+          "is_jc": false,
+          "address": "820 E 43rd Street Baltimore MD 21212"
+        },
+        {
+          "school_name": "Waverly Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000329",
+          "geoid20": "24510090300",
+          "cpg": 0.9,
+          "child_pov_pct": 58.9,
+          "is_jc": false,
+          "address": "3400 Ellerslie Avenue Baltimore MD 21218"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Tendea Family INC.",
+      "county": "Baltimore City",
+      "category": "catchment_overlap",
+      "n_tracts": 3,
+      "tracts": [
+        "24510070100",
+        "24510070200",
+        "24510070300"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Lakewood Elementary",
+          "ncessch_id": "240009000265",
+          "pct_of_tract": 0.628,
+          "pct_of_catchment": 0.13,
+          "tract_geoid": "24510070100"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Tench Tilghman Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000320",
+          "geoid20": "24510070300",
+          "cpg": 0.91,
+          "child_pov_pct": 28.8,
+          "is_jc": false,
+          "address": "600 N Patterson Park Avenue Baltimore MD 21205"
+        },
+        {
+          "school_name": "Elmer A. Henderson: A Johns Hopkins Partnership Sc",
+          "school_type": "Combined",
+          "ncessch_id": "",
+          "geoid20": "24510070300",
+          "cpg": 0.91,
+          "child_pov_pct": 28.8,
+          "is_jc": false,
+          "address": "2100 Ashland Avenue Baltimore MD 21205"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "United Communities Against Poverty",
+      "county": "Prince George's",
+      "category": "needs_jc",
+      "n_tracts": 4,
+      "tracts": [
+        "24033802301",
+        "24033802404",
+        "24033802406",
+        "24033802407"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "District Heights Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240051001019",
+          "geoid20": "24033802404",
+          "cpg": 0.9,
+          "child_pov_pct": 31.3,
+          "is_jc": false,
+          "address": "2200 County Rd District Heights MD 20747"
+        },
+        {
+          "school_name": "Frances Scott Key Elem",
+          "school_type": "Elementary",
+          "ncessch_id": "240051001050",
+          "geoid20": "24033802407",
+          "cpg": 0.86,
+          "child_pov_pct": null,
+          "is_jc": false,
+          "address": "2301 Scott Key Dr District Heights MD 20747"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Urban Strategies Inc",
+      "county": "Baltimore City",
+      "category": "needs_jc",
+      "n_tracts": 2,
+      "tracts": [
+        "24510030100",
+        "24510280500"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "National Academy Foundation",
+          "school_type": "Combined",
+          "ncessch_id": "",
+          "geoid20": "24510280500",
+          "cpg": 0.9,
+          "child_pov_pct": 80.7,
+          "is_jc": false,
+          "address": "540 N Caroline Street Baltimore MD 21205"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Latin American Youth Center",
+      "county": "Prince George's",
+      "category": "needs_jc",
+      "n_tracts": 4,
+      "tracts": [
+        "24033806602",
+        "24033807301",
+        "24033807305",
+        "24033807410"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Adelphi Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240051000965",
+          "geoid20": "24033807305",
+          "cpg": 0.87,
+          "child_pov_pct": 49.9,
+          "is_jc": false,
+          "address": "9000 25th Ave Adelphi MD 20783"
+        },
+        {
+          "school_name": "Cherokee Lane Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240051001006",
+          "geoid20": "24033807305",
+          "cpg": 0.85,
+          "child_pov_pct": 49.9,
+          "is_jc": false,
+          "address": "2617 Buck Lodge Rd Adelphi MD 20783"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Identity, Inc.",
+      "county": "Montgomery",
+      "category": "catchment_overlap",
+      "n_tracts": 6,
+      "tracts": [
+        "24031700713",
+        "24031700724",
+        "24031700725",
+        "24031700726",
+        "24031700727",
+        "24031700731"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Summit Hall Elementary",
+          "ncessch_id": "240048000931",
+          "pct_of_tract": 0.253,
+          "pct_of_catchment": 0.409,
+          "tract_geoid": "24031700731"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "South Lake Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240048000924",
+          "geoid20": "24031700713",
+          "cpg": 0.85,
+          "child_pov_pct": 40.2,
+          "is_jc": false,
+          "address": "18201 Contour Road Gaithersburg MD 20877"
+        },
+        {
+          "school_name": "Gaithersburg Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240048000836",
+          "geoid20": "24031700725",
+          "cpg": 0.82,
+          "child_pov_pct": 7.5,
+          "is_jc": false,
+          "address": "35 N Summit Ave Gaithersburg MD 20877"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Community Assistance Network, Inc.",
+      "county": "Baltimore County",
+      "category": "catchment_overlap",
+      "n_tracts": 3,
+      "tracts": [
+        "24005450501",
+        "24005450503",
+        "24005450504"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [
+        {
+          "school_name": "Sandalwood Elementary",
+          "ncessch_id": "240012000469",
+          "pct_of_tract": 0.439,
+          "pct_of_catchment": 0.167,
+          "tract_geoid": "24005450503"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Deep Creek Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240012000369",
+          "geoid20": "24005450501",
+          "cpg": 0.81,
+          "child_pov_pct": 14.7,
+          "is_jc": false,
+          "address": "1101 E Homberg Ave Baltimore MD 21221"
+        },
+        {
+          "school_name": "Mars Estates Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240012000424",
+          "geoid20": "24005450501",
+          "cpg": 0.74,
+          "child_pov_pct": 14.7,
+          "is_jc": false,
+          "address": "1500 E Homberg Ave Baltimore MD 21221"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Good Intentions Foundation Inc.",
+      "county": "Prince George's",
+      "category": "needs_jc",
+      "n_tracts": 1,
+      "tracts": [
+        "24033803602"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Glenarden Woods Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "",
+          "geoid20": "24033803602",
+          "cpg": 0.41,
+          "child_pov_pct": 43.4,
+          "is_jc": false,
+          "address": "7801 Glenarden Pkwy Lanham MD 20706"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Leaders Breeders Inc.",
+      "county": "Baltimore City",
+      "category": "needs_jc",
+      "n_tracts": 1,
+      "tracts": [
+        "24510260301"
+      ],
+      "tract_level_coverage": false,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [],
+      "jcs_near_miss": [],
+      "candidates": [],
+      "closest_elementary": {
+        "school_name": "Sinclair Lane Elementary",
+        "ncessch_id": "240009000313",
         "school_type": "Elementary",
-        "ncessch_id": "240009000303",
-        "geoid20": "24510150400",
-        "cpg": 0.96,
-        "child_pov_pct": 47.8,
-        "is_jc": false,
-        "address": "2400 Windsor Avenue Baltimore MD 21216"
-      },
-      {
-        "school_name": "Edgewood Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "",
-        "geoid20": "24510150600",
-        "cpg": 0.92,
-        "child_pov_pct": 57.0,
-        "is_jc": false,
-        "address": "1900 Edgewood Street Baltimore MD 21216"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "CASA, Inc.",
-    "county": "Prince George's",
-    "n_tracts": 4,
-    "tracts": [
-      "24033805500",
-      "24033805601",
-      "24033805602",
-      "24033805700"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Cool Spring Elementary",
-        "ncessch_id": "240051000510",
-        "pct_of_tract": 0.356,
-        "pct_of_catchment": 0.246,
-        "tract_geoid": "24033805601"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Langley Pk/Mccormick Elem",
-        "school_type": "Elementary",
-        "ncessch_id": "240051001087",
-        "geoid20": "24033805700",
-        "cpg": 0.95,
-        "child_pov_pct": 18.1,
-        "is_jc": false,
-        "address": "8201 15th Ave Hyattsville MD 20783"
-      },
-      {
-        "school_name": "Carole Highlands Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240051000999",
-        "geoid20": "24033805500",
-        "cpg": 0.89,
-        "child_pov_pct": 25.1,
-        "is_jc": false,
-        "address": "1610 Hannon St Takoma Park MD 20912"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "The Central Baltimore Partnership, Inc.",
-    "county": "Baltimore City",
-    "n_tracts": 5,
-    "tracts": [
-      "24510090400",
-      "24510090800",
-      "24510120300",
-      "24510120400",
-      "24510120500"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Abbottston Elementary",
-        "ncessch_id": "240009000143",
-        "pct_of_tract": 0.643,
-        "pct_of_catchment": 0.162,
-        "tract_geoid": "24510090400"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Cecil Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000169",
-        "geoid20": "24510090800",
-        "cpg": 0.92,
-        "child_pov_pct": 31.4,
-        "is_jc": false,
-        "address": "2000 Cecil Avenue Baltimore MD 21218"
-      },
-      {
-        "school_name": "Dallas F Nicholas Sr Elem",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000184",
-        "geoid20": "24510120400",
-        "cpg": 0.9,
-        "child_pov_pct": 14.5,
-        "is_jc": false,
-        "address": "201 E 21st Street Baltimore MD 21218"
-      },
-      {
-        "school_name": "Margaret Brent Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000276",
-        "geoid20": "24510120300",
-        "cpg": 0.9,
-        "child_pov_pct": 30.7,
-        "is_jc": false,
-        "address": "100 E 26th Street Baltimore MD 21218"
-      },
-      {
-        "school_name": "Baltimore Design School",
-        "school_type": "Combined",
-        "ncessch_id": "",
-        "geoid20": "24510120500",
-        "cpg": 0.9,
-        "child_pov_pct": 13.8,
-        "is_jc": false,
-        "address": "1500 Barclay Street Baltimore MD 21202"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "The Y in Central Maryland",
-    "county": "Baltimore City",
-    "n_tracts": 7,
-    "tracts": [
-      "24510090100",
-      "24510090200",
-      "24510090300",
-      "24510090400",
-      "24510090600",
-      "24510090700",
-      "24510271001"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Abbottston Elementary",
-        "ncessch_id": "240009000143",
-        "pct_of_tract": 0.998,
-        "pct_of_catchment": 0.311,
-        "tract_geoid": "24510090700"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Walter P Carter Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000328",
-        "geoid20": "24510271001",
-        "cpg": 0.92,
-        "child_pov_pct": 40.3,
-        "is_jc": false,
-        "address": "820 E 43rd Street Baltimore MD 21212"
-      },
-      {
-        "school_name": "Waverly Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000329",
-        "geoid20": "24510090300",
-        "cpg": 0.9,
-        "child_pov_pct": 58.9,
-        "is_jc": false,
-        "address": "3400 Ellerslie Avenue Baltimore MD 21218"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Tendea Family INC.",
-    "county": "Baltimore City",
-    "n_tracts": 3,
-    "tracts": [
-      "24510070100",
-      "24510070200",
-      "24510070300"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Lakewood Elementary",
-        "ncessch_id": "240009000265",
-        "pct_of_tract": 0.628,
-        "pct_of_catchment": 0.13,
-        "tract_geoid": "24510070100"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Tench Tilghman Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000320",
-        "geoid20": "24510070300",
+        "address": "3880 Sinclair Lane Baltimore MD 21213",
         "cpg": 0.91,
-        "child_pov_pct": 28.8,
-        "is_jc": false,
-        "address": "600 N Patterson Park Avenue Baltimore MD 21205"
+        "geoid20": "24510260302",
+        "distance_m": 545,
+        "lat": 39.31513320858818,
+        "lon": -76.56053743212824
       },
-      {
-        "school_name": "Elmer A. Henderson: A Johns Hopkins Partnership Sc",
-        "school_type": "Combined",
-        "ncessch_id": "",
-        "geoid20": "24510070300",
-        "cpg": 0.91,
-        "child_pov_pct": 28.8,
-        "is_jc": false,
-        "address": "2100 Ashland Avenue Baltimore MD 21205"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "United Communities Against Poverty",
-    "county": "Prince George's",
-    "n_tracts": 4,
-    "tracts": [
-      "24033802301",
-      "24033802404",
-      "24033802406",
-      "24033802407"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "District Heights Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240051001019",
-        "geoid20": "24033802404",
-        "cpg": 0.9,
-        "child_pov_pct": 31.3,
-        "is_jc": false,
-        "address": "2200 County Rd District Heights MD 20747"
-      },
-      {
-        "school_name": "Frances Scott Key Elem",
-        "school_type": "Elementary",
-        "ncessch_id": "240051001050",
-        "geoid20": "24033802407",
-        "cpg": 0.86,
-        "child_pov_pct": null,
-        "is_jc": false,
-        "address": "2301 Scott Key Dr District Heights MD 20747"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Urban Strategies Inc",
-    "county": "Baltimore City",
-    "n_tracts": 2,
-    "tracts": [
-      "24510030100",
-      "24510280500"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "National Academy Foundation",
-        "school_type": "Combined",
-        "ncessch_id": "",
-        "geoid20": "24510280500",
-        "cpg": 0.9,
-        "child_pov_pct": 80.7,
-        "is_jc": false,
-        "address": "540 N Caroline Street Baltimore MD 21205"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Latin American Youth Center",
-    "county": "Prince George's",
-    "n_tracts": 4,
-    "tracts": [
-      "24033806602",
-      "24033807301",
-      "24033807305",
-      "24033807410"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Adelphi Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240051000965",
-        "geoid20": "24033807305",
-        "cpg": 0.87,
-        "child_pov_pct": 49.9,
-        "is_jc": false,
-        "address": "9000 25th Ave Adelphi MD 20783"
-      },
-      {
-        "school_name": "Cherokee Lane Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240051001006",
-        "geoid20": "24033807305",
-        "cpg": 0.85,
-        "child_pov_pct": 49.9,
-        "is_jc": false,
-        "address": "2617 Buck Lodge Rd Adelphi MD 20783"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Identity, Inc.",
-    "county": "Montgomery",
-    "n_tracts": 6,
-    "tracts": [
-      "24031700713",
-      "24031700724",
-      "24031700725",
-      "24031700726",
-      "24031700727",
-      "24031700731"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Summit Hall Elementary",
-        "ncessch_id": "240048000931",
-        "pct_of_tract": 0.253,
-        "pct_of_catchment": 0.409,
-        "tract_geoid": "24031700731"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "South Lake Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240048000924",
-        "geoid20": "24031700713",
-        "cpg": 0.85,
-        "child_pov_pct": 40.2,
-        "is_jc": false,
-        "address": "18201 Contour Road Gaithersburg MD 20877"
-      },
-      {
-        "school_name": "Gaithersburg Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240048000836",
-        "geoid20": "24031700725",
-        "cpg": 0.82,
-        "child_pov_pct": 7.5,
-        "is_jc": false,
-        "address": "35 N Summit Ave Gaithersburg MD 20877"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Community Assistance Network, Inc.",
-    "county": "Baltimore County",
-    "n_tracts": 3,
-    "tracts": [
-      "24005450501",
-      "24005450503",
-      "24005450504"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [
-      {
-        "school_name": "Sandalwood Elementary",
-        "ncessch_id": "240012000469",
-        "pct_of_tract": 0.439,
-        "pct_of_catchment": 0.167,
-        "tract_geoid": "24005450503"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Deep Creek Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240012000369",
-        "geoid20": "24005450501",
-        "cpg": 0.81,
-        "child_pov_pct": 14.7,
-        "is_jc": false,
-        "address": "1101 E Homberg Ave Baltimore MD 21221"
-      },
-      {
-        "school_name": "Mars Estates Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240012000424",
-        "geoid20": "24005450501",
-        "cpg": 0.74,
-        "child_pov_pct": 14.7,
-        "is_jc": false,
-        "address": "1500 E Homberg Ave Baltimore MD 21221"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Good Intentions Foundation Inc.",
-    "county": "Prince George's",
-    "n_tracts": 1,
-    "tracts": [
-      "24033803602"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Glenarden Woods Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "",
-        "geoid20": "24033803602",
-        "cpg": 0.41,
-        "child_pov_pct": 43.4,
-        "is_jc": false,
-        "address": "7801 Glenarden Pkwy Lanham MD 20706"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Leaders Breeders Inc.",
-    "county": "Baltimore City",
-    "n_tracts": 1,
-    "tracts": [
-      "24510260301"
-    ],
-    "tract_level_coverage": false,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [],
-    "jcs_near_miss": [],
-    "candidates": [],
-    "named_hint": false,
-    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
-  },
-  {
-    "grantee": "Anne Arundel County Partnership for Children, Youth, and Families",
-    "county": "Anne Arundel",
-    "n_tracts": 4,
-    "tracts": [
-      "24003750101",
-      "24003750102",
-      "24003750201",
-      "24003750204"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Belle Grove Elementary School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Belle Grove Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240006000043",
-        "geoid20": "24003750102",
-        "cpg": 0.88,
-        "child_pov_pct": null,
-        "is_jc": true,
-        "address": "4502 Belle Grove Road Baltimore MD 21225"
-      },
-      {
-        "school_name": "Park Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240006000111",
-        "geoid20": "24003750101",
-        "cpg": 0.87,
-        "child_pov_pct": 4.4,
-        "is_jc": false,
-        "address": "201 East 11th Ave Baltimore MD 21225"
-      },
-      {
-        "school_name": "Brooklyn Park Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240006000049",
-        "geoid20": "24003750204",
-        "cpg": 0.82,
-        "child_pov_pct": null,
-        "is_jc": false,
-        "address": "200 14th Ave Baltimore MD 21225"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Boys & Girls Clubs of Harford and Cecil Counties",
-    "county": "Harford",
-    "n_tracts": 5,
-    "tracts": [
-      "24025301301",
-      "24025301302",
-      "24025301401",
-      "24025301402",
-      "24025301601"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Magnolia Elementary School"
-    ],
-    "jcs_near_miss": [
-      {
-        "school_name": "Deerfield Elementary",
-        "ncessch_id": "240039000686",
-        "pct_of_tract": 0.114,
-        "pct_of_catchment": 0.065,
-        "tract_geoid": "24025301601"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Magnolia Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240039000706",
-        "geoid20": "24025301402",
-        "cpg": 0.91,
-        "child_pov_pct": 26.4,
-        "is_jc": true,
-        "address": "901 Trimble Rd Joppa MD 21085"
-      },
-      {
-        "school_name": "Edgewood Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240039000688",
-        "geoid20": "24025301601",
-        "cpg": 0.86,
-        "child_pov_pct": 5.8,
-        "is_jc": false,
-        "address": "2100 Cedar Dr Edgewood MD 21040"
-      },
-      {
-        "school_name": "Riverside Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240039000713",
-        "geoid20": "24025301402",
-        "cpg": 0.71,
-        "child_pov_pct": 26.4,
-        "is_jc": false,
-        "address": "211 Stillmeadow Dr Joppa MD 21085"
-      },
-      {
-        "school_name": "Joppatowne Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240039000704",
-        "geoid20": "24025301401",
-        "cpg": 0.67,
-        "child_pov_pct": 3.5,
-        "is_jc": false,
-        "address": "407 Trimble Rd Joppa MD 21085"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Caroline Human Services Council, Inc.",
-    "county": "Caroline",
-    "n_tracts": 1,
-    "tracts": [
-      "24011955600"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Federalsburg Judy Center"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Federalsburg Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240018000521",
-        "geoid20": "24011955600",
-        "cpg": 0.93,
-        "child_pov_pct": 45.1,
-        "is_jc": true,
-        "address": "302 S University Ave Federalsburg MD 21632"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
-  },
-  {
-    "grantee": "CHEER (Community Health and Empowerment through Education and Research)",
-    "county": "Montgomery",
-    "n_tracts": 4,
-    "tracts": [
-      "24031701702",
-      "24031701900",
-      "24031702000",
-      "24031702301"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Rolling Terrace Elementary School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "New Hampshire Estates Elem",
-        "school_type": "Elementary",
-        "ncessch_id": "240048000881",
-        "geoid20": "24031702000",
-        "cpg": 0.9,
-        "child_pov_pct": 18.6,
-        "is_jc": false,
-        "address": "8720 Carroll Ave Silver Spring MD 20903"
-      },
-      {
-        "school_name": "Rolling Terrace Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240048000913",
-        "geoid20": "24031702000",
-        "cpg": 0.87,
-        "child_pov_pct": 18.6,
-        "is_jc": true,
-        "address": "705 Bayfield St Takoma Park MD 20912"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Cherry Hill Strong",
-    "county": "Baltimore City",
-    "n_tracts": 3,
-    "tracts": [
-      "24510250203",
-      "24510250204",
-      "24510250207"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Arundel Elementary School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Cherry Hill Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "",
-        "geoid20": "24510250204",
-        "cpg": 0.94,
-        "child_pov_pct": 62.3,
-        "is_jc": false,
-        "address": "801 Bridgeview Road Baltimore MD 21225"
-      },
-      {
-        "school_name": "Arundel Elementary/Middle",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000148",
-        "geoid20": "24510250207",
-        "cpg": 0.93,
-        "child_pov_pct": 22.0,
-        "is_jc": true,
-        "address": "2400 Round Road Baltimore MD 21225"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Child First Authority",
-    "county": "Baltimore City",
-    "n_tracts": 6,
-    "tracts": [
-      "24510130200",
-      "24510130300",
-      "24510140200",
-      "24510140300",
-      "24510170200",
-      "24510170300"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Dorothy I. Height Elementary School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "The Historic Samuel Coleridge-Taylor Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000309",
-        "geoid20": "24510170200",
-        "cpg": 0.98,
-        "child_pov_pct": 63.5,
-        "is_jc": false,
-        "address": "507 W Preston Street Baltimore MD 21201"
-      },
-      {
-        "school_name": "Dorothy I. Height Elementary School ",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000256",
-        "geoid20": "24510130200",
-        "cpg": 0.93,
-        "child_pov_pct": 18.0,
-        "is_jc": true,
-        "address": "2011 Linden Avenue Baltimore MD 21217"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "City of Cumberland",
-    "county": "Allegany",
-    "n_tracts": 2,
-    "tracts": [
-      "24001000700",
-      "24001000800"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "South Penn Elementary School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "John Humbird Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240003000019",
-        "geoid20": "24001000800",
-        "cpg": 0.91,
-        "child_pov_pct": 37.9,
-        "is_jc": false,
-        "address": "120 Mary St Cumberland MD 21502"
-      },
-      {
-        "school_name": "South Penn Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240003001359",
-        "geoid20": "24001000700",
-        "cpg": 0.77,
-        "child_pov_pct": 48.1,
-        "is_jc": true,
-        "address": "500 E 2nd St Cumberland MD 21502"
-      }
-    ],
-    "named_hint": true,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Frederick Local Management Board",
-    "county": "Frederick",
-    "n_tracts": 5,
-    "tracts": [
-      "24021750504",
-      "24021750505",
-      "24021750506",
-      "24021750507",
-      "24021750508"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Butterfly Ridge Elementary School",
-      "Hillcrest Elementary School",
-      "Waverley Elementary School"
-    ],
-    "jcs_near_miss": [
-      {
-        "school_name": "Lincoln Elementary",
-        "ncessch_id": "240033000649",
-        "pct_of_tract": 0.589,
-        "pct_of_catchment": 0.314,
-        "tract_geoid": "24021750504"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Hillcrest Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240033090473",
-        "geoid20": "24021750505",
-        "cpg": 0.92,
-        "child_pov_pct": 8.8,
-        "is_jc": true,
-        "address": "1285 Hillcrest Drive Frederick MD 21703"
-      },
-      {
-        "school_name": "Waverley Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240033000657",
-        "geoid20": "24021750507",
-        "cpg": 0.85,
-        "child_pov_pct": null,
-        "is_jc": true,
-        "address": "201 Waverley Dr Frederick MD 21702"
-      },
-      {
-        "school_name": "Butterfly Ridge Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240033001748",
-        "geoid20": "24021750506",
-        "cpg": 0.67,
-        "child_pov_pct": 2.6,
-        "is_jc": true,
-        "address": "601 Contender Way Frederick MD 21703"
-      }
-    ],
-    "named_hint": true,
-    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
-  },
-  {
-    "grantee": "LifeStyles of Maryland Foundation, Inc.",
-    "county": "Charles",
-    "n_tracts": 1,
-    "tracts": [
-      "24017850901"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Dr. Samuel A. Mudd Elementary School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Dr Samuel A Mudd Elementary ",
-        "school_type": "Elementary",
-        "ncessch_id": "240027000585",
-        "geoid20": "24017850901",
-        "cpg": 0.85,
-        "child_pov_pct": 26.9,
-        "is_jc": true,
-        "address": "820 Stone Ave Waldorf MD 20602"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
-  },
-  {
-    "grantee": "Moving Dorchester Forward, INC",
-    "county": "Dorchester",
-    "n_tracts": 3,
-    "tracts": [
-      "24019970500",
-      "24019970600",
-      "24019970804"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Maple Elementary School"
-    ],
-    "jcs_near_miss": [
-      {
-        "school_name": "Sandy Hill Elementary",
-        "ncessch_id": "240030000621",
-        "pct_of_tract": 0.776,
-        "pct_of_catchment": 0.023,
-        "tract_geoid": "24019970500"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Choptank Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240030000841",
-        "geoid20": "24019970600",
-        "cpg": 0.94,
-        "child_pov_pct": 18.5,
-        "is_jc": false,
-        "address": "1103 Mace's Lane Cambridge MD 21613"
-      },
-      {
-        "school_name": "Maple Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240030000617",
-        "geoid20": "24019970600",
-        "cpg": 0.84,
-        "child_pov_pct": 18.5,
-        "is_jc": true,
-        "address": "5225 Egypt Rd. Cambridge MD 21613"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "One Annapolis, Inc",
-    "county": "Anne Arundel",
-    "n_tracts": 4,
-    "tracts": [
-      "24003702500",
-      "24003706303",
-      "24003706403",
-      "24003706404"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Georgetown East Elementary"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Tyler Heights Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240006000136",
-        "geoid20": "24003706404",
-        "cpg": 0.96,
-        "child_pov_pct": 2.1,
-        "is_jc": false,
-        "address": "200 Janwall St Annapolis MD 21403"
-      },
-      {
-        "school_name": "Georgetown East Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240006000073",
-        "geoid20": "24003706303",
-        "cpg": 0.9,
-        "child_pov_pct": null,
-        "is_jc": true,
-        "address": "111 Dogwood Rd Annapolis MD 21403"
-      }
-    ],
-    "named_hint": true,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Park Heights Renaissance, Inc.",
-    "county": "Baltimore City",
-    "n_tracts": 10,
-    "tracts": [
-      "24510150500",
-      "24510151100",
-      "24510151200",
-      "24510151300",
-      "24510271600",
-      "24510271700",
-      "24510271801",
-      "24510271802",
-      "24510280101",
-      "24510280102"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Arlington Elementary School"
-    ],
-    "jcs_near_miss": [
-      {
-        "school_name": "Liberty Elementary",
-        "ncessch_id": "240009000270",
-        "pct_of_tract": 0.069,
-        "pct_of_catchment": 0.072,
-        "tract_geoid": "24510151100"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Park Heights Academy",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000192",
-        "geoid20": "24510271600",
-        "cpg": 0.94,
-        "child_pov_pct": 29.6,
-        "is_jc": false,
-        "address": "2835 Virginia Avenue Baltimore MD 21215"
-      },
-      {
-        "school_name": "Dr Nathan A Pitts-Ashburton Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000149",
-        "geoid20": "24510151100",
-        "cpg": 0.92,
-        "child_pov_pct": null,
-        "is_jc": false,
-        "address": "3935 Hilton Road Baltimore MD 21215"
-      },
-      {
-        "school_name": "Callaway Elementary",
-        "school_type": "Combined",
-        "ncessch_id": "240009000163",
-        "geoid20": "24510151100",
-        "cpg": 0.91,
-        "child_pov_pct": null,
-        "is_jc": false,
-        "address": "3701 Fernhill Avenue Baltimore MD 21215"
-      },
-      {
-        "school_name": "Pimlico Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000299",
-        "geoid20": "24510271700",
-        "cpg": 0.9,
-        "child_pov_pct": 41.0,
-        "is_jc": false,
-        "address": "4849 Pimlico Road Baltimore MD 21215"
-      },
-      {
-        "school_name": "Arlington Elementary/Middle",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000146",
-        "geoid20": "24510271801",
-        "cpg": 0.9,
-        "child_pov_pct": 27.1,
-        "is_jc": true,
-        "address": "3705 W Rogers Avenue Baltimore MD 21215"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "Prince George's County Department of Social Services",
-    "county": "Prince George's",
-    "n_tracts": 4,
-    "tracts": [
-      "24033801801",
-      "24033801802",
-      "24033801808",
-      "24033801809"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Hillcrest Heights Elementary School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Hillcrest Heights Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240051001060",
-        "geoid20": "24033801808",
-        "cpg": 0.89,
-        "child_pov_pct": 23.5,
-        "is_jc": true,
-        "address": "4305 22nd Pl Temple Hills MD 20748"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
-  },
-  {
-    "grantee": "San Mar Family & Community Services: Bester Community of Hope",
-    "county": "Washington",
-    "n_tracts": 5,
-    "tracts": [
-      "24043000500",
-      "24043000601",
-      "24043000700",
-      "24043000800",
-      "24043000900"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Bester Elementary School"
-    ],
-    "jcs_near_miss": [
-      {
-        "school_name": "Emma K Doub Elementary",
-        "ncessch_id": "240066001264",
-        "pct_of_tract": 0.182,
-        "pct_of_catchment": 0.04,
-        "tract_geoid": "24043000700"
-      },
-      {
-        "school_name": "Lincolnshire Elementary",
-        "ncessch_id": "240066001273",
-        "pct_of_tract": 0.248,
-        "pct_of_catchment": 0.212,
-        "tract_geoid": "24043000900"
-      },
-      {
-        "school_name": "Ruth Ann Monroe Primary",
-        "ncessch_id": "240066001707",
-        "pct_of_tract": 0.131,
-        "pct_of_catchment": 0.015,
-        "tract_geoid": "24043000601"
-      }
-    ],
-    "candidates": [
-      {
-        "school_name": "Pangborn Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240066001278",
-        "geoid20": "24043000601",
-        "cpg": 0.87,
-        "child_pov_pct": 23.3,
-        "is_jc": false,
-        "address": "195 Pangborn Blvd Hagerstown MD 21740"
-      },
-      {
-        "school_name": "Bester Elementary",
-        "school_type": "Elementary",
-        "ncessch_id": "240066001253",
-        "geoid20": "24043000700",
-        "cpg": 0.87,
-        "child_pov_pct": 57.2,
-        "is_jc": true,
-        "address": "385 Mill St Hagerstown MD 21740"
-      }
-    ],
-    "named_hint": true,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  },
-  {
-    "grantee": "South Baltimore Community Land Trust",
-    "county": "Baltimore City",
-    "n_tracts": 2,
-    "tracts": [
-      "24510250402",
-      "24510250500"
-    ],
-    "tract_level_coverage": true,
-    "county_level_coverage": true,
-    "jcs_in_tracts": [
-      "Curtis Bay Elementary/Middle School"
-    ],
-    "jcs_near_miss": [],
-    "candidates": [
-      {
-        "school_name": "Bay-Brook Elementary/Middle",
-        "school_type": "Combined",
-        "ncessch_id": "240009000154",
-        "geoid20": "24510250500",
-        "cpg": 0.9,
-        "child_pov_pct": 32.8,
-        "is_jc": false,
-        "address": "4301 10th Street Baltimore MD 21225"
-      },
-      {
-        "school_name": "Curtis Bay Elementary/Middle",
-        "school_type": "Elementary",
-        "ncessch_id": "240009000183",
-        "geoid20": "24510250500",
-        "cpg": 0.9,
-        "child_pov_pct": 32.8,
-        "is_jc": true,
-        "address": "4301 W Bay Avenue Baltimore MD 21225"
-      }
-    ],
-    "named_hint": false,
-    "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
-  }
-]
+      "named_hint": false,
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+    },
+    {
+      "grantee": "Anne Arundel County Partnership for Children, Youth, and Families",
+      "county": "Anne Arundel",
+      "category": "in_tract",
+      "n_tracts": 4,
+      "tracts": [
+        "24003750101",
+        "24003750102",
+        "24003750201",
+        "24003750204"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Belle Grove Elementary School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Belle Grove Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240006000043",
+          "geoid20": "24003750102",
+          "cpg": 0.88,
+          "child_pov_pct": null,
+          "is_jc": true,
+          "address": "4502 Belle Grove Road Baltimore MD 21225"
+        },
+        {
+          "school_name": "Park Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240006000111",
+          "geoid20": "24003750101",
+          "cpg": 0.87,
+          "child_pov_pct": 4.4,
+          "is_jc": false,
+          "address": "201 East 11th Ave Baltimore MD 21225"
+        },
+        {
+          "school_name": "Brooklyn Park Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240006000049",
+          "geoid20": "24003750204",
+          "cpg": 0.82,
+          "child_pov_pct": null,
+          "is_jc": false,
+          "address": "200 14th Ave Baltimore MD 21225"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Boys & Girls Clubs of Harford and Cecil Counties",
+      "county": "Harford",
+      "category": "in_tract",
+      "n_tracts": 5,
+      "tracts": [
+        "24025301301",
+        "24025301302",
+        "24025301401",
+        "24025301402",
+        "24025301601"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Magnolia Elementary School"
+      ],
+      "jcs_near_miss": [
+        {
+          "school_name": "Deerfield Elementary",
+          "ncessch_id": "240039000686",
+          "pct_of_tract": 0.114,
+          "pct_of_catchment": 0.065,
+          "tract_geoid": "24025301601"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Magnolia Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240039000706",
+          "geoid20": "24025301402",
+          "cpg": 0.91,
+          "child_pov_pct": 26.4,
+          "is_jc": true,
+          "address": "901 Trimble Rd Joppa MD 21085"
+        },
+        {
+          "school_name": "Edgewood Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240039000688",
+          "geoid20": "24025301601",
+          "cpg": 0.86,
+          "child_pov_pct": 5.8,
+          "is_jc": false,
+          "address": "2100 Cedar Dr Edgewood MD 21040"
+        },
+        {
+          "school_name": "Riverside Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240039000713",
+          "geoid20": "24025301402",
+          "cpg": 0.71,
+          "child_pov_pct": 26.4,
+          "is_jc": false,
+          "address": "211 Stillmeadow Dr Joppa MD 21085"
+        },
+        {
+          "school_name": "Joppatowne Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240039000704",
+          "geoid20": "24025301401",
+          "cpg": 0.67,
+          "child_pov_pct": 3.5,
+          "is_jc": false,
+          "address": "407 Trimble Rd Joppa MD 21085"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Caroline Human Services Council, Inc.",
+      "county": "Caroline",
+      "category": "in_tract",
+      "n_tracts": 1,
+      "tracts": [
+        "24011955600"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Federalsburg Judy Center"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Federalsburg Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240018000521",
+          "geoid20": "24011955600",
+          "cpg": 0.93,
+          "child_pov_pct": 45.1,
+          "is_jc": true,
+          "address": "302 S University Ave Federalsburg MD 21632"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+    },
+    {
+      "grantee": "CHEER (Community Health and Empowerment through Education and Research)",
+      "county": "Montgomery",
+      "category": "in_tract",
+      "n_tracts": 4,
+      "tracts": [
+        "24031701702",
+        "24031701900",
+        "24031702000",
+        "24031702301"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Rolling Terrace Elementary School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "New Hampshire Estates Elem",
+          "school_type": "Elementary",
+          "ncessch_id": "240048000881",
+          "geoid20": "24031702000",
+          "cpg": 0.9,
+          "child_pov_pct": 18.6,
+          "is_jc": false,
+          "address": "8720 Carroll Ave Silver Spring MD 20903"
+        },
+        {
+          "school_name": "Rolling Terrace Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240048000913",
+          "geoid20": "24031702000",
+          "cpg": 0.87,
+          "child_pov_pct": 18.6,
+          "is_jc": true,
+          "address": "705 Bayfield St Takoma Park MD 20912"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Cherry Hill Strong",
+      "county": "Baltimore City",
+      "category": "in_tract",
+      "n_tracts": 3,
+      "tracts": [
+        "24510250203",
+        "24510250204",
+        "24510250207"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Arundel Elementary School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Cherry Hill Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "",
+          "geoid20": "24510250204",
+          "cpg": 0.94,
+          "child_pov_pct": 62.3,
+          "is_jc": false,
+          "address": "801 Bridgeview Road Baltimore MD 21225"
+        },
+        {
+          "school_name": "Arundel Elementary/Middle",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000148",
+          "geoid20": "24510250207",
+          "cpg": 0.93,
+          "child_pov_pct": 22.0,
+          "is_jc": true,
+          "address": "2400 Round Road Baltimore MD 21225"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Child First Authority",
+      "county": "Baltimore City",
+      "category": "in_tract",
+      "n_tracts": 6,
+      "tracts": [
+        "24510130200",
+        "24510130300",
+        "24510140200",
+        "24510140300",
+        "24510170200",
+        "24510170300"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Dorothy I. Height Elementary School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "The Historic Samuel Coleridge-Taylor Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000309",
+          "geoid20": "24510170200",
+          "cpg": 0.98,
+          "child_pov_pct": 63.5,
+          "is_jc": false,
+          "address": "507 W Preston Street Baltimore MD 21201"
+        },
+        {
+          "school_name": "Dorothy I. Height Elementary School ",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000256",
+          "geoid20": "24510130200",
+          "cpg": 0.93,
+          "child_pov_pct": 18.0,
+          "is_jc": true,
+          "address": "2011 Linden Avenue Baltimore MD 21217"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "City of Cumberland",
+      "county": "Allegany",
+      "category": "in_tract",
+      "n_tracts": 2,
+      "tracts": [
+        "24001000700",
+        "24001000800"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "South Penn Elementary School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "John Humbird Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240003000019",
+          "geoid20": "24001000800",
+          "cpg": 0.91,
+          "child_pov_pct": 37.9,
+          "is_jc": false,
+          "address": "120 Mary St Cumberland MD 21502"
+        },
+        {
+          "school_name": "South Penn Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240003001359",
+          "geoid20": "24001000700",
+          "cpg": 0.77,
+          "child_pov_pct": 48.1,
+          "is_jc": true,
+          "address": "500 E 2nd St Cumberland MD 21502"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": true,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Frederick Local Management Board",
+      "county": "Frederick",
+      "category": "in_tract",
+      "n_tracts": 5,
+      "tracts": [
+        "24021750504",
+        "24021750505",
+        "24021750506",
+        "24021750507",
+        "24021750508"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Butterfly Ridge Elementary School",
+        "Hillcrest Elementary School",
+        "Waverley Elementary School"
+      ],
+      "jcs_near_miss": [
+        {
+          "school_name": "Lincoln Elementary",
+          "ncessch_id": "240033000649",
+          "pct_of_tract": 0.589,
+          "pct_of_catchment": 0.314,
+          "tract_geoid": "24021750504"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Hillcrest Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240033090473",
+          "geoid20": "24021750505",
+          "cpg": 0.92,
+          "child_pov_pct": 8.8,
+          "is_jc": true,
+          "address": "1285 Hillcrest Drive Frederick MD 21703"
+        },
+        {
+          "school_name": "Waverley Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240033000657",
+          "geoid20": "24021750507",
+          "cpg": 0.85,
+          "child_pov_pct": null,
+          "is_jc": true,
+          "address": "201 Waverley Dr Frederick MD 21702"
+        },
+        {
+          "school_name": "Butterfly Ridge Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240033001748",
+          "geoid20": "24021750506",
+          "cpg": 0.67,
+          "child_pov_pct": 2.6,
+          "is_jc": true,
+          "address": "601 Contender Way Frederick MD 21703"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": true,
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+    },
+    {
+      "grantee": "LifeStyles of Maryland Foundation, Inc.",
+      "county": "Charles",
+      "category": "in_tract",
+      "n_tracts": 1,
+      "tracts": [
+        "24017850901"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Dr. Samuel A. Mudd Elementary School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Dr Samuel A Mudd Elementary ",
+          "school_type": "Elementary",
+          "ncessch_id": "240027000585",
+          "geoid20": "24017850901",
+          "cpg": 0.85,
+          "child_pov_pct": 26.9,
+          "is_jc": true,
+          "address": "820 Stone Ave Waldorf MD 20602"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+    },
+    {
+      "grantee": "Moving Dorchester Forward, INC",
+      "county": "Dorchester",
+      "category": "in_tract",
+      "n_tracts": 3,
+      "tracts": [
+        "24019970500",
+        "24019970600",
+        "24019970804"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Maple Elementary School"
+      ],
+      "jcs_near_miss": [
+        {
+          "school_name": "Sandy Hill Elementary",
+          "ncessch_id": "240030000621",
+          "pct_of_tract": 0.776,
+          "pct_of_catchment": 0.023,
+          "tract_geoid": "24019970500"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Choptank Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240030000841",
+          "geoid20": "24019970600",
+          "cpg": 0.94,
+          "child_pov_pct": 18.5,
+          "is_jc": false,
+          "address": "1103 Mace's Lane Cambridge MD 21613"
+        },
+        {
+          "school_name": "Maple Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240030000617",
+          "geoid20": "24019970600",
+          "cpg": 0.84,
+          "child_pov_pct": 18.5,
+          "is_jc": true,
+          "address": "5225 Egypt Rd. Cambridge MD 21613"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "One Annapolis, Inc",
+      "county": "Anne Arundel",
+      "category": "in_tract",
+      "n_tracts": 4,
+      "tracts": [
+        "24003702500",
+        "24003706303",
+        "24003706403",
+        "24003706404"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Georgetown East Elementary"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Tyler Heights Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240006000136",
+          "geoid20": "24003706404",
+          "cpg": 0.96,
+          "child_pov_pct": 2.1,
+          "is_jc": false,
+          "address": "200 Janwall St Annapolis MD 21403"
+        },
+        {
+          "school_name": "Georgetown East Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240006000073",
+          "geoid20": "24003706303",
+          "cpg": 0.9,
+          "child_pov_pct": null,
+          "is_jc": true,
+          "address": "111 Dogwood Rd Annapolis MD 21403"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": true,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Park Heights Renaissance, Inc.",
+      "county": "Baltimore City",
+      "category": "in_tract",
+      "n_tracts": 10,
+      "tracts": [
+        "24510150500",
+        "24510151100",
+        "24510151200",
+        "24510151300",
+        "24510271600",
+        "24510271700",
+        "24510271801",
+        "24510271802",
+        "24510280101",
+        "24510280102"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Arlington Elementary School"
+      ],
+      "jcs_near_miss": [
+        {
+          "school_name": "Liberty Elementary",
+          "ncessch_id": "240009000270",
+          "pct_of_tract": 0.069,
+          "pct_of_catchment": 0.072,
+          "tract_geoid": "24510151100"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Park Heights Academy",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000192",
+          "geoid20": "24510271600",
+          "cpg": 0.94,
+          "child_pov_pct": 29.6,
+          "is_jc": false,
+          "address": "2835 Virginia Avenue Baltimore MD 21215"
+        },
+        {
+          "school_name": "Dr Nathan A Pitts-Ashburton Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000149",
+          "geoid20": "24510151100",
+          "cpg": 0.92,
+          "child_pov_pct": null,
+          "is_jc": false,
+          "address": "3935 Hilton Road Baltimore MD 21215"
+        },
+        {
+          "school_name": "Callaway Elementary",
+          "school_type": "Combined",
+          "ncessch_id": "240009000163",
+          "geoid20": "24510151100",
+          "cpg": 0.91,
+          "child_pov_pct": null,
+          "is_jc": false,
+          "address": "3701 Fernhill Avenue Baltimore MD 21215"
+        },
+        {
+          "school_name": "Pimlico Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000299",
+          "geoid20": "24510271700",
+          "cpg": 0.9,
+          "child_pov_pct": 41.0,
+          "is_jc": false,
+          "address": "4849 Pimlico Road Baltimore MD 21215"
+        },
+        {
+          "school_name": "Arlington Elementary/Middle",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000146",
+          "geoid20": "24510271801",
+          "cpg": 0.9,
+          "child_pov_pct": 27.1,
+          "is_jc": true,
+          "address": "3705 W Rogers Avenue Baltimore MD 21215"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "Prince George's County Department of Social Services",
+      "county": "Prince George's",
+      "category": "in_tract",
+      "n_tracts": 4,
+      "tracts": [
+        "24033801801",
+        "24033801802",
+        "24033801808",
+        "24033801809"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Hillcrest Heights Elementary School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Hillcrest Heights Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240051001060",
+          "geoid20": "24033801808",
+          "cpg": 0.89,
+          "child_pov_pct": 23.5,
+          "is_jc": true,
+          "address": "4305 22nd Pl Temple Hills MD 20748"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+    },
+    {
+      "grantee": "San Mar Family & Community Services: Bester Community of Hope",
+      "county": "Washington",
+      "category": "in_tract",
+      "n_tracts": 5,
+      "tracts": [
+        "24043000500",
+        "24043000601",
+        "24043000700",
+        "24043000800",
+        "24043000900"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Bester Elementary School"
+      ],
+      "jcs_near_miss": [
+        {
+          "school_name": "Emma K Doub Elementary",
+          "ncessch_id": "240066001264",
+          "pct_of_tract": 0.182,
+          "pct_of_catchment": 0.04,
+          "tract_geoid": "24043000700"
+        },
+        {
+          "school_name": "Lincolnshire Elementary",
+          "ncessch_id": "240066001273",
+          "pct_of_tract": 0.248,
+          "pct_of_catchment": 0.212,
+          "tract_geoid": "24043000900"
+        },
+        {
+          "school_name": "Ruth Ann Monroe Primary",
+          "ncessch_id": "240066001707",
+          "pct_of_tract": 0.131,
+          "pct_of_catchment": 0.015,
+          "tract_geoid": "24043000601"
+        }
+      ],
+      "candidates": [
+        {
+          "school_name": "Pangborn Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240066001278",
+          "geoid20": "24043000601",
+          "cpg": 0.87,
+          "child_pov_pct": 23.3,
+          "is_jc": false,
+          "address": "195 Pangborn Blvd Hagerstown MD 21740"
+        },
+        {
+          "school_name": "Bester Elementary",
+          "school_type": "Elementary",
+          "ncessch_id": "240066001253",
+          "geoid20": "24043000700",
+          "cpg": 0.87,
+          "child_pov_pct": 57.2,
+          "is_jc": true,
+          "address": "385 Mill St Hagerstown MD 21740"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": true,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    },
+    {
+      "grantee": "South Baltimore Community Land Trust",
+      "county": "Baltimore City",
+      "category": "in_tract",
+      "n_tracts": 2,
+      "tracts": [
+        "24510250402",
+        "24510250500"
+      ],
+      "tract_level_coverage": true,
+      "county_level_coverage": true,
+      "jcs_in_tracts": [
+        "Curtis Bay Elementary/Middle School"
+      ],
+      "jcs_near_miss": [],
+      "candidates": [
+        {
+          "school_name": "Bay-Brook Elementary/Middle",
+          "school_type": "Combined",
+          "ncessch_id": "240009000154",
+          "geoid20": "24510250500",
+          "cpg": 0.9,
+          "child_pov_pct": 32.8,
+          "is_jc": false,
+          "address": "4301 10th Street Baltimore MD 21225"
+        },
+        {
+          "school_name": "Curtis Bay Elementary/Middle",
+          "school_type": "Elementary",
+          "ncessch_id": "240009000183",
+          "geoid20": "24510250500",
+          "cpg": 0.9,
+          "child_pov_pct": 32.8,
+          "is_jc": true,
+          "address": "4301 W Bay Avenue Baltimore MD 21225"
+        }
+      ],
+      "closest_elementary": null,
+      "named_hint": false,
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+    }
+  ]
+}
