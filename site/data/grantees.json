@@ -65,9 +65,9 @@
       {
         "school_name": "Dorothy I. Height Elementary School ",
         "ncessch_id": "240009000256",
-        "pct_of_tract": 0.082,
-        "pct_of_catchment": 0.018,
-        "tract_geoid": "24510150400"
+        "pct_of_tract": 0.992,
+        "pct_of_catchment": 0.741,
+        "tract_geoid": "24510130400"
       }
     ],
     "candidates": [
@@ -987,9 +987,9 @@
       {
         "school_name": "Sandy Hill Elementary",
         "ncessch_id": "240030000621",
-        "pct_of_tract": 0.442,
-        "pct_of_catchment": 0.095,
-        "tract_geoid": "24019970600"
+        "pct_of_tract": 0.776,
+        "pct_of_catchment": 0.023,
+        "tract_geoid": "24019970500"
       }
     ],
     "candidates": [
@@ -1168,18 +1168,18 @@
         "tract_geoid": "24043000700"
       },
       {
-        "school_name": "Ruth Ann Monroe Primary",
-        "ncessch_id": "240066001707",
-        "pct_of_tract": 0.128,
-        "pct_of_catchment": 0.016,
-        "tract_geoid": "24043000500"
-      },
-      {
         "school_name": "Lincolnshire Elementary",
         "ncessch_id": "240066001273",
         "pct_of_tract": 0.248,
         "pct_of_catchment": 0.212,
         "tract_geoid": "24043000900"
+      },
+      {
+        "school_name": "Ruth Ann Monroe Primary",
+        "ncessch_id": "240066001707",
+        "pct_of_tract": 0.131,
+        "pct_of_catchment": 0.015,
+        "tract_geoid": "24043000601"
       }
     ],
     "candidates": [

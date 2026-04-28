@@ -300,7 +300,8 @@ def compute_catchment_overlaps(catchments: gpd.GeoDataFrame,
     rows = []
     for _, r in inter.iterrows():
         tract = r["GEOID20"]
-        for grantee in tract_to_grantees.get(tract, set()):
+        # Sorted iteration so CSV output is reproducible across runs
+        for grantee in sorted(tract_to_grantees.get(tract, set())):
             ca = float(r["catchment_area_m2"] or 0)
             tract_area = (
                 grantee_tracts.loc[grantee_tracts["GEOID20"] == tract,
@@ -320,6 +321,7 @@ def compute_catchment_overlaps(catchments: gpd.GeoDataFrame,
                 ),
                 "pct_of_catchment": round(r["inter_area_m2"] / ca, 3) if ca else 0,
             })
+    rows.sort(key=lambda r: (r["ncessch_id"], r["grantee"], r["tract_geoid"]))
     return rows
 
 
@@ -531,7 +533,7 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
     rel_schools["lat"] = rel_schools.geometry.y
     rel_schools["lon"] = rel_schools.geometry.x
     rel_schools["roles"] = rel_schools["NCESSCH_ID"].map(
-        lambda nid: ncesid_to_role.get(nid, {})
+        lambda nid: dict(sorted(ncesid_to_role.get(nid, {}).items()))
     )
     rel_schools["is_judy_center"] = rel_schools["NCESSCH_ID"].map(
         lambda nid: nid in jc_ncesids
@@ -580,8 +582,10 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
                            0 if r["is_judy_center"] == "no" else 1)
         )
 
-    near_miss_by_grantee = defaultdict(list)
-    seen_pairs = set()
+    # Pick, for each (grantee, JC) pair, the single overlap row with the
+    # largest pct_of_tract — that's the "most-informative" near-miss to
+    # show in the sidebar.
+    best_overlap = {}
     for o in overlap_rows:
         if o["ncessch_id"] not in jc_ncesids:
             continue
@@ -593,14 +597,16 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         if (ncesid_to_role.get(o["ncessch_id"], {}).get(o["grantee"])
                 == "jc_in_tract"):
             continue
-        # de-dupe across the multiple-tract-overlap rows for the same JC
-        pair = (o["grantee"], o["ncessch_id"])
-        if pair in seen_pairs:
-            continue
-        seen_pairs.add(pair)
-        near_miss_by_grantee[o["grantee"]].append({
+        key = (o["grantee"], o["ncessch_id"])
+        prev = best_overlap.get(key)
+        if prev is None or o["pct_of_tract"] > prev["pct_of_tract"]:
+            best_overlap[key] = o
+
+    near_miss_by_grantee = defaultdict(list)
+    for (grantee, ncesid), o in sorted(best_overlap.items()):
+        near_miss_by_grantee[grantee].append({
             "school_name": o["school_name"],
-            "ncessch_id": o["ncessch_id"],
+            "ncessch_id": ncesid,
             "pct_of_tract": o["pct_of_tract"],
             "pct_of_catchment": o["pct_of_catchment"],
             "tract_geoid": o["tract_geoid"],
