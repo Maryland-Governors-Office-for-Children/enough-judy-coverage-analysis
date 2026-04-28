@@ -170,9 +170,33 @@ function setCategoryFilter(cat) {
   document.querySelectorAll(".filter-pill").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.cat === cat);
   });
+  // "All" is also the deselect action: clear any selected grantee
+  // and return the map to the Maryland default view.
+  if (cat === "all") {
+    clearSelection();
+  } else {
+    renderGranteeList();
+    renderGranteeBlocks();
+    if (state.layers.tracts) drawTracts(state.selectedGrantee);
+    if (state.layers.schools) drawSchools(state.selectedGrantee);
+  }
+}
+
+function clearSelection() {
+  state.selectedGrantee = null;
+  document.querySelectorAll(".grantee-button").forEach((btn) => {
+    btn.classList.remove("selected");
+  });
   renderGranteeList();
   renderGranteeBlocks();
-  if (state.layers.tracts) drawTracts(state.selectedGrantee);
+  renderGranteeDetail(null);
+  if (state.map && state.layers.tracts) {
+    drawTracts(null);
+    drawSchools(null);
+  }
+  if (state.map && state.mapEverShown) {
+    state.map.fitBounds(MD_BOUNDS);
+  }
 }
 
 function passesFilter(g) {
@@ -225,10 +249,11 @@ function subForGrantee(g) {
 function renderGranteeDetail(g) {
   const pane = document.getElementById("grantee-detail");
   if (!g) {
-    pane.innerHTML = `<div class="detail-empty">Pick a grantee from the list above.</div>`;
+    pane.innerHTML = `<div class="detail-empty">Select an ENOUGH Grantee from the list above to see details, or click <b>All</b> to return to the statewide view.</div>`;
     return;
   }
   let h = "";
+  h += `<button class="clear-selection" id="clear-selection-btn">← Clear selection / return to statewide view</button>`;
   h += `<div class="gtitle">${escapeHtml(g.grantee)}${g.named_hint ? " ★" : ""}</div>`;
   h += `<div class="gmeta">${escapeHtml(g.county)} · ${g.n_tracts} served tract${g.n_tracts === 1 ? "" : "s"} · `;
   h += `<span class="gpill ${g.category}" style="margin-left:4px;">${CATEGORY_LABELS[g.category]}</span></div>`;
@@ -263,6 +288,8 @@ function renderGranteeDetail(g) {
   }
   h += `<div class="recco"><b>Recommendation:</b> ${escapeHtml(g.recommendation_short)}</div>`;
   pane.innerHTML = h;
+  const clearBtn = document.getElementById("clear-selection-btn");
+  if (clearBtn) clearBtn.addEventListener("click", clearSelection);
 }
 
 // ============= Grantees tab =============
@@ -378,24 +405,32 @@ function drawTracts(grantee) {
   state.layers.tracts = L.geoJSON(state.rawTracts, {
     style: (f) => {
       const tractGrantees = f.properties.grantees || [];
+      // Selected grantee's tracts: deeper orange.
       if (grantee && tractGrantees.includes(grantee)) {
-        return { fillColor: "#fde0c1", fillOpacity: 0.55, color: "#d4731c", weight: 1.6 };
+        return { fillColor: "#f9b96b", fillOpacity: 0.65, color: "#a14b0d", weight: 1.8 };
       }
-      // No grantee selected: shade by category if filter is active
-      if (!grantee && state.categoryFilter !== "all") {
+      // Other tracts when a grantee is selected: dim grey for context.
+      if (grantee) {
+        return { fillColor: "#e6e6e1", fillOpacity: 0.18, color: "#a8a8a4", weight: 0.6 };
+      }
+      // No grantee selected, but a category filter is active: shade
+      // tracts of that category in the category colour, others dim grey.
+      if (state.categoryFilter !== "all") {
         const inFilter = tractGrantees.some((gn) => {
           const g = state.granteeIndex[gn];
           return g && g.category === state.categoryFilter;
         });
         if (inFilter) {
           const c = state.categoryFilter;
-          if (c === "in_tract") return { fillColor: "#d8efdd", fillOpacity: 0.5, color: "#2f8f4d", weight: 1.0 };
-          if (c === "catchment_overlap") return { fillColor: "#d6def4", fillOpacity: 0.5, color: "#1c4ed4", weight: 1.0 };
-          if (c === "needs_jc") return { fillColor: "#f5cdc8", fillOpacity: 0.5, color: "#c0392b", weight: 1.0 };
+          if (c === "in_tract") return { fillColor: "#a8d8b4", fillOpacity: 0.55, color: "#2f8f4d", weight: 1.2 };
+          if (c === "catchment_overlap") return { fillColor: "#aebbe5", fillOpacity: 0.55, color: "#1c4ed4", weight: 1.2 };
+          if (c === "needs_jc") return { fillColor: "#eaa39c", fillOpacity: 0.6, color: "#c0392b", weight: 1.2 };
         }
+        return { fillColor: "#e6e6e1", fillOpacity: 0.15, color: "#bdbdba", weight: 0.5 };
       }
-      // Default: dim grey
-      return { fillColor: "#e6e6e1", fillOpacity: 0.18, color: "#a8a8a4", weight: 0.6 };
+      // Default state: ALL grantee tracts shaded soft orange so the
+      // ENOUGH footprint is immediately visible on opening the map.
+      return { fillColor: "#fde0c1", fillOpacity: 0.55, color: "#d4731c", weight: 1.0 };
     },
     onEachFeature: (f, layer) => {
       const grantees = f.properties.grantees || [];
