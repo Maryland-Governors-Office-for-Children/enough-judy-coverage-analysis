@@ -71,7 +71,32 @@ function activateTab(name) {
     p.classList.toggle("active", p.dataset.tab === name);
   });
   if (name === "map" && state.map) {
-    setTimeout(() => state.map.invalidateSize(), 50);
+    // The map div is display:none when the page first loads, so any
+    // bounds computed at init time are bogus. Refit to MD bounds the
+    // first time the Map tab is shown, and on every show recompute
+    // canvas size so Leaflet redraws cleanly. If a grantee is already
+    // selected, prefer fitting to its tracts.
+    setTimeout(() => {
+      state.map.invalidateSize();
+      if (!state.mapEverShown) {
+        state.mapEverShown = true;
+        if (state.selectedGrantee) {
+          fitToGrantee(state.selectedGrantee);
+        } else {
+          state.map.fitBounds(MD_BOUNDS);
+        }
+      }
+    }, 50);
+  }
+}
+
+function fitToGrantee(name) {
+  const sel = state.rawTracts.features.filter((f) =>
+    f.properties.grantees.includes(name)
+  );
+  if (sel.length) {
+    const layer = L.geoJSON({ type: "FeatureCollection", features: sel });
+    state.map.fitBounds(layer.getBounds().pad(0.15));
   }
 }
 
@@ -534,15 +559,7 @@ function selectGrantee(name) {
   renderGranteeDetail(g);
   drawTracts(name);
   drawSchools(name);
-  if (g) {
-    const sel = state.rawTracts.features.filter((f) =>
-      f.properties.grantees.includes(name)
-    );
-    if (sel.length) {
-      const layer = L.geoJSON({ type: "FeatureCollection", features: sel });
-      state.map.fitBounds(layer.getBounds().pad(0.15));
-    }
-  }
+  if (g && state.mapEverShown) fitToGrantee(name);
 }
 
 // ============= Helpers =============
