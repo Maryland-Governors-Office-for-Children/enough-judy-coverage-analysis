@@ -51,6 +51,27 @@ Willenborg's follow-up (Apr 28 2026) on which ENOUGH grantees lack a Patty Cente
       Rachel raised in the same thread (separate, larger scope).
 - [ ] Share the updated link with Peter/Rachel once pushed.
 
+## Next steps / potential uses
+
+Ideas for where this map could go next (none built yet — captured here so they're not lost):
+
+- **Patty Center expansion prioritization (FY2030 grant).** The Blueprint funds 3 new Patty
+  Centers/year through FY2030 at $330k each. Rank the 10 "no nearby PC" grantees into a
+  `pc_expansion_priority.csv` using child-poverty rate, distance to the nearest existing PC,
+  and county PC count — a direct decision aid for Peter's question. (Mirror of the JC
+  candidate-elementary logic, adapted: PCs aren't school-sited, so rank communities, not schools.)
+- **Cross-link the New-Parents guide / MDMOM resource map.** Peter & Rachel raised
+  maryland.gov/new-parents and the Hopkins/MDH map (mdmomresources.org/map) in the same thread.
+  Option: a combined 0–5 resource view, or simply linking out from the Methodology tab. Larger
+  scope — scope it with Peter before building.
+- **Threshold tuning.** Revisit the 5 km PC "nearby" cutoff against the live map; it may be tight
+  in rural counties (e.g. Eastern Shore) and generous in dense Baltimore/PG. `PC_NEARBY_M` is a
+  single constant in `analyze.py`; document any change in SOURCES.
+- **Periodic data refresh + MFN-vs-MSDE reconcile.** Re-run the pipeline when MFN updates the
+  feed; cross-check the 17 PCs / 92 JCs against MSDE's coordinator PDF (the spreadsheet cites 35
+  PCs statewide in 2024 vs 17 on the public map — confirm whether MFN lists a subset).
+- **Share the live link with Peter & Rachel** once pushed (answers Peter's Apr 28 ask directly).
+
 ## Decisions made
 
 - **Scope:** lightweight PC overlay + per-grantee flag (no PC candidate-site ranking) — honors

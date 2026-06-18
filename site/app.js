@@ -24,7 +24,8 @@ const state = {
   rawSchools: null,
   rawCatchments: null,
   rawPattyCenters: null,
-  showPattyCenters: true,  // toggle for the Patty Center layer
+  showPattyCenters: true,  // toggle for the Patty Center marker layer
+  pcView: false,           // shade tracts by Patty Center coverage tier
   map: null,
   layers: { tracts: null, schools: null, catchments: null, closest: null, patty: null },
 };
@@ -123,6 +124,7 @@ function renderDashboard() {
     { num: d.n_needs_jc, label: "Needs Judy Center", cls: "cat-needs_jc", cat: "needs_jc" },
     { num: d.n_judy_centers_total, label: "Judy Centers statewide", cls: "is-static" },
     { num: d.n_judy_centers_in_grantee_tracts, label: "JCs in ENOUGH grantee tracts", cls: "is-static" },
+    { num: d.n_judy_centers_catchment_overlap_only, label: "JCs reaching tracts via catchment only", cls: "is-static cat-jc-catch" },
     { num: d.n_prospective_elementaries, label: "Prospective elementary schools", cls: "is-static" },
     { num: d.n_patty_centers_total, label: "Patty Centers statewide", cls: "is-static is-pc" },
     { num: d.n_pc_in_tract, label: "Grantees with a Patty Center in tract", cls: "is-static is-pc" },
@@ -489,17 +491,35 @@ function drawPattyCenters(grantee) {
 
 function setupPattyToggle() {
   const btn = document.getElementById("pc-toggle");
-  if (!btn) return;
-  const sync = () => {
-    btn.classList.toggle("active", state.showPattyCenters);
-    btn.setAttribute("aria-pressed", state.showPattyCenters ? "true" : "false");
-  };
-  sync();
-  btn.addEventListener("click", () => {
-    state.showPattyCenters = !state.showPattyCenters;
+  if (btn) {
+    const sync = () => {
+      btn.classList.toggle("active", state.showPattyCenters);
+      btn.setAttribute("aria-pressed", state.showPattyCenters ? "true" : "false");
+    };
     sync();
-    drawPattyCenters(state.selectedGrantee);
-  });
+    btn.addEventListener("click", () => {
+      state.showPattyCenters = !state.showPattyCenters;
+      sync();
+      drawPattyCenters(state.selectedGrantee);
+    });
+  }
+
+  // PC coverage view: recolour tracts by Patty Center tier (only meaningful
+  // when no grantee is selected, so selecting a grantee overrides it).
+  const viewBtn = document.getElementById("pc-view-toggle");
+  if (viewBtn) {
+    const syncView = () => {
+      viewBtn.classList.toggle("active", state.pcView);
+      viewBtn.setAttribute("aria-pressed", state.pcView ? "true" : "false");
+    };
+    syncView();
+    viewBtn.addEventListener("click", () => {
+      state.pcView = !state.pcView;
+      syncView();
+      drawTracts(state.selectedGrantee);
+      drawLegend();
+    });
+  }
 }
 
 function drawTracts(grantee) {
@@ -514,6 +534,20 @@ function drawTracts(grantee) {
       // Other tracts when a grantee is selected: dim grey for context.
       if (grantee) {
         return { fillColor: "#e6e6e1", fillOpacity: 0.18, color: "#a8a8a4", weight: 0.6 };
+      }
+      // No grantee selected, PC view on: shade each tract by the Patty
+      // Center coverage tier of the grantee(s) serving it (teal = has one
+      // in tract, light teal = nearby, amber = none nearby). Takes
+      // precedence over the JC category filter so the two views stay
+      // mutually legible.
+      if (state.pcView) {
+        const pcCats = tractGrantees
+          .map((gn) => state.granteeIndex[gn] && state.granteeIndex[gn].pc_category)
+          .filter(Boolean);
+        if (pcCats.includes("has_pc")) return { fillColor: "#0f9b8e", fillOpacity: 0.55, color: "#0a6f66", weight: 1.2 };
+        if (pcCats.includes("nearby_pc")) return { fillColor: "#9fd8d1", fillOpacity: 0.5, color: "#0f9b8e", weight: 1.0 };
+        if (pcCats.includes("needs_pc")) return { fillColor: "#e8b888", fillOpacity: 0.55, color: "#b8651b", weight: 1.2 };
+        return { fillColor: "#e6e6e1", fillOpacity: 0.15, color: "#bdbdba", weight: 0.5 };
       }
       // No grantee selected, but a category filter is active: shade
       // tracts of that category in the category colour, others dim grey.
@@ -676,10 +710,17 @@ function bindSchoolPopup(f, layer, grantee) {
 
 function drawLegend() {
   const el = document.getElementById("map-legend");
+  // In PC-coverage view (no grantee selected), tracts are shaded by Patty
+  // Center tier, so the legend swaps to explain those colours.
+  const pcTierRows = state.pcView && !state.selectedGrantee
+    ? `<div class="row"><span class="swatch pc-has"></span>Tract: Patty Center in tract</div>` +
+      `<div class="row"><span class="swatch pc-near"></span>Tract: Patty Center nearby (≤5 km)</div>` +
+      `<div class="row"><span class="swatch pc-none"></span>Tract: no nearby Patty Center</div>`
+    : `<div class="row"><span class="swatch orange"></span>Selected grantee tracts</div>` +
+      `<div class="row"><span class="swatch grey"></span>Other grantee tracts</div>`;
   el.innerHTML =
     `<div class="legend-title">Legend</div>` +
-    `<div class="row"><span class="swatch orange"></span>Selected grantee tracts</div>` +
-    `<div class="row"><span class="swatch grey"></span>Other grantee tracts</div>` +
+    pcTierRows +
     `<div class="row"><span class="swatch dot purple"></span>Judy Center (statewide)</div>` +
     `<div class="row"><span class="swatch dot blue"></span>JC in selected tract</div>` +
     `<div class="row"><span class="swatch dot green"></span>JC catchment overlap</div>` +

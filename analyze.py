@@ -202,8 +202,9 @@ def refresh_judy_centers_from_mc():
 
     This is the authoritative source as of April 2026. The SSF XML carries
     school name, address, lat/lon, and a county tag for every site. We
-    parse only items whose location ends with "(JC)" -- the same feed
-    also lists ~17 Patty/Family Support Centers ("(PC)") which we exclude.
+    parse only items whose location ends with "(JC)"; the same feed also
+    lists ~17 Patty/Family Support Centers ("(PC)"), which are parsed
+    separately by refresh_patty_centers_from_mc().
     """
     import xml.etree.ElementTree as ET
 
@@ -240,7 +241,7 @@ def refresh_judy_centers_from_mc():
             continue
         clean_name = re.sub(r"\s*\(JC\)\s*", "", name).strip()
         # Strip the "Maryland, " prefix some county tags carry
-        county_tag = text(it, "productsServices").replace("&#39;", "'")
+        county_tag = text(it, "productsServices")
         county_tag = re.sub(r"^Maryland,\s*", "", county_tag).strip()
         cfips = COUNTY_NAME_TO_FIPS.get(county_tag, "")
         addr_full = text(it, "address")
@@ -277,12 +278,8 @@ def load_judy_centers():
     """Refresh from MC if missing, then read the CSV."""
     if not JUDY_CSV.exists():
         refresh_judy_centers_from_mc()
-    rows = []
     with JUDY_CSV.open(encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            rows.append(row)
-    return rows
+        return list(csv.DictReader(f))
 
 
 def refresh_patty_centers_from_mc():
@@ -331,7 +328,7 @@ def refresh_patty_centers_from_mc():
         if "(PC)" not in name:
             continue
         clean_name = re.sub(r"\s*\(PC\)\s*", "", name).strip()
-        county_tag = text(it, "productsServices").replace("&#39;", "'")
+        county_tag = text(it, "productsServices")
         county_tag = re.sub(r"^Maryland,\s*", "", county_tag).strip()
         cfips = COUNTY_NAME_TO_FIPS.get(county_tag, "")
         addr_full = text(it, "address")
@@ -367,12 +364,8 @@ def load_patty_centers():
     """Refresh from MC if missing, then read the CSV."""
     if not PATTY_CSV.exists():
         refresh_patty_centers_from_mc()
-    rows = []
     with PATTY_CSV.open(encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            rows.append(row)
-    return rows
+        return list(csv.DictReader(f))
 
 
 # County name -> FIPS lookup (inverse of COUNTY_NAMES, with apostrophe variants)

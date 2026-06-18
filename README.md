@@ -77,7 +77,9 @@ sits inside one of PG DSS's served tracts.
 
 1. Refreshes `judy_centers_full.csv` from [MarylandChild.org's Judy Center Hubs
    Map](https://marylandchild.org/family-support/judy-center-hubs-map/) (the
-   authoritative current list, 92 sites as of April 2026).
+   authoritative current list, 92 sites as of April 2026). The same feed run
+   also refreshes `patty_centers_full.csv` from the 17 "(PC)"-tagged entries
+   (see step 8).
 2. Pulls three layers from
    [MDP's `ENOUGH_Act_2025` FeatureServer](https://mdpgis.mdp.state.md.us/arcgis/rest/services/Society/ENOUGH_Act_2025/FeatureServer):
    School Locations 2025 (Layer 0), School Attendance Zones 2025 (Layer 1),
