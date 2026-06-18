@@ -403,9 +403,28 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+}
+.legend .legend-subhead {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); margin: 8px 0 3px; padding-top: 6px;
+  border-top: 1px solid var(--line);
 }
 .legend .row { display: flex; align-items: center; gap: 8px; }
+/* Legend toggle buttons (one per map layer) */
+.legend .legend-row {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; text-align: left;
+  background: transparent; border: 0; padding: 2px 4px;
+  margin: 0 -4px; border-radius: 4px;
+  font-size: 12px; color: var(--ink); cursor: pointer; line-height: 1.4;
+}
+.legend .legend-row:hover { background: var(--bg); }
+.legend .legend-row .legend-label { flex: 1; }
+.legend .legend-row.off { color: var(--muted); }
+.legend .legend-row.off .swatch { opacity: 0.25; filter: grayscale(1); }
+.legend .legend-row.off .legend-label { text-decoration: line-through; }
+.legend .row.static { cursor: default; padding-left: 4px; }
 .legend .swatch {
   display: inline-block; width: 12px; height: 12px; flex-shrink: 0;
 }
@@ -551,6 +570,34 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   font-size: 12px;
 }
 .tabpane[data-tab="methodology"] a { color: var(--cat-catch); }
+
+/* ===== Executive Summary (rendered markdown) ===== */
+.markdown-body { font-size: 14px; line-height: 1.6; color: var(--ink); padding-bottom: 40px; }
+.markdown-body h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; margin: 8px 0 14px; }
+.markdown-body h2 {
+  font-size: 16px; font-weight: 600; margin: 28px 0 10px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--line);
+}
+.markdown-body h3 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; }
+.markdown-body p { margin: 8px 0; }
+.markdown-body ul { padding-left: 20px; margin: 8px 0; }
+.markdown-body li { margin-bottom: 3px; }
+.markdown-body strong { font-weight: 600; }
+.markdown-body em { color: var(--muted); }
+.markdown-body code {
+  background: #f0f0eb; padding: 1px 5px; border-radius: 3px; font-size: 12px;
+}
+.markdown-body table {
+  border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px;
+}
+.markdown-body th, .markdown-body td {
+  border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top;
+}
+.markdown-body th {
+  background: var(--bg); font-size: 12px; font-weight: 600;
+}
+.markdown-body tbody tr:nth-child(even) { background: #fcfcfa; }
+.markdown-body a { color: var(--cat-catch); }
 
 /* ===== Map symbols (Leaflet popups) ===== */
 .leaflet-tooltip.school-tip { font-size: 12px; }

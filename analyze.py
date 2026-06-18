@@ -1177,7 +1177,7 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
                                             r["grantee"]))
 
     lines = []
-    lines.append("# ENOUGH × Judy Center Coverage — Executive Summary")
+    lines.append("# ENOUGH × Judy & Patty Center Coverage — Executive Summary")
     lines.append("")
     lines.append(
         f"Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has "
@@ -1435,7 +1435,12 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
                  "MSDE.")
     lines.append("")
 
-    (OUTPUTS / "executive_summary.md").write_text("\n".join(lines), encoding="utf-8")
+    summary_md = "\n".join(lines)
+    (OUTPUTS / "executive_summary.md").write_text(summary_md, encoding="utf-8")
+    # Also publish into site/data so the static site can fetch + render it
+    # in the Executive Summary tab.
+    SITE_DATA.mkdir(parents=True, exist_ok=True)
+    (SITE_DATA / "executive_summary.md").write_text(summary_md, encoding="utf-8")
     print("Wrote executive_summary.md")
 
 

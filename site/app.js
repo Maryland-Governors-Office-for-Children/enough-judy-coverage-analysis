@@ -24,11 +24,32 @@ const state = {
   rawSchools: null,
   rawCatchments: null,
   rawPattyCenters: null,
-  showPattyCenters: true,  // toggle for the Patty Center marker layer
   pcView: false,           // shade tracts by Patty Center coverage tier
+  // Every legend item is a toggleable layer, all on by default.
+  layerVisible: {
+    tracts: true,        // grantee tract polygons
+    jc: true,            // Judy Center (statewide, purple)
+    jc_in_tract: true,   // JC in selected grantee tract (blue)
+    jc_catchment: true,  // JC catchment overlap (green) + catchment polygons
+    candidate: true,     // candidate elementary (red)
+    closest: true,       // closest non-JC elementary fallback (dashed)
+    patty: true,         // Patty Center (teal squares)
+  },
   map: null,
   layers: { tracts: null, schools: null, catchments: null, closest: null, patty: null },
 };
+
+// Legend items, in display order. `key` indexes state.layerVisible;
+// `swatch` is the CSS class(es) for the colour chip; `label` is the text.
+const LEGEND_ITEMS = [
+  { key: "tracts", swatch: "orange", label: "Grantee tracts" },
+  { key: "jc", swatch: "dot purple", label: "Judy Center (statewide)" },
+  { key: "jc_in_tract", swatch: "dot blue", label: "JC in selected tract" },
+  { key: "jc_catchment", swatch: "dot green", label: "JC catchment overlap" },
+  { key: "candidate", swatch: "dot red", label: "Candidate elementary (sized by CPG)" },
+  { key: "closest", swatch: "dashed-circle", label: "Closest non-JC elem. fallback" },
+  { key: "patty", swatch: "teal-square", label: "Patty Center (Family Support)" },
+];
 
 // Patty Center coverage categories (parallel to the JC CATEGORIES).
 const PC_CATEGORY_LABELS = {
@@ -45,7 +66,8 @@ Promise.all([
   fetch("data/catchments.geojson").then((r) => r.json()),
   fetch("data/grantees.json").then((r) => r.json()),
   fetch("data/patty_centers.geojson").then((r) => r.json()).catch(() => null),
-]).then(([tracts, schools, catchments, grantees, pattyCenters]) => {
+  fetch("data/executive_summary.md").then((r) => (r.ok ? r.text() : null)).catch(() => null),
+]).then(([tracts, schools, catchments, grantees, pattyCenters, summaryMd]) => {
   state.rawTracts = tracts;
   state.rawSchools = schools;
   state.rawCatchments = catchments;
@@ -57,6 +79,7 @@ Promise.all([
   renderCategorySummary();
   renderGranteeList();
   renderGranteeBlocks();
+  renderSummary(summaryMd);
   renderMap();
   setupFilterPills();
   setupCardClicks();
@@ -154,6 +177,24 @@ function renderCategorySummary() {
     if (a) a.textContent = n;
     if (b) b.textContent = n;
   });
+}
+
+// ============= Executive Summary =============
+
+function renderSummary(md) {
+  const el = document.getElementById("summary-body");
+  if (!el) return;
+  if (!md) {
+    el.innerHTML = `<p style="color:var(--muted);">Executive summary not available. ` +
+      `Run <code>python analyze.py</code> to generate <code>data/executive_summary.md</code>.</p>`;
+    return;
+  }
+  if (typeof marked === "undefined") {
+    // Fallback: show the raw markdown rather than nothing.
+    el.innerHTML = `<pre style="white-space:pre-wrap;">${escapeHtml(md)}</pre>`;
+    return;
+  }
+  el.innerHTML = marked.parse(md);
 }
 
 function setupCardClicks() {
@@ -450,7 +491,7 @@ function renderMap() {
 // its tracts is filled solid; a PC counted as "nearby" gets a dashed ring.
 function drawPattyCenters(grantee) {
   if (state.layers.patty) { state.layers.patty.remove(); state.layers.patty = null; }
-  if (!state.rawPattyCenters || !state.showPattyCenters) return;
+  if (!state.rawPattyCenters || !state.layerVisible.patty) return;
 
   state.layers.patty = L.geoJSON(state.rawPattyCenters, {
     pointToLayer: (f, latlng) => {
@@ -490,22 +531,10 @@ function drawPattyCenters(grantee) {
 }
 
 function setupPattyToggle() {
-  const btn = document.getElementById("pc-toggle");
-  if (btn) {
-    const sync = () => {
-      btn.classList.toggle("active", state.showPattyCenters);
-      btn.setAttribute("aria-pressed", state.showPattyCenters ? "true" : "false");
-    };
-    sync();
-    btn.addEventListener("click", () => {
-      state.showPattyCenters = !state.showPattyCenters;
-      sync();
-      drawPattyCenters(state.selectedGrantee);
-    });
-  }
-
-  // PC coverage view: recolour tracts by Patty Center tier (only meaningful
-  // when no grantee is selected, so selecting a grantee overrides it).
+  // The Patty Center marker layer is toggled from the legend now (the
+  // "patty" item). This wires the remaining PC-coverage *view* control,
+  // which recolours tracts by Patty Center tier (only meaningful when no
+  // grantee is selected, so selecting a grantee overrides it).
   const viewBtn = document.getElementById("pc-view-toggle");
   if (viewBtn) {
     const syncView = () => {
@@ -523,7 +552,8 @@ function setupPattyToggle() {
 }
 
 function drawTracts(grantee) {
-  if (state.layers.tracts) state.layers.tracts.remove();
+  if (state.layers.tracts) { state.layers.tracts.remove(); state.layers.tracts = null; }
+  if (!state.layerVisible.tracts) return;
   state.layers.tracts = L.geoJSON(state.rawTracts, {
     style: (f) => {
       const tractGrantees = f.properties.grantees || [];
@@ -583,28 +613,34 @@ function drawSchools(grantee) {
 
   const features = [];
   const catchmentNcesids = new Set();
+  const vis = state.layerVisible;
 
-  // Always show Judy Centers (state-wide context).
-  // Their styling depends on whether the selected grantee gives them a role.
+  // Judy Centers (state-wide context) + candidate elementaries. Their styling
+  // depends on the selected grantee's role, and each role is independently
+  // toggleable via the legend (jc / jc_in_tract / jc_catchment / candidate).
   state.rawSchools.features.forEach((f) => {
     const p = f.properties;
     if (p.is_judy_center) {
       const role = grantee ? (p.roles && p.roles[grantee]) : null;
       f._role = role || null;  // jc_in_tract | jc_near_miss | null
+      const layerKey =
+        role === "jc_in_tract" ? "jc_in_tract" :
+        role === "jc_near_miss" ? "jc_catchment" : "jc";
+      if (!vis[layerKey]) return;
       features.push(f);
       if (role === "jc_in_tract" || role === "jc_near_miss") {
         catchmentNcesids.add(p.ncessch_id);
       }
     } else {
       // Candidate elementary -- only render when its grantee is selected
-      if (grantee && p.roles && p.roles[grantee] === "candidate") {
+      if (grantee && p.roles && p.roles[grantee] === "candidate" && vis.candidate) {
         f._role = "candidate";
         features.push(f);
       }
     }
   });
 
-  // Catchment polygons for blue/green schools
+  // Catchment polygons follow the visibility of the JC role they belong to.
   const cats = state.rawCatchments.features.filter((f) =>
     catchmentNcesids.has(f.properties.ncessch_id)
   );
@@ -640,7 +676,7 @@ function drawSchools(grantee) {
   ).addTo(state.map);
 
   // Closest-elementary fallback (only when a Cat 3 zero-candidate grantee is selected)
-  if (grantee) {
+  if (grantee && vis.closest) {
     const g = state.granteeIndex[grantee];
     if (g && g.closest_elementary) {
       const ce = g.closest_elementary;
@@ -710,23 +746,47 @@ function bindSchoolPopup(f, layer, grantee) {
 
 function drawLegend() {
   const el = document.getElementById("map-legend");
-  // In PC-coverage view (no grantee selected), tracts are shaded by Patty
-  // Center tier, so the legend swaps to explain those colours.
-  const pcTierRows = state.pcView && !state.selectedGrantee
-    ? `<div class="row"><span class="swatch pc-has"></span>Tract: Patty Center in tract</div>` +
-      `<div class="row"><span class="swatch pc-near"></span>Tract: Patty Center nearby (≤5 km)</div>` +
-      `<div class="row"><span class="swatch pc-none"></span>Tract: no nearby Patty Center</div>`
-    : `<div class="row"><span class="swatch orange"></span>Selected grantee tracts</div>` +
-      `<div class="row"><span class="swatch grey"></span>Other grantee tracts</div>`;
+  // In PC-coverage view (no grantee selected), the tract polygons are shaded
+  // by Patty Center tier; show a small non-interactive key for those colours.
+  const pcTierKey = state.pcView && !state.selectedGrantee
+    ? `<div class="legend-subhead">Tract shading (PC view)</div>` +
+      `<div class="row static"><span class="swatch pc-has"></span>Patty Center in tract</div>` +
+      `<div class="row static"><span class="swatch pc-near"></span>Patty Center nearby (≤5 km)</div>` +
+      `<div class="row static"><span class="swatch pc-none"></span>No nearby Patty Center</div>`
+    : "";
+
+  // Every legend item is a toggle button (on by default). Clicking flips the
+  // layer's visibility and redraws.
+  const rows = LEGEND_ITEMS.map((it) => {
+    const on = state.layerVisible[it.key];
+    return `<button class="legend-row${on ? " on" : " off"}" data-layer="${it.key}" ` +
+           `role="switch" aria-checked="${on}" title="Show or hide: ${escapeHtml(it.label)}">` +
+           `<span class="swatch ${it.swatch}"></span>` +
+           `<span class="legend-label">${escapeHtml(it.label)}</span></button>`;
+  }).join("");
+
   el.innerHTML =
-    `<div class="legend-title">Legend</div>` +
-    pcTierRows +
-    `<div class="row"><span class="swatch dot purple"></span>Judy Center (statewide)</div>` +
-    `<div class="row"><span class="swatch dot blue"></span>JC in selected tract</div>` +
-    `<div class="row"><span class="swatch dot green"></span>JC catchment overlap</div>` +
-    `<div class="row"><span class="swatch dot red"></span>Candidate elementary (sized by CPG)</div>` +
-    `<div class="row"><span class="swatch dashed-circle"></span>Closest non-JC elem. fallback</div>` +
-    `<div class="row"><span class="swatch teal-square"></span>Patty Center (Family Support)</div>`;
+    `<div class="legend-title">Legend — click to toggle</div>` +
+    rows +
+    pcTierKey;
+
+  el.querySelectorAll(".legend-row[data-layer]").forEach((btn) => {
+    btn.addEventListener("click", () => toggleLayer(btn.dataset.layer));
+  });
+}
+
+// Flip a map layer's visibility and redraw only what's affected.
+function toggleLayer(key) {
+  state.layerVisible[key] = !state.layerVisible[key];
+  if (key === "tracts") {
+    drawTracts(state.selectedGrantee);
+  } else if (key === "patty") {
+    drawPattyCenters(state.selectedGrantee);
+  } else {
+    // jc / jc_in_tract / jc_catchment / candidate / closest all live in drawSchools
+    drawSchools(state.selectedGrantee);
+  }
+  drawLegend();
 }
 
 function selectGrantee(name) {

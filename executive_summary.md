@@ -1,4 +1,4 @@
-# ENOUGH × Judy Center Coverage — Executive Summary
+# ENOUGH × Judy & Patty Center Coverage — Executive Summary
 
 Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has 92 Judy Center Early Learning Hubs. This summary breaks the grantees into three groups: those that already have a Judy Center in their served tracts, those served by a nearby Judy Center whose attendance zone reaches in, and those with no Judy Center coverage at all. For grantees in the third group, it lists the elementary schools that could host a future Judy Center.
 
