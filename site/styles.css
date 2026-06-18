@@ -466,6 +466,11 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .pc-callout.pc-needs_pc { background: #f6e6d6; border-left-color: var(--pc-needs); }
 .pc-callout.pc-needs_pc b { color: var(--pc-needs); }
 .pc-callout .pc-status { font-weight: 600; }
+.pc-callout .pc-county-list {
+  margin: 6px 0 0; padding-left: 18px; list-style: disc;
+}
+.pc-callout .pc-county-list li { font-size: 12px; margin-bottom: 2px; }
+.pc-callout .pc-county-list .pc-dist { color: var(--muted); }
 .gblock .pc-row { grid-column: 1 / -1; }
 
 /* Patty Center dashboard tiles */

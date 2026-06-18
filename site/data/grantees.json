@@ -69,7 +69,21 @@
         "site_name": "United Way Family Center at Excel Academy",
         "distance_m": 216
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 216
+        },
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 898
+        },
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 1887
+        }
+      ]
     },
     {
       "grantee": "Greater Mondawmin Coordinating Council",
@@ -126,7 +140,21 @@
         "site_name": "RISE Early Learning & Family Support Center",
         "distance_m": 1913
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 1913
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 2096
+        },
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 3484
+        }
+      ]
     },
     {
       "grantee": "CASA, Inc.",
@@ -182,7 +210,13 @@
         "site_name": "Family Support Center Prince George's",
         "distance_m": 875
       },
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Family Support Center Prince George's",
+          "distance_m": 875
+        }
+      ]
     },
     {
       "grantee": "The Central Baltimore Partnership, Inc.",
@@ -259,7 +293,21 @@
         "site_name": "RISE Early Learning & Family Support Center",
         "distance_m": 962
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 962
+        },
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 1735
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 2191
+        }
+      ]
     },
     {
       "grantee": "The Y in Central Maryland",
@@ -318,7 +366,21 @@
         "site_name": "RISE Early Learning & Family Support Center",
         "distance_m": 2461
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 2461
+        },
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 3382
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 3674
+        }
+      ]
     },
     {
       "grantee": "Tendea Family INC.",
@@ -373,7 +435,21 @@
         "site_name": "Goodwill Excel Drop-in Center",
         "distance_m": 2184
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 2184
+        },
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 3088
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 4013
+        }
+      ]
     },
     {
       "grantee": "United Communities Against Poverty",
@@ -418,7 +494,13 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Family Support Center Prince George's",
+          "distance_m": 15969
+        }
+      ]
     },
     {
       "grantee": "Urban Strategies Inc",
@@ -454,7 +536,21 @@
         "site_name": "Goodwill Excel Drop-in Center",
         "distance_m": 408
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 408
+        },
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 1117
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 1992
+        }
+      ]
     },
     {
       "grantee": "Latin American Youth Center",
@@ -502,7 +598,13 @@
         "site_name": "Family Support Center Prince George's",
         "distance_m": 308
       },
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Family Support Center Prince George's",
+          "distance_m": 308
+        }
+      ]
     },
     {
       "grantee": "Identity, Inc.",
@@ -557,7 +659,13 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Family Discovery Center",
+          "distance_m": 7471
+        }
+      ]
     },
     {
       "grantee": "Community Assistance Network, Inc.",
@@ -612,7 +720,13 @@
         "site_name": "The Center for Family Success",
         "distance_m": 170
       },
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "The Center for Family Success",
+          "distance_m": 170
+        }
+      ]
     },
     {
       "grantee": "Good Intentions Foundation Inc.",
@@ -644,7 +758,13 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Family Support Center Prince George's",
+          "distance_m": 10307
+        }
+      ]
     },
     {
       "grantee": "Leaders Breeders Inc.",
@@ -678,7 +798,21 @@
         "site_name": "Goodwill Excel Drop-in Center",
         "distance_m": 4790
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 4790
+        },
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 4921
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 6120
+        }
+      ]
     },
     {
       "grantee": "Anne Arundel County Partnership for Children, Youth, and Families",
@@ -735,7 +869,17 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 2
+      "n_pc_in_county": 2,
+      "county_pcs": [
+        {
+          "site_name": "Kingdom Kare, Inc.",
+          "distance_m": 13765
+        },
+        {
+          "site_name": "Annapolis Family Support Center",
+          "distance_m": 26556
+        }
+      ]
     },
     {
       "grantee": "Boys & Girls Clubs of Harford and Cecil Counties",
@@ -811,7 +955,8 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 0
+      "n_pc_in_county": 0,
+      "county_pcs": []
     },
     {
       "grantee": "Caroline Human Services Council, Inc.",
@@ -845,7 +990,8 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 0
+      "n_pc_in_county": 0,
+      "county_pcs": []
     },
     {
       "grantee": "CHEER (Community Health and Empowerment through Education and Research)",
@@ -895,7 +1041,13 @@
         "site_name": "Family Support Center Prince George's",
         "distance_m": 1192
       },
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Family Discovery Center",
+          "distance_m": 13848
+        }
+      ]
     },
     {
       "grantee": "Cherry Hill Strong",
@@ -944,7 +1096,21 @@
         "site_name": "Goodwill Excel Drop-in Center",
         "distance_m": 3692
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 3692
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 3743
+        },
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 4639
+        }
+      ]
     },
     {
       "grantee": "Child First Authority",
@@ -995,7 +1161,8 @@
         "RISE Early Learning & Family Support Center"
       ],
       "pc_nearby": null,
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": []
     },
     {
       "grantee": "City of Cumberland",
@@ -1043,7 +1210,13 @@
         "site_name": "Cumberland Family Support Center",
         "distance_m": 365
       },
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Cumberland Family Support Center",
+          "distance_m": 365
+        }
+      ]
     },
     {
       "grantee": "Frederick Local Management Board",
@@ -1113,7 +1286,8 @@
         "Asian American Center of Frederick"
       ],
       "pc_nearby": null,
-      "n_pc_in_county": 2
+      "n_pc_in_county": 2,
+      "county_pcs": []
     },
     {
       "grantee": "LifeStyles of Maryland Foundation, Inc.",
@@ -1147,7 +1321,8 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 0
+      "n_pc_in_county": 0,
+      "county_pcs": []
     },
     {
       "grantee": "Moving Dorchester Forward, INC",
@@ -1201,7 +1376,8 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 0
+      "n_pc_in_county": 0,
+      "county_pcs": []
     },
     {
       "grantee": "One Annapolis, Inc",
@@ -1251,7 +1427,17 @@
         "site_name": "Annapolis Family Support Center",
         "distance_m": 1167
       },
-      "n_pc_in_county": 2
+      "n_pc_in_county": 2,
+      "county_pcs": [
+        {
+          "site_name": "Annapolis Family Support Center",
+          "distance_m": 1167
+        },
+        {
+          "site_name": "Kingdom Kare, Inc.",
+          "distance_m": 18755
+        }
+      ]
     },
     {
       "grantee": "Park Heights Renaissance, Inc.",
@@ -1345,7 +1531,21 @@
         "site_name": "RISE Early Learning & Family Support Center",
         "distance_m": 2931
       },
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 2931
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 3020
+        },
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 4572
+        }
+      ]
     },
     {
       "grantee": "Prince George's County Department of Social Services",
@@ -1382,7 +1582,13 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": [
+        {
+          "site_name": "Family Support Center Prince George's",
+          "distance_m": 16693
+        }
+      ]
     },
     {
       "grantee": "San Mar Family & Community Services: Bester Community of Hope",
@@ -1454,7 +1660,8 @@
         "Washington County Family Support Center"
       ],
       "pc_nearby": null,
-      "n_pc_in_county": 1
+      "n_pc_in_county": 1,
+      "county_pcs": []
     },
     {
       "grantee": "South Baltimore Community Land Trust",
@@ -1499,7 +1706,21 @@
       "pc_category": "needs_pc",
       "pcs_in_tracts": [],
       "pc_nearby": null,
-      "n_pc_in_county": 3
+      "n_pc_in_county": 3,
+      "county_pcs": [
+        {
+          "site_name": "Goodwill Excel Drop-in Center",
+          "distance_m": 5479
+        },
+        {
+          "site_name": "United Way Family Center at Excel Academy",
+          "distance_m": 6542
+        },
+        {
+          "site_name": "RISE Early Learning & Family Support Center",
+          "distance_m": 6985
+        }
+      ]
     }
   ]
 }

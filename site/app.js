@@ -44,10 +44,10 @@ const state = {
 const LEGEND_ITEMS = [
   { key: "tracts", swatch: "orange", label: "Grantee tracts" },
   { key: "jc", swatch: "dot purple", label: "Judy Center (statewide)" },
-  { key: "jc_in_tract", swatch: "dot blue", label: "JC in selected tract" },
-  { key: "jc_catchment", swatch: "dot green", label: "JC catchment overlap" },
+  { key: "jc_in_tract", swatch: "dot blue", label: "Judy Center in selected tract" },
+  { key: "jc_catchment", swatch: "dot green", label: "Judy Center catchment overlap" },
   { key: "candidate", swatch: "dot red", label: "Candidate elementary (sized by CPG)" },
-  { key: "closest", swatch: "dashed-circle", label: "Closest non-JC elem. fallback" },
+  { key: "closest", swatch: "dashed-circle", label: "Closest non-Judy-Center elem. fallback" },
   { key: "patty", swatch: "teal-square", label: "Patty Center (Family Support)" },
 ];
 
@@ -142,12 +142,12 @@ function renderDashboard() {
   const grid = document.getElementById("dashboard-grid");
   const cards = [
     { num: d.n_grantees, label: "ENOUGH grantees", cls: "is-static" },
-    { num: d.n_in_tract, label: "Already covered (JC in tract)", cls: "cat-in_tract", cat: "in_tract" },
+    { num: d.n_in_tract, label: "Already covered (Judy Center in tract)", cls: "cat-in_tract", cat: "in_tract" },
     { num: d.n_catchment_overlap, label: "Catchment overlap (coordination opportunity)", cls: "cat-catchment_overlap", cat: "catchment_overlap" },
     { num: d.n_needs_jc, label: "Needs Judy Center", cls: "cat-needs_jc", cat: "needs_jc" },
     { num: d.n_judy_centers_total, label: "Judy Centers statewide", cls: "is-static" },
-    { num: d.n_judy_centers_in_grantee_tracts, label: "JCs in ENOUGH grantee tracts", cls: "is-static" },
-    { num: d.n_judy_centers_catchment_overlap_only, label: "JCs reaching tracts via catchment only", cls: "is-static cat-jc-catch" },
+    { num: d.n_judy_centers_in_grantee_tracts, label: "Judy Centers in ENOUGH grantee tracts", cls: "is-static" },
+    { num: d.n_judy_centers_catchment_overlap_only, label: "Judy Centers reaching tracts via catchment only", cls: "is-static cat-jc-catch" },
     { num: d.n_prospective_elementaries, label: "Prospective elementary schools", cls: "is-static" },
     { num: d.n_patty_centers_total, label: "Patty Centers statewide", cls: "is-static is-pc" },
     { num: d.n_pc_in_tract, label: "Grantees with a Patty Center in tract", cls: "is-static is-pc" },
@@ -341,7 +341,7 @@ function renderGranteeDetail(g) {
   if (g.closest_elementary) {
     const ce = g.closest_elementary;
     const km = (ce.distance_m / 1000).toFixed(1);
-    h += `<div class="closest-callout"><b>Closest non-JC elementary:</b> `;
+    h += `<div class="closest-callout"><b>Closest non-Judy-Center elementary:</b> `;
     h += `${escapeHtml(ce.school_name)} (CPG ${fmtCpg(ce.cpg)}, ~${km} km from tract). `;
     h += `Used as a fallback because no traditional elementary or combined school exists in the served tract.</div>`;
   }
@@ -354,10 +354,11 @@ function renderGranteeDetail(g) {
 
 // Patty Center coverage line, shared by the sidebar detail and the
 // Grantees-tab blocks. Returns an HTML string (possibly empty-ish).
-function renderPattyDetail(g) {
+function renderPattyDetail(g, showCountyList) {
   const cat = g.pc_category || "needs_pc";
   const label = PC_CATEGORY_LABELS[cat] || cat;
   let body = "";
+  let extra = "";
   if (cat === "has_pc" && g.pcs_in_tracts && g.pcs_in_tracts.length) {
     body = "In served tract: " +
       g.pcs_in_tracts.map((s) => escapeHtml(s.trim())).join(", ") + ".";
@@ -365,11 +366,22 @@ function renderPattyDetail(g) {
     const km = (g.pc_nearby.distance_m / 1000).toFixed(1);
     body = `Nearest: ${escapeHtml(g.pc_nearby.site_name.trim())} (~${km} km from tract).`;
   } else {
-    const n = g.n_pc_in_county || 0;
+    const county = g.county_pcs || [];
+    const n = g.n_pc_in_county || county.length || 0;
     body = `No Patty Center within 5 km. ${n} Patty Center${n === 1 ? "" : "s"} in county.`;
+    // On the Grantees page, list those county Patty Centers with their
+    // distance from the grantee's served tracts (nearest first).
+    if (showCountyList && county.length) {
+      extra = `<ul class="pc-county-list">` +
+        county.map((pc) => {
+          const km = (pc.distance_m / 1000).toFixed(1);
+          return `<li>${escapeHtml(pc.site_name.trim())} <span class="pc-dist">~${km} km</span></li>`;
+        }).join("") +
+        `</ul>`;
+    }
   }
   return `<div class="pc-callout pc-${cat}"><b>Patty Center:</b> ` +
-         `<span class="pc-status">${escapeHtml(label)}</span> — ${body}</div>`;
+         `<span class="pc-status">${escapeHtml(label)}</span> — ${body}${extra}</div>`;
 }
 
 // ============= Grantees tab =============
@@ -451,11 +463,11 @@ function renderGranteeBlock(g) {
     const ce = g.closest_elementary;
     const km = (ce.distance_m / 1000).toFixed(1);
     h += `<div class="closest-callout">`;
-    h += `<b>Closest non-JC elementary (fallback):</b> ${escapeHtml(ce.school_name)} (CPG ${fmtCpg(ce.cpg)}, ~${km} km from tract). `;
+    h += `<b>Closest non-Judy-Center elementary (fallback):</b> ${escapeHtml(ce.school_name)} (CPG ${fmtCpg(ce.cpg)}, ~${km} km from tract). `;
     h += `Used because no traditional elementary or combined school is inside the served tract.`;
     h += `</div>`;
   }
-  h += `<div class="pc-row">${renderPattyDetail(g)}</div>`;
+  h += `<div class="pc-row">${renderPattyDetail(g, true)}</div>`;
   h += `</div></div>`;
   return h;
 }
@@ -690,7 +702,7 @@ function drawSchools(grantee) {
         weight: 1.2, fillOpacity: 0.9,
       });
       const tip = `<b>${escapeHtml(ce.school_name)}</b><br/>` +
-                  `Closest non-JC elementary (fallback)<br/>` +
+                  `Closest non-Judy-Center elementary (fallback)<br/>` +
                   `CPG ${fmtCpg(ce.cpg)} · ~${(ce.distance_m / 1000).toFixed(1)} km`;
       dot.bindTooltip(tip, { className: "school-tip", sticky: true });
       ring.bindTooltip(tip, { className: "school-tip", sticky: true });

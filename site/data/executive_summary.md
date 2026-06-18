@@ -7,8 +7,8 @@ Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has 92 Judy Cen
 | | |
 |---|---:|
 | ENOUGH grantees | **28** |
-| &nbsp; — Already covered (JC in tract) | 15 |
-| &nbsp; — Catchment overlap (no in-tract JC, near-miss catchment) | 8 |
+| &nbsp; — Already covered (Judy Center in tract) | 15 |
+| &nbsp; — Catchment overlap (no in-tract Judy Center, near-miss catchment) | 8 |
 | &nbsp; — Needs Judy Center | **5** |
 | Judy Centers statewide | 92 |
 | &nbsp; — In ENOUGH grantee tracts | 17 |

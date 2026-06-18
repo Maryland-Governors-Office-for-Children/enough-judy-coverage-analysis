@@ -1043,6 +1043,7 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
             "pcs_in_tracts": pc_coverage_by_grantee.get(g, {}).get("in_tract", []),
             "pc_nearby": pc_coverage_by_grantee.get(g, {}).get("nearby"),
             "n_pc_in_county": pc_coverage_by_grantee.get(g, {}).get("n_in_county", 0),
+            "county_pcs": pc_coverage_by_grantee.get(g, {}).get("county_pcs", []),
         })
 
     # Sort: needs-JC by best non-JC CPG desc, then has-JC alphabetically
@@ -1197,8 +1198,8 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
     lines.append("| | |")
     lines.append("|---|---:|")
     lines.append(f"| ENOUGH grantees | **{dashboard['n_grantees']}** |")
-    lines.append(f"| &nbsp; — Already covered (JC in tract) | {dashboard['n_in_tract']} |")
-    lines.append(f"| &nbsp; — Catchment overlap (no in-tract JC, near-miss catchment) | {dashboard['n_catchment_overlap']} |")
+    lines.append(f"| &nbsp; — Already covered (Judy Center in tract) | {dashboard['n_in_tract']} |")
+    lines.append(f"| &nbsp; — Catchment overlap (no in-tract Judy Center, near-miss catchment) | {dashboard['n_catchment_overlap']} |")
     lines.append(f"| &nbsp; — Needs Judy Center | **{dashboard['n_needs_jc']}** |")
     lines.append(f"| Judy Centers statewide | {dashboard['n_judy_centers_total']} |")
     lines.append(f"| &nbsp; — In ENOUGH grantee tracts | {dashboard['n_judy_centers_in_grantee_tracts']} |")
@@ -1782,6 +1783,7 @@ def analyze():
         except ValueError:
             continue
         pc_pts.append({"site_name": pc["site_name"], "resolved_tract": pc["resolved_tract"],
+                       "county_fips": pc.get("county_fips", ""),
                        "geometry": _Point(lon, lat)})
     pc_gdf = gpd.GeoDataFrame(pc_pts, crs=4326).to_crs(epsg=26985) if pc_pts else None
 
@@ -1795,6 +1797,7 @@ def analyze():
         n_in_county = sum(len(pc_by_county.get(c, []))
                           for c in grantee_counties[gname])
         nearby = None
+        county_pcs = []  # in-county PCs (name + distance), nearest first
         if not in_tract and pc_gdf is not None:
             gtr = grantee_tracts_gdf[grantee_tracts_gdf["GEOID20"].isin(gtracts)]
             if not gtr.empty:
@@ -1807,6 +1810,17 @@ def analyze():
                         "site_name": pc_gdf.loc[nearest_idx, "site_name"],
                         "distance_m": int(nearest_dist),
                     }
+                # Every Patty Center in one of the grantee's counties, with
+                # its distance to the served-tract union (for the Grantees
+                # page when there's no nearby PC but the county has some).
+                gcounties = set(grantee_counties[gname])
+                in_county_mask = pc_gdf["county_fips"].isin(gcounties)
+                for idx in pc_gdf.index[in_county_mask]:
+                    county_pcs.append({
+                        "site_name": pc_gdf.loc[idx, "site_name"],
+                        "distance_m": int(float(dists.loc[idx])),
+                    })
+                county_pcs.sort(key=lambda d: d["distance_m"])
         if in_tract:
             category = "has_pc"
         elif nearby:
@@ -1816,6 +1830,7 @@ def analyze():
         pc_coverage_by_grantee[gname] = {
             "category": category, "in_tract": in_tract,
             "nearby": nearby, "n_in_county": n_in_county,
+            "county_pcs": county_pcs,
         }
         r["pc_category"] = category
         r["pc_in_grantee_tracts"] = "; ".join(in_tract)
