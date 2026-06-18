@@ -1,0 +1,18 @@
+county,county_fips,site_name,site_address,city,zip,lat,lon,phone,mc_store_id,source
+Allegany,24001,Cumberland Family Support Center,205,Baltimore Avenue  Cumberland,21502,39.652712907249494,-78.75780973784386,301-724-5445,98,marylandchild.org SSF feed
+Anne Arundel,24003,Annapolis Family Support Center,80,West Street  Annapolis,21401,38.9785081967298,-76.49623099603636,410-269-4478,88,marylandchild.org SSF feed
+Anne Arundel,24003,"Kingdom Kare, Inc.","1350 Blair Drive,",Suite G  Odenton,21113,39.09045523359556,-76.70136657428822,410-672-2006,89,marylandchild.org SSF feed
+Baltimore City,24510,Goodwill Excel Drop-in Center,222,Redwood Street  Baltimore,21202,39.2890884,-76.6111697,443-870-5050,104,marylandchild.org SSF feed
+Baltimore City,24510,RISE Early Learning & Family Support Center,940,Madison Avenue  Baltimore,21202,39.30034049636189,-76.62382216320415,410-275-0928,102,marylandchild.org SSF feed
+Baltimore City,24510,United Way Family Center at Excel Academy,1001,West Saratoga Street  Baltimore,21223,39.29242058206158,-76.63395384072605,410-396-1290,103,marylandchild.org SSF feed
+Baltimore County,24005,The Center for Family Success,201,Back River Neck Road  Essex,21221,39.30876165413756,-76.44251293927107,410-887-4700,90,marylandchild.org SSF feed
+Carroll,24013,Carroll County Family Support Center,10,Distillery Drive  Westminster,21158,39.57589860869201,-76.99395848137586,410-857-2999,105,marylandchild.org SSF feed
+Frederick,24021,Asian American Center of Frederick,5901,Old National Pike  Frederick,21702,39.420821724982716,-77.46223275600694,301-694-3355,108,marylandchild.org SSF feed
+Frederick,24021,Frederick Family Partnership,8420,Gas House Pike Ste. EE  Frederick,21701,39.43549523605521,-77.36839379909027,301-600-2206,107,marylandchild.org SSF feed
+Howard,24027,Howard County Family Support,9790,Patuxent Woods Drive  Columbia,21046,39.17807345846817,-76.85319441657958,410-872-8700,93,marylandchild.org SSF feed
+Kent,24029,Kent County Family Support Center,"115 S. Lynchburg Street,",Suite B  Chestertown,21620,39.211807373049574,-76.07083639225532,410-810-3790,109,marylandchild.org SSF feed
+Montgomery,24031,Family Discovery Center,1010,Grandin Avenue  Rockville,20851,39.08034653089784,-77.13259549574205,301-424-2989,94,marylandchild.org SSF feed
+Prince George's,24033,Family Support Center Prince George's,8908,Riggs Road  Adelphi,20783,39.00236956121223,-76.97044149169805,301-431-6210,110,marylandchild.org SSF feed
+Queen Anne's,24035,Family Support Center of Queen Anne's County,103,N. Linden Street  Sudlersville,21668,39.18909657874647,-75.85647367557789,410-438-3182,95,marylandchild.org SSF feed
+Washington,24043,Washington County Family Support Center,"221 McRand Court,",Suite 300  Hagerstown,21740,39.64702192349065,-77.7488507831368,240-382-5782,96,marylandchild.org SSF feed
+Worcester,24047,First Wave Families,10900,Ocean Gateway  Berlin,21811,38.34324032428072,-75.17950722605397,443-577-0810,97,marylandchild.org SSF feed

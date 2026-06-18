@@ -22,6 +22,9 @@
   --jc-catch: #2f8f4d;        /* green - JC catchment overlaps */
   --cand: #c0392b;            /* red - prospective elementary */
   --cand-soft: #f5cdc8;
+  --pc: #0f9b8e;              /* teal - Patty Center (Family Support) */
+  --pc-soft: #d3efec;
+  --pc-needs: #b8651b;        /* amber - grantee with no nearby PC */
 }
 
 * { box-sizing: border-box; }
@@ -416,6 +419,60 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .legend .swatch.dashed-circle {
   border: 1px dashed var(--cand); background: transparent; border-radius: 50%;
 }
+.legend .swatch.teal-square { background: var(--pc); border: 1px solid #0a6f66; }
+
+/* ===== Patty Center map markers (teal squares via divIcon) ===== */
+.pc-marker { background: transparent; border: 0; }
+.pc-square {
+  display: block; width: 100%; height: 100%;
+  background: var(--pc); border: 1px solid #0a6f66;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.6);
+}
+.pc-square.pc-in-tract { border: 2px solid #064b45; box-shadow: 0 0 0 2px rgba(255,255,255,0.85); }
+.pc-square.pc-nearby {
+  background: transparent; border: 2px dashed var(--pc);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.6);
+}
+
+/* ===== Patty Center coverage callout (sidebar + grantee blocks) ===== */
+.pc-callout {
+  margin-top: 10px;
+  padding: 9px 12px;
+  background: var(--pc-soft);
+  border-left: 3px solid var(--pc);
+  border-radius: 0 6px 6px 0;
+  font-size: 13px;
+}
+.pc-callout b { color: #0a6f66; }
+.pc-callout.pc-needs_pc { background: #f6e6d6; border-left-color: var(--pc-needs); }
+.pc-callout.pc-needs_pc b { color: var(--pc-needs); }
+.pc-callout .pc-status { font-weight: 600; }
+.gblock .pc-row { grid-column: 1 / -1; }
+
+/* Patty Center dashboard tiles */
+.dash-card.is-pc .num { color: var(--pc); }
+.dash-card.is-pc.is-pc-needs .num { color: var(--pc-needs); }
+
+/* Patty Center layer toggle (map sidebar) */
+.pc-toggle {
+  margin-top: 8px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pc-toggle::before {
+  content: ""; width: 10px; height: 10px;
+  background: var(--pc); border: 1px solid #0a6f66; display: inline-block;
+}
+.pc-toggle.active { color: #0a6f66; border-color: var(--pc); background: var(--pc-soft); }
 
 /* ===== Grantees tab ===== */
 .grantee-blocks { display: flex; flex-direction: column; gap: 16px; margin-top: 14px; }

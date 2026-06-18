@@ -14,6 +14,10 @@ Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has 92 Judy Cen
 | &nbsp; — In ENOUGH grantee tracts | 17 |
 | &nbsp; — Catchment-overlap only (school outside grantee tract) | 12 |
 | Distinct prospective elementaries in grantee tracts | 35 |
+| Patty Centers statewide | 17 |
+| &nbsp; — Grantees with a Patty Center in a served tract | 3 |
+| &nbsp; — Grantees with a Patty Center nearby (≤5 km) | 15 |
+| &nbsp; — **Grantees with no nearby Patty Center** | **10** |
 
 ## 1. Already covered (15)
 
@@ -65,6 +69,29 @@ No Judy Center inside the grantee's tracts, and no nearby Judy Center whose atte
 | Leaders Breeders Inc. | Baltimore City | _(closest fallback: Sinclair Lane Elementary at 0.5 km, CPG 91%)_ | No traditional elementary in tract |
 
 **Already-aligned grantees.** Four grantees are named after their host Judy Center school or locality and operate in close partnership with it: City of Cumberland with South Penn Elementary, One Annapolis with Georgetown East Elementary, San Mar with Bester Elementary, and Frederick Local Management Board with Waverley, Hillcrest, and Butterfly Ridge Elementary. Frederick LMB serves 5 tracts; 3 of the 6 Frederick County Judy Centers sit inside them, while the other three (Lincoln, Monocacy, Tuscarora) are in adjacent Frederick tracts not covered by the current grant.
+
+## Patty Center coverage
+
+Patty Centers (formerly Family Support Centers) are community-based hubs for parents of children birth–3 — they help parents pursue their own goals (GED, job readiness, parenting) while their child receives on-site early care. Unlike Judy Centers they are not housed in schools and have no attendance zone, so a grantee is counted as covered when a Patty Center sits inside a served tract, and as "nearby" when one sits within 5 km of its served tracts. Maryland Family Network operates 17 Patty Centers as MSDE's intermediary; the Blueprint funds 3 new sites per year through FY2030 at $330,000 each, so identifying ENOUGH communities without one is timely.
+
+**Grantees with a Patty Center in a served tract (3).** Child First Authority (RISE Early Learning & Family Support Center); Frederick Local Management Board (Asian American Center of Frederick); San Mar Family & Community Services: Bester Community of Hope (Washington County Family Support Center).
+
+**Grantees with a Patty Center nearby, within 5 km (15).** CASA, Inc. — Family Support Center Prince George's (0.9 km); CHEER (Community Health and Empowerment through Education and Research) — Family Support Center Prince George's (1.2 km); Cherry Hill Strong — Goodwill Excel Drop-in Center (3.7 km); City of Cumberland — Cumberland Family Support Center (0.4 km); Community Assistance Network, Inc. — The Center for Family Success (0.2 km); Elev8 Baltimore, Inc. — United Way Family Center at Excel Academy (0.2 km); Greater Mondawmin Coordinating Council — RISE Early Learning & Family Support Center (1.9 km); Latin American Youth Center — Family Support Center Prince George's (0.3 km); Leaders Breeders Inc. — Goodwill Excel Drop-in Center (4.8 km); One Annapolis, Inc — Annapolis Family Support Center (1.2 km); Park Heights Renaissance, Inc. — RISE Early Learning & Family Support Center (2.9 km); Tendea Family INC. — Goodwill Excel Drop-in Center (2.2 km); The Central Baltimore Partnership, Inc. — RISE Early Learning & Family Support Center (1.0 km); The Y in Central Maryland — RISE Early Learning & Family Support Center (2.5 km); Urban Strategies Inc — Goodwill Excel Drop-in Center (0.4 km).
+
+**Grantees with no nearby Patty Center (10).** These ENOUGH communities are the candidates a future Patty Center expansion could prioritise:
+
+| Grantee | County | Patty Centers in county |
+|---|---|---:|
+| South Baltimore Community Land Trust | Baltimore City | 3 |
+| Anne Arundel County Partnership for Children, Youth, and Families | Anne Arundel | 2 |
+| Good Intentions Foundation Inc. | Prince George's | 1 |
+| Identity, Inc. | Montgomery | 1 |
+| Prince George's County Department of Social Services | Prince George's | 1 |
+| United Communities Against Poverty | Prince George's | 1 |
+| Boys & Girls Clubs of Harford and Cecil Counties | Harford | 0 |
+| Caroline Human Services Council, Inc. | Caroline | 0 |
+| LifeStyles of Maryland Foundation, Inc. | Charles | 0 |
+| Moving Dorchester Forward, INC | Dorchester | 0 |
 
 ## Candidate elementary schools by grantee
 

@@ -1,0 +1,18 @@
+county,county_fips,site_name,site_address,city,zip,lat,lon,mc_store_id,match_tier,resolved_tract,grantees_serving_this_tract
+Allegany,24001,Cumberland Family Support Center,205,Baltimore Avenue  Cumberland,21502,39.652712907249494,-78.75780973784386,98,latlon,24001000500,
+Anne Arundel,24003,Annapolis Family Support Center,80,West Street  Annapolis,21401,38.9785081967298,-76.49623099603636,88,latlon,24003706102,
+Anne Arundel,24003,"Kingdom Kare, Inc.","1350 Blair Drive,",Suite G  Odenton,21113,39.09045523359556,-76.70136657428822,89,latlon,24003740304,
+Baltimore City,24510,Goodwill Excel Drop-in Center,222,Redwood Street  Baltimore,21202,39.2890884,-76.6111697,104,latlon,24510040100,
+Baltimore City,24510,RISE Early Learning & Family Support Center,940,Madison Avenue  Baltimore,21202,39.30034049636189,-76.62382216320415,102,latlon,24510170200,Child First Authority
+Baltimore City,24510,United Way Family Center at Excel Academy,1001,West Saratoga Street  Baltimore,21223,39.29242058206158,-76.63395384072605,103,latlon,24510280600,
+Baltimore County,24005,The Center for Family Success,201,Back River Neck Road  Essex,21221,39.30876165413756,-76.44251293927107,90,latlon,24005450800,
+Carroll,24013,Carroll County Family Support Center,10,Distillery Drive  Westminster,21158,39.57589860869201,-76.99395848137586,105,latlon,24013507602,
+Frederick,24021,Asian American Center of Frederick,5901,Old National Pike  Frederick,21702,39.420821724982716,-77.46223275600694,108,latlon,24021750507,Frederick Local Management Board
+Frederick,24021,Frederick Family Partnership,8420,Gas House Pike Ste. EE  Frederick,21701,39.43549523605521,-77.36839379909027,107,latlon,24021751701,
+Howard,24027,Howard County Family Support,9790,Patuxent Woods Drive  Columbia,21046,39.17807345846817,-76.85319441657958,93,latlon,24027606708,
+Kent,24029,Kent County Family Support Center,"115 S. Lynchburg Street,",Suite B  Chestertown,21620,39.211807373049574,-76.07083639225532,109,latlon,24029950300,
+Montgomery,24031,Family Discovery Center,1010,Grandin Avenue  Rockville,20851,39.08034653089784,-77.13259549574205,94,latlon,24031701101,
+Prince George's,24033,Family Support Center Prince George's,8908,Riggs Road  Adelphi,20783,39.00236956121223,-76.97044149169805,110,latlon,24033805904,
+Queen Anne's,24035,Family Support Center of Queen Anne's County,103,N. Linden Street  Sudlersville,21668,39.18909657874647,-75.85647367557789,95,latlon,24035810200,
+Washington,24043,Washington County Family Support Center,"221 McRand Court,",Suite 300  Hagerstown,21740,39.64702192349065,-77.7488507831368,96,latlon,24043000900,San Mar Family & Community Services: Bester Community of Hope
+Worcester,24047,First Wave Families,10900,Ocean Gateway  Berlin,21811,38.34324032428072,-75.17950722605397,97,latlon,24047950900,

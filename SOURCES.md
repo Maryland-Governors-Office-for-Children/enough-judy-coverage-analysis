@@ -18,14 +18,31 @@ GOC supplied the same roster to MDP for the public ENOUGH map.
 backed by a SuperStoreFinder XML feed at
 `https://marylandchild.org/wp-content/plugins/superstorefinder-wp/ssf-wp-xml.php`,
 which the pipeline caches locally to `.cache/marylandchild_ssf.xml` on first
-run. As of April 2026 the feed lists 92 Judy Centers (and 17 Patty Family
-Support Centers, which the pipeline excludes via the "(JC)" / "(PC)" suffix
-on each item's location field).
+run. As of April 2026 the feed lists 92 Judy Centers and 17 Patty (Family
+Support) Centers, distinguished by the "(JC)" / "(PC)" suffix on each item's
+location field. The pipeline now parses **both**: Judy Centers drive the
+school-coverage analysis, and Patty Centers are resolved to tracts and
+written to `patty_centers_full.csv` / `patty_center_coverage.csv` for the
+grantee proximity tiering (see below).
 
-Each item carries: school name, street address, city, ZIP, latitude,
+Each item carries: school/site name, street address, city, ZIP, latitude,
 longitude, county tag, telephone, and an internal MFN store ID. The pipeline
 records all of these except telephone (not needed for the spatial analysis;
 GOC can pull it from MFN's site or MSDE's coordinator PDF when needed).
+
+## Patty Center (Family Support Center) list
+
+`patty_centers_full.csv` is regenerated on every run from the same
+MarylandChild.org SuperStoreFinder feed (the 17 "(PC)"-tagged entries).
+Patty Centers are community-based hubs for parents of children birth–3, run
+by Maryland Family Network as MSDE's intermediary — **not housed in schools**,
+so they have no attendance zone and are not matched against MDP's school
+layer. Each is resolved to a census tract by its MFN-supplied lat/lon
+(point-in-polygon). Grantee proximity is then tiered by straight-line
+distance from the grantee's served-tract union: in-tract → within 5 km →
+none nearby. The Blueprint for Maryland's Future funds 3 new Patty Centers
+per year through FY2030 at $330,000 each (MSDE Blueprint Implementation
+Update: Patty Centers and Judy Centers, October 2023).
 
 MFN's map is the public-facing Judy Center directory maintained for MSDE.
 For the most current authoritative source -- including the per-site

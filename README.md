@@ -1,13 +1,15 @@
-# ENOUGH × Judy Center coverage analysis
+# ENOUGH × Judy & Patty Center coverage analysis
 
 Maryland's 28 [ENOUGH](https://goc.maryland.gov/enough/) grantees serve 106
 census tracts. The state has 92 [Judy Center Early Learning
-Hubs](https://earlychildhood.marylandpublicschools.org/families/judy-centers).
-This tool sorts the grantees into three groups — those that already have a
-Judy Center in their served tracts, those served by a nearby Judy Center
-whose attendance zone reaches in, and those with no Judy Center coverage at
-all — and lists the elementary schools that could host a Judy Center for
-grantees in the third group.
+Hubs](https://earlychildhood.marylandpublicschools.org/families/judy-centers)
+and 17 Patty Centers (Family Support Centers). This tool sorts the grantees
+into three groups — those that already have a Judy Center in their served
+tracts, those served by a nearby Judy Center whose attendance zone reaches
+in, and those with no Judy Center coverage at all — and lists the elementary
+schools that could host a Judy Center for grantees in the third group. It
+also maps every Patty Center and flags which ENOUGH grantees do not have one
+nearby (a Patty Center inside a served tract, within 5 km, or neither).
 
 ## Dashboard
 
@@ -25,6 +27,18 @@ grantees in the third group.
 The five grantees not served by a Judy Center — the primary candidates for a
 new Judy Center — are CASA Inc., Good Intentions Foundation, Latin American
 Youth Center, Leaders Breeders Inc., and Urban Strategies Inc.
+
+## Patty Centers
+
+Patty Centers (formerly Family Support Centers) are community-based hubs for
+parents of children birth–3, run by Maryland Family Network as MSDE's
+intermediary — not housed in schools, so they have no attendance zone. Each
+ENOUGH grantee is tiered by Patty Center proximity: **3** have one inside a
+served tract, **15** have one within 5 km, and **10** have none nearby. The
+Blueprint funds 3 new Patty Centers per year through FY2030 at $330,000 each,
+so the 10 grantees with no nearby center are natural expansion candidates.
+See `patty_center_coverage.csv` and the "Patty Center coverage" section of
+`executive_summary.md`.
 
 ## Where the analysis lives
 
@@ -84,6 +98,12 @@ sits inside one of PG DSS's served tracts.
    gate (per GOC guidance). Emits `candidate_elementary_schools.csv`,
    `executive_summary.md`, and the `site/data/*` files the interactive map
    reads.
+8. Refreshes `patty_centers_full.csv` from the same MarylandChild.org feed
+   (the 17 "(PC)"-tagged entries), resolves each to a tract via its lat/lon,
+   and tiers every grantee by Patty Center proximity (in served tract → within
+   5 km → none nearby). Emits `patty_center_coverage.csv`, `pc_match_audit.csv`,
+   `site/data/patty_centers.geojson`, and the Patty Center columns on
+   `grantee_coverage.csv`.
 
 ## Run it
 
@@ -108,14 +128,17 @@ python -m http.server 8000 --directory site
 | File | Purpose |
 |---|---|
 | `executive_summary.md` | Stakeholder narrative + recommendations |
-| `grantee_coverage.csv` | One row per grantee with coverage flags + near-miss column |
+| `grantee_coverage.csv` | One row per grantee with JC coverage flags, near-miss column, and Patty Center tier columns |
 | `judy_center_coverage.csv` | One row per Judy Center with resolved tract + grantees served |
 | `candidate_elementary_schools.csv` | Elementary schools in grantee tracts, ranked by CPG |
 | `jc_match_audit.csv` | Per-Judy-Center match decision audit |
+| `patty_centers_full.csv` | Patty Center list refreshed from MarylandChild.org |
+| `patty_center_coverage.csv` | One row per Patty Center with resolved tract + grantees served |
+| `pc_match_audit.csv` | Per-Patty-Center tract-resolution audit |
 | `catchment_overlaps.csv` | Long-format catchment-vs-tract overlap audit |
 | `catchment_countywide_flags.csv` | Schools whose catchment is ≥ 70% of county area |
 | `gaps.csv` | Grantees with no Judy Center in their county (currently empty) |
-| `site/index.html` + `site/data/*` | Interactive Leaflet map |
+| `site/index.html` + `site/data/*` | Interactive Leaflet map (incl. `patty_centers.geojson`) |
 | `sanity_overview_md.png`, `sanity_overview_bc.png` | Static overlays for visual verification |
 
 See `SOURCES.md` for data provenance and known vintage gaps.

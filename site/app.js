@@ -23,8 +23,17 @@ const state = {
   rawTracts: null,
   rawSchools: null,
   rawCatchments: null,
+  rawPattyCenters: null,
+  showPattyCenters: true,  // toggle for the Patty Center layer
   map: null,
-  layers: { tracts: null, schools: null, catchments: null, closest: null },
+  layers: { tracts: null, schools: null, catchments: null, closest: null, patty: null },
+};
+
+// Patty Center coverage categories (parallel to the JC CATEGORIES).
+const PC_CATEGORY_LABELS = {
+  has_pc: "Patty Center in tract",
+  nearby_pc: "Patty Center nearby",
+  needs_pc: "No nearby Patty Center",
 };
 
 // ============= Boot =============
@@ -34,10 +43,12 @@ Promise.all([
   fetch("data/schools.geojson").then((r) => r.json()),
   fetch("data/catchments.geojson").then((r) => r.json()),
   fetch("data/grantees.json").then((r) => r.json()),
-]).then(([tracts, schools, catchments, grantees]) => {
+  fetch("data/patty_centers.geojson").then((r) => r.json()).catch(() => null),
+]).then(([tracts, schools, catchments, grantees, pattyCenters]) => {
   state.rawTracts = tracts;
   state.rawSchools = schools;
   state.rawCatchments = catchments;
+  state.rawPattyCenters = pattyCenters;
   state.payload = grantees;
   grantees.grantees.forEach((g) => { state.granteeIndex[g.grantee] = g; });
   initTabs();
@@ -112,8 +123,11 @@ function renderDashboard() {
     { num: d.n_needs_jc, label: "Needs Judy Center", cls: "cat-needs_jc", cat: "needs_jc" },
     { num: d.n_judy_centers_total, label: "Judy Centers statewide", cls: "is-static" },
     { num: d.n_judy_centers_in_grantee_tracts, label: "JCs in ENOUGH grantee tracts", cls: "is-static" },
-    { num: d.n_judy_centers_catchment_overlap_only, label: "JCs with catchment-only overlap", cls: "is-static" },
     { num: d.n_prospective_elementaries, label: "Prospective elementary schools", cls: "is-static" },
+    { num: d.n_patty_centers_total, label: "Patty Centers statewide", cls: "is-static is-pc" },
+    { num: d.n_pc_in_tract, label: "Grantees with a Patty Center in tract", cls: "is-static is-pc" },
+    { num: d.n_pc_nearby, label: "Grantees with a Patty Center nearby (≤5 km)", cls: "is-static is-pc" },
+    { num: d.n_needs_pc, label: "Grantees with no nearby Patty Center", cls: "is-static is-pc is-pc-needs" },
   ];
   grid.innerHTML = cards.map((c) =>
     `<div class="dash-card ${c.cls}" ${c.cat ? `data-cat="${c.cat}"` : ""}>
@@ -179,6 +193,7 @@ function setCategoryFilter(cat) {
     renderGranteeBlocks();
     if (state.layers.tracts) drawTracts(state.selectedGrantee);
     if (state.layers.schools) drawSchools(state.selectedGrantee);
+    if (state.map) drawPattyCenters(state.selectedGrantee);
   }
 }
 
@@ -193,6 +208,7 @@ function clearSelection() {
   if (state.map && state.layers.tracts) {
     drawTracts(null);
     drawSchools(null);
+    drawPattyCenters(null);
   }
   if (state.map && state.mapEverShown) {
     state.map.fitBounds(MD_BOUNDS);
@@ -286,10 +302,31 @@ function renderGranteeDetail(g) {
     h += `${escapeHtml(ce.school_name)} (CPG ${fmtCpg(ce.cpg)}, ~${km} km from tract). `;
     h += `Used as a fallback because no traditional elementary or combined school exists in the served tract.</div>`;
   }
+  h += renderPattyDetail(g);
   h += `<div class="recco"><b>Recommendation:</b> ${escapeHtml(g.recommendation_short)}</div>`;
   pane.innerHTML = h;
   const clearBtn = document.getElementById("clear-selection-btn");
   if (clearBtn) clearBtn.addEventListener("click", clearSelection);
+}
+
+// Patty Center coverage line, shared by the sidebar detail and the
+// Grantees-tab blocks. Returns an HTML string (possibly empty-ish).
+function renderPattyDetail(g) {
+  const cat = g.pc_category || "needs_pc";
+  const label = PC_CATEGORY_LABELS[cat] || cat;
+  let body = "";
+  if (cat === "has_pc" && g.pcs_in_tracts && g.pcs_in_tracts.length) {
+    body = "In served tract: " +
+      g.pcs_in_tracts.map((s) => escapeHtml(s.trim())).join(", ") + ".";
+  } else if (cat === "nearby_pc" && g.pc_nearby) {
+    const km = (g.pc_nearby.distance_m / 1000).toFixed(1);
+    body = `Nearest: ${escapeHtml(g.pc_nearby.site_name.trim())} (~${km} km from tract).`;
+  } else {
+    const n = g.n_pc_in_county || 0;
+    body = `No Patty Center within 5 km. ${n} Patty Center${n === 1 ? "" : "s"} in county.`;
+  }
+  return `<div class="pc-callout pc-${cat}"><b>Patty Center:</b> ` +
+         `<span class="pc-status">${escapeHtml(label)}</span> — ${body}</div>`;
 }
 
 // ============= Grantees tab =============
@@ -375,6 +412,7 @@ function renderGranteeBlock(g) {
     h += `Used because no traditional elementary or combined school is inside the served tract.`;
     h += `</div>`;
   }
+  h += `<div class="pc-row">${renderPattyDetail(g)}</div>`;
   h += `</div></div>`;
   return h;
 }
@@ -397,7 +435,71 @@ function renderMap() {
 
   drawTracts(null);
   drawSchools(null);
+  drawPattyCenters(null);
   drawLegend();
+  setupPattyToggle();
+}
+
+// ============= Patty Centers =============
+
+// Patty Centers are community-based (not school-based), so they render as
+// teal squares — visually distinct from the purple JC dots and red
+// candidate-elementary dots. When a grantee is selected, a PC inside one of
+// its tracts is filled solid; a PC counted as "nearby" gets a dashed ring.
+function drawPattyCenters(grantee) {
+  if (state.layers.patty) { state.layers.patty.remove(); state.layers.patty = null; }
+  if (!state.rawPattyCenters || !state.showPattyCenters) return;
+
+  state.layers.patty = L.geoJSON(state.rawPattyCenters, {
+    pointToLayer: (f, latlng) => {
+      const role = grantee ? (f.properties.roles && f.properties.roles[grantee]) : null;
+      const emphasized = role === "pc_in_tract";
+      const nearby = role === "pc_nearby";
+      const size = emphasized || nearby ? 12 : 9;
+      return L.marker(latlng, {
+        icon: L.divIcon({
+          className: "pc-marker",
+          html: `<span class="pc-square${emphasized ? " pc-in-tract" : ""}` +
+                `${nearby ? " pc-nearby" : ""}"></span>`,
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+        }),
+      });
+    },
+    onEachFeature: (f, layer) => {
+      const p = f.properties;
+      const role = grantee ? (p.roles && p.roles[grantee]) : null;
+      const roleLabel =
+        role === "pc_in_tract" ? "Patty Center (in selected grantee's tract)" :
+        role === "pc_nearby" ? "Patty Center (within 5 km of selected grantee's tracts)" :
+        "Patty Center";
+      const tip = `<b>${escapeHtml((p.site_name || "").trim())}</b><br/>` +
+                  `<span style="color:#666;font-size:11px;">${escapeHtml(roleLabel)}</span>`;
+      layer.bindTooltip(tip, { className: "school-tip", sticky: true });
+      const popup =
+        `<b>${escapeHtml((p.site_name || "").trim())}</b><br/>` +
+        `Patty Center (Family Support Center)<br/>` +
+        `${escapeHtml(p.address || "")}${p.city ? ", " + escapeHtml(p.city) : ""}<br/>` +
+        `${escapeHtml(p.county || "")} · tract ${p.geoid20 || "—"}<br/>` +
+        `<span style="color:#666;font-size:12px;">${escapeHtml(roleLabel)}</span>`;
+      layer.bindPopup(popup);
+    },
+  }).addTo(state.map);
+}
+
+function setupPattyToggle() {
+  const btn = document.getElementById("pc-toggle");
+  if (!btn) return;
+  const sync = () => {
+    btn.classList.toggle("active", state.showPattyCenters);
+    btn.setAttribute("aria-pressed", state.showPattyCenters ? "true" : "false");
+  };
+  sync();
+  btn.addEventListener("click", () => {
+    state.showPattyCenters = !state.showPattyCenters;
+    sync();
+    drawPattyCenters(state.selectedGrantee);
+  });
 }
 
 function drawTracts(grantee) {
@@ -582,7 +684,8 @@ function drawLegend() {
     `<div class="row"><span class="swatch dot blue"></span>JC in selected tract</div>` +
     `<div class="row"><span class="swatch dot green"></span>JC catchment overlap</div>` +
     `<div class="row"><span class="swatch dot red"></span>Candidate elementary (sized by CPG)</div>` +
-    `<div class="row"><span class="swatch dashed-circle"></span>Closest non-JC elem. fallback</div>`;
+    `<div class="row"><span class="swatch dashed-circle"></span>Closest non-JC elem. fallback</div>` +
+    `<div class="row"><span class="swatch teal-square"></span>Patty Center (Family Support)</div>`;
 }
 
 function selectGrantee(name) {
@@ -594,6 +697,7 @@ function selectGrantee(name) {
   renderGranteeDetail(g);
   drawTracts(name);
   drawSchools(name);
+  drawPattyCenters(name);
   if (g && state.mapEverShown) fitToGrantee(name);
 }
 

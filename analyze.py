@@ -40,6 +40,7 @@ Pipeline:
 """
 
 import csv
+import html
 import re
 import unicodedata
 from collections import defaultdict
@@ -53,6 +54,7 @@ from rapidfuzz import fuzz, process
 HERE = Path(__file__).parent
 GRANTEE_CSV = HERE / "2025 Updated ENOUGH Grantee Census Tracts and Zipcodes - Unique ENOUGH Census Tracts.csv"
 JUDY_CSV = HERE / "judy_centers_full.csv"
+PATTY_CSV = HERE / "patty_centers_full.csv"
 CACHE = HERE / ".cache"
 CACHE.mkdir(exist_ok=True)
 OUTPUTS = HERE
@@ -79,6 +81,14 @@ MC_SSF_URL = (
 
 # Catchment area / county area >= this fraction => "county-wide" flag.
 COUNTYWIDE_THRESHOLD = 0.70
+
+# Patty Centers are community-based (no school attendance zone), so grantee
+# proximity is measured as straight-line distance from the grantee's served-
+# tract union to the PC point. A PC within this many metres of the tract
+# union (but not inside it) classifies the grantee as "nearby". 5 km is a
+# short-drive proxy; the exact distance is surfaced in outputs so the cutoff
+# stays transparent.
+PC_NEARBY_M = 5000
 
 FUZZ_THRESHOLD = 85  # rapidfuzz token_sort_ratio cutoff
 
@@ -219,7 +229,9 @@ def refresh_judy_centers_from_mc():
 
     def text(el, tag):
         sub = el.find(tag)
-        return (sub.text or "").strip() if sub is not None else ""
+        # The SSF feed double-encodes HTML entities (&amp;, &#39;, &#44;);
+        # unescape so names/addresses render as plain text everywhere.
+        return html.unescape((sub.text or "").strip()) if sub is not None else ""
 
     rows = []
     for it in store:
@@ -267,6 +279,96 @@ def load_judy_centers():
         refresh_judy_centers_from_mc()
     rows = []
     with JUDY_CSV.open(encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rows.append(row)
+    return rows
+
+
+def refresh_patty_centers_from_mc():
+    """Fetch the same MarylandChild.org SuperStoreFinder feed and parse the
+    Patty (Family Support) Centers, rewriting patty_centers_full.csv.
+
+    Patty Centers are tagged "(PC)" in the feed's location field (vs "(JC)"
+    for Judy Centers). They are community-based hubs for parents of children
+    birth-3 -- NOT sited in schools -- so unlike Judy Centers they have no
+    school attendance zone and are not matched against MDP's school layer.
+    We carry the MFN-supplied lat/lon for point-in-tract resolution.
+    """
+    import xml.etree.ElementTree as ET
+
+    cache = CACHE / "marylandchild_ssf.xml"
+    if not cache.exists():
+        # load_judy_centers / refresh runs first and populates the cache;
+        # fetch defensively in case this is called standalone.
+        print(f"  fetching {MC_SSF_URL}")
+        req = urllib.request.Request(
+            MC_SSF_URL,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 Chrome/121.0 Safari/537.36"
+                ),
+            },
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            cache.write_bytes(resp.read())
+    else:
+        print(f"  using cached {cache.name}")
+
+    tree = ET.parse(cache)
+    store = next(c for c in tree.getroot() if c.tag == "store")
+
+    def text(el, tag):
+        sub = el.find(tag)
+        # The SSF feed double-encodes HTML entities (&amp;, &#39;, &#44;);
+        # unescape so names/addresses render as plain text everywhere.
+        return html.unescape((sub.text or "").strip()) if sub is not None else ""
+
+    rows = []
+    for it in store:
+        name = text(it, "location")
+        if "(PC)" not in name:
+            continue
+        clean_name = re.sub(r"\s*\(PC\)\s*", "", name).strip()
+        county_tag = text(it, "productsServices").replace("&#39;", "'")
+        county_tag = re.sub(r"^Maryland,\s*", "", county_tag).strip()
+        cfips = COUNTY_NAME_TO_FIPS.get(county_tag, "")
+        addr_full = text(it, "address")
+        m = re.match(r"^(.*?)\s+([\w. ]+),\s*MD\s+(\d{5})\s*$", addr_full)
+        if m:
+            street, city, zipc = m.group(1).strip(), m.group(2).strip(), m.group(3)
+        else:
+            street, city, zipc = addr_full, "", ""
+        rows.append({
+            "county": county_tag,
+            "county_fips": cfips,
+            "site_name": clean_name,
+            "site_address": street,
+            "city": city,
+            "zip": zipc,
+            "lat": text(it, "latitude"),
+            "lon": text(it, "longitude"),
+            "phone": text(it, "telephone"),
+            "mc_store_id": text(it, "storeId"),
+            "source": "marylandchild.org SSF feed",
+        })
+
+    rows.sort(key=lambda r: (r["county"], r["site_name"]))
+    with PATTY_CSV.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    print(f"  wrote {PATTY_CSV.name} with {len(rows)} Patty Centers")
+    return rows
+
+
+def load_patty_centers():
+    """Refresh from MC if missing, then read the CSV."""
+    if not PATTY_CSV.exists():
+        refresh_patty_centers_from_mc()
+    rows = []
+    with PATTY_CSV.open(encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             rows.append(row)
@@ -577,6 +679,44 @@ def resolve_judy_centers(judy_centers, joined_schools, raw_tracts):
     return audit
 
 
+def resolve_patty_centers(patty_centers, raw_tracts):
+    """Resolve each Patty Center to its census tract via point-in-polygon on
+    the MarylandChild.org lat/lon.
+
+    Unlike Judy Centers, Patty Centers are not in MDP's school layer, so
+    there is no name/address match step -- the MFN-supplied coordinates are
+    the only locator. Returns a list of audit dicts mirroring
+    resolve_judy_centers' shape (minus the MDP-school fields).
+    """
+    from shapely.geometry import Point
+
+    tracts_wgs = raw_tracts.to_crs(epsg=4326)
+
+    audit = []
+    for pc in patty_centers:
+        try:
+            lat = float(pc.get("lat") or "")
+            lon = float(pc.get("lon") or "")
+        except ValueError:
+            lat = lon = None
+        geoid = ""
+        tier = "no_latlon"
+        if lat and lon:
+            tract_hit = tracts_wgs[tracts_wgs.geometry.contains(Point(lon, lat))]
+            if not tract_hit.empty:
+                geoid = str(tract_hit.iloc[0]["GEOID20"])
+                tier = "latlon"
+            else:
+                tier = "latlon_no_tract"
+        audit.append({
+            "patty_center": pc["site_name"],
+            "county": pc["county"],
+            "geoid20": geoid,
+            "tier": tier,
+        })
+    return audit
+
+
 def tract_county_fips(tract_geoid):
     return tract_geoid[:5]
 
@@ -612,8 +752,9 @@ def _short_recommendation(has_candidate):
 def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
                      countywide_flags, joined_schools, catchments,
                      grantee_tracts_gdf, raw_tracts, tract_to_grantees,
-                     closest_elementary_per_grantee=None):
-    """Emit the four files the static Leaflet site reads.
+                     closest_elementary_per_grantee=None,
+                     patty_centers=None, pc_coverage_by_grantee=None):
+    """Emit the files the static Leaflet site reads.
 
     site/data/
         grantee_tracts.geojson    EPSG:4326 polygons, 106 tracts
@@ -624,9 +765,14 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         catchments.geojson        EPSG:4326 polygons, catchments for
                                   the rendered schools (excluding
                                   county-wide ones)
+        patty_centers.geojson     EPSG:4326 points: ALL Patty Centers, each
+                                  with a per-grantee roles dict
+                                  (pc_in_tract / pc_nearby)
         grantees.json             {dashboard: {...}, grantees: [...]}
     """
     closest_elementary_per_grantee = closest_elementary_per_grantee or {}
+    patty_centers = patty_centers or []
+    pc_coverage_by_grantee = pc_coverage_by_grantee or {}
     SITE_DATA.mkdir(parents=True, exist_ok=True)
 
     # --- 1. Grantee tracts ---
@@ -793,6 +939,41 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
     )
     rel_cats.to_file(SITE_DATA / "catchments.geojson", driver="GeoJSON")
 
+    # --- 4b. Patty Centers GeoJSON (all PCs + per-grantee roles) ---
+    # Each PC carries a roles dict {grantee: "pc_in_tract"|"pc_nearby"} so
+    # the frontend can emphasise the relevant PC when a grantee is selected.
+    pc_name_to_roles = defaultdict(dict)
+    for gname, cov in pc_coverage_by_grantee.items():
+        for nm in cov.get("in_tract", []):
+            pc_name_to_roles[nm][gname] = "pc_in_tract"
+        nb = cov.get("nearby")
+        if nb:
+            pc_name_to_roles[nb["site_name"]].setdefault(gname, "pc_nearby")
+
+    from shapely.geometry import Point as _PCPoint
+    pc_records = []
+    for pc in patty_centers:
+        try:
+            lat = float(pc.get("lat") or "")
+            lon = float(pc.get("lon") or "")
+        except ValueError:
+            continue
+        pc_records.append({
+            "site_name": pc["site_name"],
+            "site_type": "Patty Center",
+            "address": pc.get("site_address") or "",
+            "city": pc.get("city") or "",
+            "county": pc.get("county") or "",
+            "geoid20": pc.get("resolved_tract") or "",
+            "lat": lat,
+            "lon": lon,
+            "roles": dict(sorted(pc_name_to_roles.get(pc["site_name"], {}).items())),
+            "geometry": _PCPoint(lon, lat),
+        })
+    if pc_records:
+        pc_gdf_out = gpd.GeoDataFrame(pc_records, crs=4326)
+        pc_gdf_out.to_file(SITE_DATA / "patty_centers.geojson", driver="GeoJSON")
+
     # --- 5. Per-grantee narrative ---
     cands_by_grantee = defaultdict(list)
     for c in candidate_rows:
@@ -865,6 +1046,10 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
             "closest_elementary": closest_elementary_per_grantee.get(g),
             "named_hint": g in NAMED_HINT_GRANTEES,
             "recommendation_short": _short_recommendation(has_candidate),
+            "pc_category": pc_coverage_by_grantee.get(g, {}).get("category", "needs_pc"),
+            "pcs_in_tracts": pc_coverage_by_grantee.get(g, {}).get("in_tract", []),
+            "pc_nearby": pc_coverage_by_grantee.get(g, {}).get("nearby"),
+            "n_pc_in_county": pc_coverage_by_grantee.get(g, {}).get("n_in_county", 0),
         })
 
     # Sort: needs-JC by best non-JC CPG desc, then has-JC alphabetically
@@ -896,6 +1081,11 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
     n_prospective_distinct = len({c["ncessch_id"] for c in candidate_rows
                                   if c["is_judy_center"] == "no" and c["ncessch_id"]})
 
+    # Patty Center dashboard counts
+    n_pc_in_tract = sum(1 for p in grantees_payload if p["pc_category"] == "has_pc")
+    n_pc_nearby = sum(1 for p in grantees_payload if p["pc_category"] == "nearby_pc")
+    n_needs_pc = sum(1 for p in grantees_payload if p["pc_category"] == "needs_pc")
+
     dashboard = {
         "n_grantees": len(grantees_payload),
         "n_in_tract": n_in_tract,
@@ -905,6 +1095,10 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         "n_judy_centers_in_grantee_tracts": len(jcs_in_tract_set),
         "n_judy_centers_catchment_overlap_only": len(jcs_catchment_only),
         "n_prospective_elementaries": n_prospective_distinct,
+        "n_patty_centers_total": len(patty_centers),
+        "n_pc_in_tract": n_pc_in_tract,
+        "n_pc_nearby": n_pc_nearby,
+        "n_needs_pc": n_needs_pc,
     }
 
     import json
@@ -913,8 +1107,9 @@ def write_site_data(grantee_rows, candidate_rows, audit, overlap_rows,
         json.dumps(payload, indent=2, default=str), encoding="utf-8"
     )
     print(f"Wrote site data: {len(g_tracts)} tracts, {len(rel_schools)} schools, "
-          f"{len(rel_cats)} catchments, {len(grantees_payload)} grantees "
-          f"({n_in_tract}/{n_catchment}/{n_needs})")
+          f"{len(rel_cats)} catchments, {len(pc_records)} patty centers, "
+          f"{len(grantees_payload)} grantees ({n_in_tract}/{n_catchment}/{n_needs} JC; "
+          f"{n_pc_in_tract}/{n_pc_nearby}/{n_needs_pc} PC)")
     return payload
 
 
@@ -945,7 +1140,9 @@ def _grantee_county_label(grantee_row):
 def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
                              tract_to_grantees, dashboard=None,
                              grantees_payload=None,
-                             closest_elementary_per_grantee=None):
+                             closest_elementary_per_grantee=None,
+                             pc_coverage_by_grantee=None):
+    pc_coverage_by_grantee = pc_coverage_by_grantee or {}
     cands_by_grantee = defaultdict(list)
     for c in candidate_rows:
         cands_by_grantee[c["grantee"]].append(c)
@@ -1014,6 +1211,10 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
     lines.append(f"| &nbsp; — In ENOUGH grantee tracts | {dashboard['n_judy_centers_in_grantee_tracts']} |")
     lines.append(f"| &nbsp; — Catchment-overlap only (school outside grantee tract) | {dashboard['n_judy_centers_catchment_overlap_only']} |")
     lines.append(f"| Distinct prospective elementaries in grantee tracts | {dashboard['n_prospective_elementaries']} |")
+    lines.append(f"| Patty Centers statewide | {dashboard.get('n_patty_centers_total', 0)} |")
+    lines.append(f"| &nbsp; — Grantees with a Patty Center in a served tract | {dashboard.get('n_pc_in_tract', 0)} |")
+    lines.append(f"| &nbsp; — Grantees with a Patty Center nearby (≤5 km) | {dashboard.get('n_pc_nearby', 0)} |")
+    lines.append(f"| &nbsp; — **Grantees with no nearby Patty Center** | **{dashboard.get('n_needs_pc', 0)}** |")
     lines.append("")
 
     # ---- Section: Already covered ----
@@ -1107,6 +1308,51 @@ def write_executive_summary(grantee_rows, candidate_rows, audit, joined,
                  "while the other three (Lincoln, Monocacy, Tuscarora) are "
                  "in adjacent Frederick tracts not covered by the current "
                  "grant.")
+    lines.append("")
+
+    # ---- Section: Patty Center coverage ----
+    n_pc_total = dashboard.get("n_patty_centers_total", 0)
+    lines.append("## Patty Center coverage")
+    lines.append("")
+    lines.append(
+        f"Patty Centers (formerly Family Support Centers) are community-based "
+        f"hubs for parents of children birth–3 — they help parents pursue "
+        f"their own goals (GED, job readiness, parenting) while their child "
+        f"receives on-site early care. Unlike Judy Centers they are not housed "
+        f"in schools and have no attendance zone, so a grantee is counted as "
+        f"covered when a Patty Center sits inside a served tract, and as "
+        f"\"nearby\" when one sits within 5 km of its served tracts. Maryland "
+        f"Family Network operates {n_pc_total} Patty Centers as MSDE's "
+        f"intermediary; the Blueprint funds 3 new sites per year through "
+        f"FY2030 at $330,000 each, so identifying ENOUGH communities without "
+        f"one is timely."
+    )
+    lines.append("")
+    # Group grantees by PC category
+    pc_has = [r for r in grantee_rows if r.get("pc_category") == "has_pc"]
+    pc_near = [r for r in grantee_rows if r.get("pc_category") == "nearby_pc"]
+    pc_needs = [r for r in grantee_rows if r.get("pc_category") == "needs_pc"]
+
+    lines.append(f"**Grantees with a Patty Center in a served tract "
+                 f"({len(pc_has)}).** " + (
+                     "; ".join(f"{r['grantee']} ({r.get('pc_in_grantee_tracts','')})"
+                               for r in sorted(pc_has, key=lambda r: r['grantee']))
+                     or "None") + ".")
+    lines.append("")
+    lines.append(f"**Grantees with a Patty Center nearby, within 5 km "
+                 f"({len(pc_near)}).** " + (
+                     "; ".join(f"{r['grantee']} — {r.get('pc_nearby','')}"
+                               for r in sorted(pc_near, key=lambda r: r['grantee']))
+                     or "None") + ".")
+    lines.append("")
+    lines.append(f"**Grantees with no nearby Patty Center ({len(pc_needs)}).** "
+                 "These ENOUGH communities are the candidates a future Patty "
+                 "Center expansion could prioritise:")
+    lines.append("")
+    lines.append("| Grantee | County | Patty Centers in county |")
+    lines.append("|---|---|---:|")
+    for r in sorted(pc_needs, key=lambda r: (-(r.get("n_pc_in_county", 0)), r["grantee"])):
+        lines.append(f"| {r['grantee']} | {r['counties']} | {r.get('n_pc_in_county', 0)} |")
     lines.append("")
 
     # ---- Full candidate elementary list per grantee without coverage ----
@@ -1207,6 +1453,9 @@ def analyze():
     print("Refreshing Judy Center list from MarylandChild.org...")
     refresh_judy_centers_from_mc()
     judy_centers = load_judy_centers()
+    print("Refreshing Patty Center list from MarylandChild.org...")
+    refresh_patty_centers_from_mc()
+    patty_centers = load_patty_centers()
 
     tract_county = {t: tract_county_fips(t) for t in tract_to_grantees.keys()}
     grantee_counties = {
@@ -1236,6 +1485,18 @@ def analyze():
         w = csv.DictWriter(f, fieldnames=list(audit[0].keys()))
         w.writeheader()
         w.writerows(audit)
+
+    # ---- Resolve Patty Centers (lat/lon point-in-tract only) ----
+    pc_audit = resolve_patty_centers(patty_centers, raw_tracts_for_pip)
+    pc_audit_by_name = {a["patty_center"]: a for a in pc_audit}
+    for pc in patty_centers:
+        a = pc_audit_by_name[pc["site_name"]]
+        pc["resolved_tract"] = a["geoid20"] or None
+        pc["match_tier"] = a["tier"]
+    with (OUTPUTS / "pc_match_audit.csv").open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(pc_audit[0].keys()))
+        w.writeheader()
+        w.writerows(pc_audit)
 
     # ---- Output: per-grantee summary ----
     grantee_rows = []
@@ -1505,6 +1766,89 @@ def analyze():
             "lon": wgs_pt.x,
         }
 
+    # ---- Patty Center per-grantee coverage (tiered by distance) ----
+    # PCs are community-based (no attendance zone), so we classify each
+    # grantee by straight-line distance from its served-tract union to the
+    # nearest PC point: in-tract -> nearby (<= PC_NEARBY_M) -> needs one.
+    pc_by_county = defaultdict(list)
+    for pc in patty_centers:
+        pc_by_county[pc["county_fips"]].append(pc)
+
+    # Build a PC point frame in EPSG:26985 once for distance math.
+    from shapely.geometry import Point as _Point
+    pc_pts = []
+    for pc in patty_centers:
+        try:
+            lat = float(pc.get("lat") or "")
+            lon = float(pc.get("lon") or "")
+        except ValueError:
+            continue
+        pc_pts.append({"site_name": pc["site_name"], "resolved_tract": pc["resolved_tract"],
+                       "geometry": _Point(lon, lat)})
+    pc_gdf = gpd.GeoDataFrame(pc_pts, crs=4326).to_crs(epsg=26985) if pc_pts else None
+
+    # grantee -> {category, in_tract names, nearby (name+dist), n in county}
+    pc_coverage_by_grantee = {}
+    for r in grantee_rows:
+        gname = r["grantee"]
+        gtracts = set(r["tracts"].split("; ")) if r["tracts"] else set()
+        in_tract = sorted({pc["site_name"] for pc in patty_centers
+                           if pc["resolved_tract"] in gtracts})
+        n_in_county = sum(len(pc_by_county.get(c, []))
+                          for c in grantee_counties[gname])
+        nearby = None
+        if not in_tract and pc_gdf is not None:
+            gtr = grantee_tracts_gdf[grantee_tracts_gdf["GEOID20"].isin(gtracts)]
+            if not gtr.empty:
+                union_geom = gtr.geometry.union_all()
+                dists = pc_gdf.geometry.distance(union_geom)
+                nearest_idx = dists.idxmin()
+                nearest_dist = float(dists.loc[nearest_idx])
+                if nearest_dist <= PC_NEARBY_M:
+                    nearby = {
+                        "site_name": pc_gdf.loc[nearest_idx, "site_name"],
+                        "distance_m": int(nearest_dist),
+                    }
+        if in_tract:
+            category = "has_pc"
+        elif nearby:
+            category = "nearby_pc"
+        else:
+            category = "needs_pc"
+        pc_coverage_by_grantee[gname] = {
+            "category": category, "in_tract": in_tract,
+            "nearby": nearby, "n_in_county": n_in_county,
+        }
+        r["pc_category"] = category
+        r["pc_in_grantee_tracts"] = "; ".join(in_tract)
+        r["pc_nearby"] = (f"{nearby['site_name']} ({nearby['distance_m']/1000:.1f} km)"
+                          if nearby else "")
+        r["n_pc_in_county"] = n_in_county
+
+    # ---- Output: per-Patty-Center coverage ----
+    pc_rows = []
+    for pc in patty_centers:
+        precise_grantees = (tract_to_grantees.get(pc["resolved_tract"], set())
+                            if pc["resolved_tract"] else set())
+        pc_rows.append({
+            "county": pc["county"],
+            "county_fips": pc["county_fips"],
+            "site_name": pc["site_name"],
+            "site_address": pc["site_address"],
+            "city": pc["city"],
+            "zip": pc.get("zip", ""),
+            "lat": pc.get("lat", ""),
+            "lon": pc.get("lon", ""),
+            "mc_store_id": pc.get("mc_store_id", ""),
+            "match_tier": pc["match_tier"],
+            "resolved_tract": pc["resolved_tract"] or "",
+            "grantees_serving_this_tract": "; ".join(sorted(precise_grantees)),
+        })
+    with (OUTPUTS / "patty_center_coverage.csv").open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(pc_rows[0].keys()))
+        w.writeheader()
+        w.writerows(pc_rows)
+
     # Re-write grantee_coverage.csv with the new columns
     with (OUTPUTS / "grantee_coverage.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(grantee_rows[0].keys()))
@@ -1524,6 +1868,8 @@ def analyze():
         raw_tracts=raw_tracts,
         tract_to_grantees=tract_to_grantees,
         closest_elementary_per_grantee=closest_elementary_per_grantee,
+        patty_centers=patty_centers,
+        pc_coverage_by_grantee=pc_coverage_by_grantee,
     )
 
     # ---- Output: executive summary (stakeholder-facing markdown) ----
@@ -1531,12 +1877,17 @@ def analyze():
                             tract_to_grantees,
                             dashboard=site_data_payload["dashboard"],
                             grantees_payload=site_data_payload["grantees"],
-                            closest_elementary_per_grantee=closest_elementary_per_grantee)
+                            closest_elementary_per_grantee=closest_elementary_per_grantee,
+                            pc_coverage_by_grantee=pc_coverage_by_grantee)
 
     # ---- Console summary ----
     print()
     print(f"{len(grantee_to_tracts)} grantees, {len(tract_to_grantees)} tracts, "
-          f"{len(judy_centers)} Judy Centers")
+          f"{len(judy_centers)} Judy Centers, {len(patty_centers)} Patty Centers")
+    n_pc_cats = defaultdict(int)
+    for r in grantee_rows:
+        n_pc_cats[r["pc_category"]] += 1
+    print(f"Patty Center grantee tiers: {dict(n_pc_cats)}")
     tier_counts = defaultdict(int)
     for a in audit:
         bucket = a["tier"].split("_")[0] if a["tier"] != "exact" else "exact"

@@ -7,7 +7,11 @@
     "n_judy_centers_total": 92,
     "n_judy_centers_in_grantee_tracts": 17,
     "n_judy_centers_catchment_overlap_only": 12,
-    "n_prospective_elementaries": 35
+    "n_prospective_elementaries": 35,
+    "n_patty_centers_total": 17,
+    "n_pc_in_tract": 3,
+    "n_pc_nearby": 15,
+    "n_needs_pc": 10
   },
   "grantees": [
     {
@@ -58,7 +62,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "United Way Family Center at Excel Academy",
+        "distance_m": 216
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "Greater Mondawmin Coordinating Council",
@@ -108,7 +119,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "RISE Early Learning & Family Support Center",
+        "distance_m": 1913
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "CASA, Inc.",
@@ -157,7 +175,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Family Support Center Prince George's",
+        "distance_m": 875
+      },
+      "n_pc_in_county": 1
     },
     {
       "grantee": "The Central Baltimore Partnership, Inc.",
@@ -227,7 +252,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "RISE Early Learning & Family Support Center",
+        "distance_m": 962
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "The Y in Central Maryland",
@@ -279,7 +311,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "RISE Early Learning & Family Support Center",
+        "distance_m": 2461
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "Tendea Family INC.",
@@ -327,7 +366,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Goodwill Excel Drop-in Center",
+        "distance_m": 2184
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "United Communities Against Poverty",
@@ -368,7 +414,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 1
     },
     {
       "grantee": "Urban Strategies Inc",
@@ -397,7 +447,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Goodwill Excel Drop-in Center",
+        "distance_m": 408
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "Latin American Youth Center",
@@ -438,7 +495,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Family Support Center Prince George's",
+        "distance_m": 308
+      },
+      "n_pc_in_county": 1
     },
     {
       "grantee": "Identity, Inc.",
@@ -489,7 +553,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 1
     },
     {
       "grantee": "Community Assistance Network, Inc.",
@@ -537,7 +605,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "The Center for Family Success",
+        "distance_m": 170
+      },
+      "n_pc_in_county": 1
     },
     {
       "grantee": "Good Intentions Foundation Inc.",
@@ -565,7 +640,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 1
     },
     {
       "grantee": "Leaders Breeders Inc.",
@@ -592,7 +671,14 @@
         "lon": -76.56053743212824
       },
       "named_hint": false,
-      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Goodwill Excel Drop-in Center",
+        "distance_m": 4790
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "Anne Arundel County Partnership for Children, Youth, and Families",
@@ -645,7 +731,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 2
     },
     {
       "grantee": "Boys & Girls Clubs of Harford and Cecil Counties",
@@ -717,7 +807,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 0
     },
     {
       "grantee": "Caroline Human Services Council, Inc.",
@@ -747,7 +841,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 0
     },
     {
       "grantee": "CHEER (Community Health and Empowerment through Education and Research)",
@@ -790,7 +888,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Family Support Center Prince George's",
+        "distance_m": 1192
+      },
+      "n_pc_in_county": 1
     },
     {
       "grantee": "Cherry Hill Strong",
@@ -832,7 +937,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Goodwill Excel Drop-in Center",
+        "distance_m": 3692
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "Child First Authority",
@@ -877,7 +989,13 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "has_pc",
+      "pcs_in_tracts": [
+        "RISE Early Learning & Family Support Center"
+      ],
+      "pc_nearby": null,
+      "n_pc_in_county": 3
     },
     {
       "grantee": "City of Cumberland",
@@ -918,7 +1036,14 @@
       ],
       "closest_elementary": null,
       "named_hint": true,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Cumberland Family Support Center",
+        "distance_m": 365
+      },
+      "n_pc_in_county": 1
     },
     {
       "grantee": "Frederick Local Management Board",
@@ -982,7 +1107,13 @@
       ],
       "closest_elementary": null,
       "named_hint": true,
-      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives",
+      "pc_category": "has_pc",
+      "pcs_in_tracts": [
+        "Asian American Center of Frederick"
+      ],
+      "pc_nearby": null,
+      "n_pc_in_county": 2
     },
     {
       "grantee": "LifeStyles of Maryland Foundation, Inc.",
@@ -1012,7 +1143,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 0
     },
     {
       "grantee": "Moving Dorchester Forward, INC",
@@ -1062,7 +1197,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 0
     },
     {
       "grantee": "One Annapolis, Inc",
@@ -1105,7 +1244,14 @@
       ],
       "closest_elementary": null,
       "named_hint": true,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "Annapolis Family Support Center",
+        "distance_m": 1167
+      },
+      "n_pc_in_county": 2
     },
     {
       "grantee": "Park Heights Renaissance, Inc.",
@@ -1192,7 +1338,14 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "nearby_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": {
+        "site_name": "RISE Early Learning & Family Support Center",
+        "distance_m": 2931
+      },
+      "n_pc_in_county": 3
     },
     {
       "grantee": "Prince George's County Department of Social Services",
@@ -1225,7 +1378,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives"
+      "recommendation_short": "No traditional elementary in any served tract \u2014 investigate alternatives",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 1
     },
     {
       "grantee": "San Mar Family & Community Services: Bester Community of Hope",
@@ -1291,7 +1448,13 @@
       ],
       "closest_elementary": null,
       "named_hint": true,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "has_pc",
+      "pcs_in_tracts": [
+        "Washington County Family Support Center"
+      ],
+      "pc_nearby": null,
+      "n_pc_in_county": 1
     },
     {
       "grantee": "South Baltimore Community Land Trust",
@@ -1332,7 +1495,11 @@
       ],
       "closest_elementary": null,
       "named_hint": false,
-      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center"
+      "recommendation_short": "Has elementary school(s) in served tracts \u2014 candidate for Judy Center",
+      "pc_category": "needs_pc",
+      "pcs_in_tracts": [],
+      "pc_nearby": null,
+      "n_pc_in_county": 3
     }
   ]
 }

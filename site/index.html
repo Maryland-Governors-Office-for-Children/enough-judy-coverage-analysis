@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ENOUGH × Judy Center coverage</title>
+<title>ENOUGH × Judy & Patty Center coverage</title>
 <link rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="" />
-<link rel="stylesheet" href="styles.css?v=3" />
+<link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
 
 <header class="site-header">
   <div class="hwrap">
     <div>
-      <h1>ENOUGH × Judy Center coverage</h1>
-      <div class="sub">Maryland Governor's Office for Children — which ENOUGH grantees are candidates for a Judy Center?</div>
+      <h1>ENOUGH × Judy &amp; Patty Center coverage</h1>
+      <div class="sub">Maryland Governor's Office for Children — which ENOUGH grantees are candidates for a Judy Center, and which lack a Patty Center?</div>
     </div>
     <div class="meta-right">
       <span class="updated">Refreshed Apr 2026</span>
@@ -43,11 +43,26 @@
     <h2 class="section-title">What this analysis covers</h2>
     <p class="lede">
       Maryland's 28 ENOUGH grantees serve 106 census tracts. The state has
-      92 Judy Center Early Learning Hubs. This analysis breaks down which
-      grantees have Judy Centers in their communities, which grantees have
-      Judy Centers that serve their communities, which grantees are not
-      served by Judy Centers, and which elementary schools are candidates
-      to host new Judy Centers.
+      92 Judy Center Early Learning Hubs and 17 Patty Centers (Family
+      Support Centers). This analysis breaks down which grantees have Judy
+      Centers in their communities, which grantees have Judy Centers that
+      serve their communities, which grantees are not served by Judy Centers,
+      and which elementary schools are candidates to host new Judy Centers.
+      It also maps every Patty Center and flags which ENOUGH grantees do not
+      have one nearby.
+    </p>
+
+    <h2 class="section-title">Patty Centers</h2>
+    <p class="lede">
+      Patty Centers (formerly Family Support Centers) are community-based
+      hubs for parents of children birth–3 — parents work toward their own
+      goals (GED, job readiness, parenting skills) while their child receives
+      early care on site. Unlike Judy Centers they are not housed in schools,
+      so a grantee is counted as covered when a Patty Center sits inside a
+      served tract and as "nearby" when one is within 5 km. Maryland Family
+      Network runs 17 of them as MSDE's intermediary; the Blueprint funds 3
+      new sites per year through FY2030 at $330,000 each. Toggle them on the
+      map with the <b>Patty Centers</b> control in the sidebar.
     </p>
 
     <h2 class="section-title">The three groups</h2>
@@ -110,6 +125,7 @@
           <button class="filter-pill catchment_overlap" data-cat="catchment_overlap">Catchment <span id="fp-catchment_overlap">—</span></button>
           <button class="filter-pill needs_jc" data-cat="needs_jc">Needs JC <span id="fp-needs_jc">—</span></button>
         </div>
+        <button class="pc-toggle active" id="pc-toggle" aria-pressed="true" title="Show or hide Patty Centers">Patty Centers</button>
       </div>
       <div class="grantee-list" id="grantee-list">
         <!-- populated by app.js -->
@@ -202,7 +218,26 @@
           fallback. Currently this applies only to Leaders Breeders Inc.,
           whose tract sits about half a kilometre from Sinclair Lane
           Elementary.</li>
+      <li><b>Teal squares</b> are Patty Centers (Family Support Centers).
+          They show statewide by default and can be toggled off in the map
+          sidebar. When a grantee is selected, a Patty Center inside one of
+          its tracts is drawn solid and one within 5 km gets a dashed
+          outline.</li>
     </ul>
+
+    <h3>Patty Centers</h3>
+    <p>Patty Centers (formerly Family Support Centers) are community-based
+       hubs for parents of children birth–3, run by Maryland Family Network
+       as MSDE's intermediary at community sites — not inside schools. Because
+       they have no school attendance zone, grantee proximity is measured as
+       straight-line distance from the grantee's served-tract union to the
+       Patty Center: a center inside a served tract counts as covered, one
+       within 5&nbsp;km counts as nearby, and otherwise the grantee has no
+       nearby Patty Center. The Blueprint for Maryland's Future funds 3 new
+       Patty Centers per year through FY2030 at $330,000 each, so the
+       grantees with no nearby center are natural candidates for future
+       expansion. Locations come from the same Maryland Family Network
+       directory as the Judy Centers (the "(PC)"-tagged entries).</p>
 
     <h3>Matching Judy Centers to schools</h3>
     <p>Each Judy Center from Maryland Family Network's directory was paired
@@ -246,6 +281,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
