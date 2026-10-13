@@ -479,14 +479,17 @@ function renderMap() {
     zoomControl: true,
     scrollWheelZoom: true,
   }).fitBounds(MD_BOUNDS);
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 18,
-    }
-  ).addTo(state.map);
+  // CARTO basemaps began requiring an API key (Oct 2026); Esri Light Gray Canvas is keyless.
+  const esriCanvas = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas";
+  L.tileLayer(`${esriCanvas}/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {
+    attribution: "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors, and the GIS user community",
+    maxNativeZoom: 16,
+    maxZoom: 18,
+  }).addTo(state.map);
+  L.tileLayer(`${esriCanvas}/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, {
+    maxNativeZoom: 16,
+    maxZoom: 18,
+  }).addTo(state.map);
 
   drawTracts(null);
   drawSchools(null);
